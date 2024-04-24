@@ -1,0 +1,34 @@
+.common-bg{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: space-between;
+  left: 0;
+  top: 0;
+  .activity-body-bg-top,
+  .activity-body-bg-mid,
+  .activity-body-bg-bottom{
+    display: inline-flex;
+    height: 50%;
+    width: 100%;
+    object-fit: cover;
+  }
+  .activity-body-bg-top{
+    object-position: top;
+    z-index: 1;
+  }
+  .activity-body-bg-mid{
+    position: absolute;
+    object-position: center;
+    transform: scaleY(80%);
+    z-index: 0;
+    top: 10%;
+    bottom: 10%;
+  }
+  .activity-body-bg-bottom{
+    z-index: 1;
+    object-position: bottom;
+  }
+}

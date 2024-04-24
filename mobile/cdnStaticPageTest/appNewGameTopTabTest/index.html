@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+  <title>顶tab</title>
+<!--      <script src="https://cdn.bootcss.com/vConsole/3.3.0/vconsole.min.js"></script>-->
+<!--      <script>-->
+<!--          var vConsole = new VConsole();-->
+<!--      </script>-->
+  <style type="text/css">
+      * {
+          margin: 0;
+          padding: 0;
+      }
+
+      .bg {
+          position: absolute;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          top: 0;
+      }
+
+      .app-new-top-tab {
+          width: 100vw;
+          height: calc((364 / 7.5) * 1vw);
+          overflow: hidden;
+          display: flex;
+          flex-direction: row;
+      }
+
+      .app-new-top-tab * {
+          display: inline-flex;
+      }
+
+      .app-new-top-tab .right-block {
+          flex-direction: column;
+          justify-content: space-between;
+          margin-left: calc((20 / 7.5) * 1vw);
+      }
+
+      .app-new-top-tab .right-block .block-item {
+          width: calc((344 / 7.5) * 1vw);
+          height: calc((124 / 7.5) * 1vw);
+          margin-top: calc((8 / 7.5) * 1vw);
+          flex-direction: column;
+          position: relative;
+      }
+
+      .app-new-top-tab .right-block .block-item:first-child {
+          margin-top: 0;
+      }
+
+      .app-new-top-tab .right-block .block-item .text {
+          margin-top: calc((22 / 7.5) * 1vw);
+          margin-left: calc((30 / 7.5) * 1vw);
+          font-size: calc((32 / 7.5) * 1vw);
+          font-family: PingFangSC, PingFang SC;
+          font-weight: 600;
+          color: #FFFFFF;
+          line-height: calc((44 / 7.5) * 1vw);
+          z-index: 9;
+      }
+
+      .app-new-top-tab .right-block .block-item .sub-text {
+          margin-top: calc((4 / 7.5) * 1vw);
+          margin-left: calc((30 / 7.5) * 1vw);
+          z-index: 9;
+          font-size: calc((24 / 7.5) * 1vw);
+          font-family: PingFangSC, PingFang SC;
+          font-weight: 400;
+          color: #FFFFFF;
+          line-height: calc((32 / 7.5) * 1vw);
+          opacity: 0.5;
+      }
+
+      .app-new-top-tab .left-block {
+          display: inline-flex;
+          flex-direction: column;
+          margin-left: calc((30 / 7.5) * 1vw);
+      }
+
+      .app-new-top-tab .left-block .block-item {
+          display: inline-flex;
+          position: relative;
+      }
+
+      #list {
+          width: calc((326 / 7.5) * 1vw);
+          height: calc((390 / 7.5) * 1vw);
+          position: relative;
+
+          flex-direction: column;
+      }
+
+      #list .text {
+          margin-top: calc((40 / 7.5) * 1vw);
+          margin-left: calc((24 / 7.5) * 1vw);
+          z-index: 9;
+          font-size: calc((32 / 7.5) * 1vw);
+          font-family: PingFangSC, PingFang SC;
+          font-weight: 600;
+          color: #FFFFFF;
+          line-height: calc((56 / 7.5) * 1vw);
+      }
+
+      #list .sub-text {
+          margin-top: calc((4 / 7.5) * 1vw);
+          margin-left: calc((24 / 7.5) * 1vw);
+          z-index: 9;
+          font-size: calc((24 / 7.5) * 1vw);
+          font-family: PingFangSC, PingFang SC;
+          font-weight: 400;
+          color: #FFFFFF;
+          line-height: calc((33 / 7.5) * 1vw);
+          opacity: 0.8;
+      }
+
+  </style>
+
+</head>
+
+<body>
+<div class="app-new-top-tab">
+  <div class="left-block" id="left-block">
+  </div>
+  <div class="right-block" id="right-block">
+  </div>
+</div>
+<script>
+  const IS_IOS = Boolean(navigator.userAgent.match(/Mac OS X/));
+  const CDN_STATIC_URL_ROOT = 'https://m.hawlkj.cn/cdnQiniu/mobile';
+
+  const EVENT_MAP = [
+    {
+      id: 'list',
+      eventName: 'openZone',
+      type: 'left',
+      bg: CDN_STATIC_URL_ROOT + '/appGameTopTab/kaihei.png',
+      text: '开黑专区',
+      subText: '组队速匹配玩游戏',
+      params: 1,
+    },
+    {
+      id: 'xiuxian',
+      eventName: 'openZone',
+      type: 'right',
+      bg: CDN_STATIC_URL_ROOT + '/appGameTopTab/xiuxian.png',
+      text: '休闲玩法',
+      subText: '多种趣味桌游',
+      params: 3,
+    },
+    {
+      id: 'yingyue',
+      eventName: 'openZone',
+      type: 'right',
+      bg: CDN_STATIC_URL_ROOT + '/appGameTopTab/yingyue.png',
+      text: '音乐专区',
+      subText: '玩转音乐乐园',
+      params: 2,
+    },
+    {
+      id: 'saishi',
+      eventName: 'openCompetition',
+      type: 'right',
+      bg: CDN_STATIC_URL_ROOT + '/appGameTopTab/saishi.png',
+      text: '赛事中心',
+      subText: '奖金赛事',
+    }
+  ];
+  const TIME_LIMIT_EVENT_MAP = [
+    {
+      startTime: 1707235200000,
+      endTime: 1708444800000,
+      eventItem: {
+        id: 'points',
+        eventName: 'allRank',
+        type: 'left',
+        bg: 'http://wx.iyangyang.fun/mobile/appTopTab/rank-small.png',
+        text: '榜单',
+      }
+    },
+    {
+      startTime: 1707235200000,
+      endTime: 1707753600000,
+      eventItem: {
+        id: 'list',
+        eventName: 'openUrl',
+        params: 'https://m.hawlkj.cn/#/LunarNewYear',
+        type: 'right',
+        bg: 'http://wx.iyangyang.fun/mobile/appTopTab/year.png',
+        text: '年兽来袭',
+        subText: '年兽送福',
+      }
+    },
+    {
+      startTime: 1707753600000,
+      endTime: 1708444800000,
+      eventItem: {
+        id: 'list',
+        eventName: 'openUrl',
+        params: 'https://m.hawlkj.cn/#/ValentinesDay',
+        type: 'right',
+        bg: 'http://wx.iyangyang.fun/mobile/appTopTab/cp.png',
+        text: '热恋情人节',
+        subText: '快去组队吧',
+      }
+    },
+  ]
+
+  const getMergeEventMap = ()=>{
+    const currentTimes = new Date().getTime();
+    const cloneEvent = JSON.parse(JSON.stringify(EVENT_MAP));
+    TIME_LIMIT_EVENT_MAP.forEach((item)=>{
+      const findIndex = cloneEvent.findIndex((innerItem)=>innerItem.id === item.eventItem.id);
+      if (
+        currentTimes>item.startTime &&
+        currentTimes<item.endTime &&
+        findIndex !== -1
+      ){
+        cloneEvent[findIndex] = item.eventItem;
+      }
+    });
+    return cloneEvent;
+  }
+
+
+  const initAllEvent = () => {
+    const mergeEventList = getMergeEventMap();
+    mergeEventList.forEach((item) => {
+      document.getElementById(item.id).addEventListener('click', () => {
+        console.log('navigator.userAgent',navigator.userAgent);
+        if (IS_IOS) window.webkit.messageHandlers[item.eventName].postMessage(item.params || null);
+        else if (item.params) window.androidJsObj[item.eventName](item.params);
+        else window.androidJsObj[item.eventName]();
+      })
+    });
+  }
+
+  const initDomBlock = () => {
+    const leftParentDom = document.getElementById('left-block');
+    const rightParentDom = document.getElementById('right-block');
+    const mergeEventList = getMergeEventMap();
+    if (leftParentDom) {
+      mergeEventList.filter((item) => item.type === 'left')
+        .forEach((item) => {
+          const shellDom = document.createElement('div');
+          shellDom.setAttribute('class', 'block-item');
+          shellDom.id = item.id;
+          const textDom = document.createElement('div');
+          textDom.setAttribute('class', 'text');
+          textDom.innerHTML = item.text;
+          let subTextDom;
+          if (item.subText) {
+            subTextDom = document.createElement('div');
+            subTextDom.setAttribute('class', 'sub-text');
+            subTextDom.innerHTML = item.subText;
+          }
+          const imgDom = document.createElement('img');
+          imgDom.setAttribute('class', 'bg');
+          imgDom.setAttribute('src', item.bg);
+          shellDom.append(textDom);
+          subTextDom && shellDom.append(subTextDom);
+          shellDom.append(imgDom);
+          leftParentDom.append(shellDom);
+        });
+    }
+    if (rightParentDom) {
+      mergeEventList.filter((item) => item.type === 'right')
+        .forEach((item) => {
+          const shellDom = document.createElement('div');
+          shellDom.setAttribute('class', 'block-item');
+          shellDom.id = item.id;
+          const textDom = document.createElement('div');
+          textDom.setAttribute('class', 'text');
+          textDom.innerHTML = item.text;
+          let subTextDom;
+          if (item.subText) {
+            subTextDom = document.createElement('div');
+            subTextDom.setAttribute('class', 'sub-text');
+            subTextDom.innerHTML = item.subText;
+          }
+          const imgDom = document.createElement('img');
+          imgDom.setAttribute('class', 'bg');
+          imgDom.setAttribute('src', item.bg);
+          shellDom.append(textDom);
+          subTextDom && shellDom.append(subTextDom);
+          shellDom.append(imgDom);
+          rightParentDom.append(shellDom);
+
+        });
+    }
+  }
+
+  initDomBlock();
+  initAllEvent();
+</script>
+</body>
+
+</html>

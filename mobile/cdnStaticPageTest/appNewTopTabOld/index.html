@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+  <title>顶tab</title>
+  <!--    <script src="https://cdn.bootcss.com/vConsole/3.3.0/vconsole.min.js"></script>-->
+  <style type="text/css">
+      * {
+          margin: 0;
+          padding: 0;
+      }
+
+      .bg {
+          position: absolute;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          top: 0;
+      }
+
+      .app-new-top-tab {
+          width: 100vw;
+          height: calc((364/7.5)*1vw);
+          overflow: hidden;
+          display: flex;
+          flex-direction: row;
+      }
+
+      .app-new-top-tab * {
+          display: inline-flex;
+      }
+
+      .app-new-top-tab .left-block {
+          flex-direction: column;
+          justify-content: space-between;
+          margin-left: calc((30/7.5)*1vw);
+      }
+
+      .app-new-top-tab .left-block .block-item {
+          width: calc((346 / 7.5) * 1vw);
+          height: calc((116 / 7.5) * 1vw);
+          position: relative;
+      }
+
+      .app-new-top-tab .left-block .block-item .text {
+          position: absolute;
+          top: calc((20 / 7.5) * 1vw);
+          left: calc((36 / 7.5) * 1vw);
+          font-size: calc((32 / 7.5) * 1vw);
+          font-family: PingFangSC, PingFang SC;
+          font-weight: 600;
+          color: #FFFFFF;
+          line-height: calc((45 / 7.5) * 1vw);
+          z-index: 9;
+      }
+
+      .app-new-top-tab .right-block {
+          width: calc((360 / 7.5) * 1vw);
+          height: calc((364 / 7.5) * 1vw);
+          position: relative;
+
+          flex-direction: column;
+      }
+
+      .app-new-top-tab .right-block .title {
+          margin-top: calc((40 / 7.5) * 1vw);
+          margin-left: calc((66 / 7.5) * 1vw);
+          z-index: 9;
+          font-size: calc((40 / 7.5) * 1vw);
+          font-family: PingFangSC, PingFang SC;
+          font-weight: 600;
+          color: #FFFFFF;
+          line-height: calc((56 / 7.5) * 1vw);
+      }
+
+      .app-new-top-tab .right-block .sub-title {
+          margin-left: calc((66 / 7.5) * 1vw);
+          z-index: 9;
+          font-size: calc((24 / 7.5) * 1vw);
+          font-family: PingFangSC, PingFang SC;
+          font-weight: 400;
+          color: #FFFFFF;
+          line-height: calc((33 / 7.5) * 1vw);
+      }
+  </style>
+
+</head>
+
+<body>
+<div class="app-new-top-tab">
+  <div class="left-block">
+    <div class="block-item" id="extension">
+      <div class="text">扩列墙</div>
+      <img class="bg" src="https://img.iyangyang.fun/home_header_icon_wall%402x.png"/>
+    </div>
+    <div class="block-item" id="game">
+      <div class="text">一起玩</div>
+      <img class="bg" src="https://img.iyangyang.fun/home_header_icon_play%402x.png"/>
+    </div>
+    <div class="block-item" id="points">
+      <div class="text">来上分</div>
+      <img class="bg" src="https://img.iyangyang.fun/home_header_icon_score%402x.png"/>
+    </div>
+  </div>
+  <div class="right-block" id="list">
+    <div class="title">榜单</div>
+    <div class="sub-title">巅峰人气榜</div>
+    <img class="bg" src="https://img.iyangyang.fun/home_header_icon_rank%402x.png"/>
+  </div>
+</div>
+<script>
+  const IS_IOS = Boolean(navigator.userAgent.match(/Mac OS X/));
+  const EVENT_MAP = [
+    {
+      id: 'extension',
+      eventName: 'appexpansionwall',
+    },
+    {
+      id: 'game',
+      eventName: 'playGame',
+    },
+    {
+      id: 'points',
+      eventName: 'allRank',
+    },
+    {
+      id: 'list',
+      eventName: 'allRank',
+    }
+  ]
+
+
+  const initAllEvent = () => {
+    EVENT_MAP.forEach((item) => {
+      document.getElementById(item.id).addEventListener('click', () => {
+        if (IS_IOS) window.webkit.messageHandlers[item.eventName].postMessage(null);
+        else window.androidJsObj[item.eventName]();
+      })
+    });
+  }
+  initAllEvent();
+</script>
+</body>
+
+</html>
