@@ -28,15 +28,23 @@ fi
 # 压缩文件内容以准备传输
 source ./config.sh
 
-tar -czvf PreEnvFiles.tar.gz ./linux
+tar -czvf PreEnvFiles.tar.gz ./linux-pre-env-file
 
 # 使用sshpass读取配置密码，面输入登录一键传输并安装前置依赖
-sshpass -p $BLOG_SERVER_PASSWORD ssh $BLOG_SERVER_USERNAME@$BLOG_SERVER_IP -p $BLOG_SERVER_PORT -o StrictHostKeyChecking=no "mkdir /home/blog"
+sshpass -p $BLOG_SERVER_PASSWORD ssh $BLOG_SERVER_USERNAME@$BLOG_SERVER_IP -p $BLOG_SERVER_PORT -o StrictHostKeyChecking=no "mkdir $SERVER_ROOT_PATH && exit"
 echo "开始传输前置依赖文件，请稍后..."
-sshpass -p $BLOG_SERVER_PASSWORD scp -P $BLOG_SERVER_PORT ./PreEnvFiles.tar.gz $BLOG_SERVER_USERNAME@$BLOG_SERVER_IP:/home/blog
+sshpass -p $BLOG_SERVER_PASSWORD scp -P $BLOG_SERVER_PORT ./PreEnvFiles.tar.gz $BLOG_SERVER_USERNAME@$BLOG_SERVER_IP:$SERVER_ROOT_PATH
 
 rm -rf PreEnvFiles.tar.gz
 
 echo "前置依赖已传输，将为您安装，请稍后..."
+
+# 解压服务端内容并开始安装前置依赖
+sshpass -p $BLOG_SERVER_PASSWORD ssh $BLOG_SERVER_USERNAME@$BLOG_SERVER_IP -p $BLOG_SERVER_PORT -o StrictHostKeyChecking=no "
+tar -zxvf $SERVER_ROOT_PATH/PreEnvFiles.tar.gz -C $SERVER_ROOT_PATH
+sh $SERVER_ROOT_PATH/linux-pre-env-file/install.sh
+exit
+"
+
 
 
