@@ -1,3 +1,5 @@
 .idea
 .vscode
 sshpass-1.06
+
+./pre-env/config.sh

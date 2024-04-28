@@ -30,8 +30,13 @@ source ./config.sh
 
 tar -czvf PreEnvFiles.tar.gz ./linux
 
+# 使用sshpass读取配置密码，面输入登录一键传输并安装前置依赖
 sshpass -p $BLOG_SERVER_PASSWORD ssh $BLOG_SERVER_USERNAME@$BLOG_SERVER_IP -p $BLOG_SERVER_PORT -o StrictHostKeyChecking=no "mkdir /home/blog"
-echo "开始传输前置依赖包文件，请稍后..."
-sshpass -p $BLOG_SERVER_PASSWORD scp ./PreEnvFiles.tar.gz $BLOG_SERVER_USERNAME@$BLOG_SERVER_IP:/home/blog
+echo "开始传输前置依赖文件，请稍后..."
+sshpass -p $BLOG_SERVER_PASSWORD scp -P $BLOG_SERVER_PORT ./PreEnvFiles.tar.gz $BLOG_SERVER_USERNAME@$BLOG_SERVER_IP:/home/blog
 
 rm -rf PreEnvFiles.tar.gz
+
+echo "前置依赖已传输，将为您安装，请稍后..."
+
+
