@@ -1,13 +1,12 @@
 import request, { IBaseRes } from "@/api/request";
+import { EUserRole } from "@/const/type";
 
-export interface ISimpleItem {
-  id: string;
-  title: string;
-  view: number;
-  tag: string[];
-  desc: string;
+export interface IGetUserInfoReqRes {
+  uid: string;
+  username: string;
+  userRole: EUserRole;
 }
 
-export const getBlogListInfo = async (page: number) => {
-  return request.post<IBaseRes<ISimpleItem[]>>("/blog/list", { page });
+export const getUserInfoReq = async () => {
+  return request.get<IBaseRes<IGetUserInfoReqRes>>("/user/getUserInfo", {});
 };

@@ -13,7 +13,6 @@ export interface IRequestConfig<T = any> {
 
 export interface IBaseRes<T = any> {
   code: number;
-  msg?: string;
   message?: string;
   data: T;
 }
