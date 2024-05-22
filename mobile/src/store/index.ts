@@ -1,14 +1,14 @@
-import { createStore } from "vuex";
+import {createStore, StoreOptions} from "vuex";
+import {assign} from "lodash";
+import usrStore, {IUserState} from "./usr";
 
-export default createStore({
-  state: {
-    // innerAppPostFn: null,
-  },
-  mutations: {
-    // updateInnerAppPostFn: (state, payload) => {
-    //   state.innerAppPostFn = payload;
-    // }
-  },
+export type IStore = StoreOptions<IUserState>;
+
+const DEFAULT_STORE_OBJ = {
+  state: {},
+  mutations: {},
   actions: {},
   modules: {},
-});
+}
+
+export default createStore(assign(DEFAULT_STORE_OBJ, usrStore) as IStore);

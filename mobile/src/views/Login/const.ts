@@ -1,4 +1,4 @@
-import request, { IDefaultRes } from "@/api/request";
+import request, { IBaseRes } from "@/api/request";
 
 export interface ILoginReq {
   id: string;
@@ -8,6 +8,3 @@ export interface ILoginReq {
   desc: string;
 }
 
-export const loginReq = async (page: number) => {
-  return request.post<IBaseRes<ISimpleItem[]>>("/blog/list", { page });
-};
