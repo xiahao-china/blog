@@ -26,7 +26,7 @@ else
 fi
 
 # 压缩文件内容以准备传输
-source ./config.sh
+source ../config.sh
 
 tar -czvf PreEnvFiles.tar.gz ./linux-pre-env-file
 
