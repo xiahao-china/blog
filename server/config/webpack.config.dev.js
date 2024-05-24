@@ -1,0 +1,28 @@
+const { merge } = require('webpack-merge')
+const nodeExternals = require('webpack-node-externals')
+
+const baseConfig = require('./webpack.config.base')
+
+// 通过webpack-merge合并基础配置，添加开发时配置
+const webpackConfig = merge(baseConfig, {
+  mode: 'development', // 开发模式
+  devtool: 'eval-source-map', // 开发时出错能知道在源代码中哪一行
+  stats: {
+    children: false, // webpack打包时子模块信息设置不显示
+    modules: false // 不显示模块信息
+  },
+  module: {
+    rules: [
+      {
+        test: /.ts/,
+        use: {
+          loader: 'ts-loader'
+        },
+        exclude: /node_modules/
+      }
+    ]
+  },
+  externals: [nodeExternals()] // 排除对node_modules里的依赖进行打包
+})
+
+module.exports = webpackConfig
