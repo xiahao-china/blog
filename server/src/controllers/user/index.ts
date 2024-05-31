@@ -1,8 +1,18 @@
 import md5 from 'md5';
 import userModel, {IUserInfo} from '@/models/user';
+import emailVerificationCodeModel, {IEmailVerificationCode} from '@/models/emailVerificationCode';
+
 import {logger} from "@/lib/log4js";
 import {sendResponse, TDefaultRouter, TNext} from "@/routes/const";
 import {signToken} from "@/utils/token";
+import {isMail, isPhone} from "@/utils/reg";
+import {
+  createVerificationCode,
+  VERIFICATION_CODE_ACQUISITION_INTERVAL,
+  VERIFICATION_CODE_VALIDITY_TIME
+} from "@/controllers/user/const";
+import {sendMail} from "@/utils/email";
+import {APP_NAME} from "@/utils/common";
 
 export interface ILoginControllersReqParams {
   userName: string;
@@ -11,6 +21,11 @@ export interface ILoginControllersReqParams {
   email: string;
   phoneVerCode: number;
   emailVerCode: number;
+}
+
+export interface IGetVerCodeReqParams {
+  phone: number;
+  email: string;
 }
 
 const loginResKeyList: (keyof IUserInfo)[] = ['userName', 'uid', 'phone', 'avatar', 'email', 'lastLoginTime'];
@@ -23,7 +38,7 @@ export const loginControllers = async (ctx: TDefaultRouter<ILoginControllersReqP
     email,
     phoneVerCode,
     emailVerCode,
-  } = ctx.body;
+  } = ctx.request.body || {};
 
   if (!userName && !phone && !email) return sendResponse.error(ctx, '用户名，手机号或邮箱不能为空');
   if (!phoneVerCode && !emailVerCode && !password) return sendResponse.error(ctx, '验证码或密码不能为空');
@@ -93,5 +108,44 @@ export const loginControllers = async (ctx: TDefaultRouter<ILoginControllersReqP
   //   sendResponse.error(ctx, error);
   //   logger.error(userName + "尝试登录失败:" + error);
   // }
+}
+
+export const getVerCode = async (ctx: TDefaultRouter<IGetVerCodeReqParams>, next: TNext) => {
+  let {
+    phone,
+    email,
+  } = ctx.request.body;
+
+  if (!phone && !email) return sendResponse.error(ctx, '手机号或邮箱不能为空');
+  const phoneCheckRes = isPhone(phone);
+  const emailCheckRes = isMail(email);
+  if (phone && !phoneCheckRes.isRight) return sendResponse.error(ctx, phoneCheckRes.msg);
+  if (email && !emailCheckRes.isRight) return sendResponse.error(ctx, emailCheckRes.msg);
+
+  const verificationCode = createVerificationCode();
+
+  try {
+    if (email){
+      const mailVerCodeInfo: IEmailVerificationCode|null = await emailVerificationCodeModel.findOne({email});
+      if (mailVerCodeInfo && ((mailVerCodeInfo.sendTime + VERIFICATION_CODE_ACQUISITION_INTERVAL) < new Date().getTime() ))
+        return sendResponse.error(ctx, '验证码获取太频繁啦，请稍后再试~');
+      await sendMail({
+        senAimEmail: email,
+        subject: `${APP_NAME}-邮箱验证码`,
+        text: `您的验证码为：${verificationCode}(10分钟有效)`
+      });
+      await emailVerificationCodeModel.deleteOne({email});
+      const timeMs = new Date().getTime();
+      await emailVerificationCodeModel.insertMany([{
+        email,
+        code: verificationCode,
+        sendTime: timeMs,
+        expireTime: timeMs + VERIFICATION_CODE_VALIDITY_TIME
+      }]);
+    }
+  }catch (err){
+    return sendResponse.error(ctx, `获取验证码失败: ${JSON.stringify(err)}`);
+  }
+  sendResponse.success(ctx);
 }
 

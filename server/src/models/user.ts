@@ -1,10 +1,16 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+export enum ESex {
+  unknow,
+  male,
+  female
+}
 export interface IUserInfo {
   uid: string;
   userName: string;
   password: string;
+  sex: ESex,
   avatar: string;
   email: string;
   phone: number;
@@ -32,6 +38,7 @@ const usersSchema = new Schema({
   "userName" : String,
   "password" : String,
   "avatar": String,
+  "sex": Number,
   "email" : String,
   "phone" : String,
   // "createTime" : { type: Date, default: Date.now },

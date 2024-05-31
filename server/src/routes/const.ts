@@ -2,7 +2,11 @@ import Application from "koa";
 import Router from "koa-router";
 import {IObject} from "@/utils/const";
 
-export type TDefaultRouter<T = any> = Application.ParameterizedContext<any, Router.IRouterParamContext<any, {}>, T>
+export type TDefaultRouter<T = any> = Application.ParameterizedContext<any, Router.IRouterParamContext<any, {}>, any> & {
+  request: {
+    body?: T
+  }
+}
 export type TNext = Application.Next;
 
 export enum EReqStatus {
