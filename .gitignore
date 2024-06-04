@@ -6,3 +6,4 @@ sshpass-1.06
 
 ./pre-env/config.sh
 ./config.sh
+./server/config.js

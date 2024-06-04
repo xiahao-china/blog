@@ -1,6 +1,3 @@
-# 在根目录加入config.js作为配置信息文件，内容如下
-
-```
 export default {
   // qq邮箱秘钥
   mailAuthPass: '',
@@ -9,4 +6,3 @@ export default {
   // 阿里短信服务秘钥
   aliAccessKeySecret: '',
 }
-```

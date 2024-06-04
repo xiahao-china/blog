@@ -2,13 +2,26 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 export enum ESex {
-  unknow,
+  unknow = 1,
   male,
   female
 }
+
+export enum ERole {
+  admin = 1,
+  manager,
+  normal
+}
+
+export enum EUserStatus {
+  using = 1,
+  block,
+  signOut,
+}
+
 export interface IUserInfo {
   uid: string;
-  userName: string;
+  nick: string;
   password: string;
   sex: ESex,
   avatar: string;
@@ -16,53 +29,57 @@ export interface IUserInfo {
   phone: number;
   createTime: number;
   lastLoginTime: number;
-  deptId: number[];
-  state: number;
-  role: number;
-  roleList: number[]
+  collectArticlesId: number[];
+  state: EUserStatus;
+  role: ERole;
   remark: string;
   token: string;
-
-  phoneVerCode: number; // 手机号验证码
-  phoneVerCodeExpireTime: number; // 手机号验证码过期时间
-  phoneGetVerCodeNum: number[]; // 手机号验证码获取时间
-
-  emailVerCode: number; // 邮箱验证码
-  emailVerCodeExpireTime: number;
 }
+
+export const getDefaultUserInfo = (): IUserInfo => ({
+  uid: '',
+  nick: '',
+  password: '',
+  avatar: '',
+  sex: ESex.unknow,
+  email: '',
+  phone: 0,
+  createTime: new Date().getTime(),
+  lastLoginTime: new Date().getTime(),
+
+  collectArticlesId: [] as number[],
+  state: EUserStatus.using,
+  role: ERole.normal,
+
+  // token
+  token: '',
+  // 备用的字段
+  remark: ''
+});
 
 const usersSchema = new Schema({
   // _id : 605d8f81e1ed264a867cfcc2,
   // 基本信息
-  "uid" : Number,
-  "userName" : String,
-  "password" : String,
-  "avatar": String,
-  "sex": Number,
-  "email" : String,
-  "phone" : String,
+  uid: String,
+  nick: String,
+  password: String,
+  avatar: String,
+  sex: Number,
+  email: String,
+  phone: String,
   // "createTime" : { type: Date, default: Date.now },
   // "lastLoginTime" : { type: Date, default: Date.now },
-  "createTime": Number,
-  "lastLoginTime": Number,
+  createTime: Number,
+  lastLoginTime: Number,
 
-  "deptId" : Array,
-  "state" : Number,
-  "role" : Number,
-  "roleList" : Array,
-
-  "phoneVerCode": Number,
-  "phoneVerCodeExpireTime": Number,
-  "phoneGetVerCodeNum": Number,
-
-
-  "emailVerCode": Number,
-  "emailVerCodeExpireTime": Number,
+  collectArticlesId: Array,
+  state: Number,
+  role: Number,
 
   // token
-  "token": String,
+  token: String,
   // 备用的字段
-  "remark": String
+  remark: String
 });
 
 //   要把 schema 转换为一个 Model， 使用 mongoose.model(modelName, schema) 函数：

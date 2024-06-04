@@ -1,5 +1,5 @@
 import md5 from 'md5';
-import userModel, {IUserInfo} from '@/models/user';
+import userModel, {getDefaultUserInfo, IUserInfo} from '@/models/user';
 import emailVerificationCodeModel, {IEmailVerificationCode} from '@/models/emailVerificationCode';
 
 import {logger} from "@/lib/log4js";
@@ -11,11 +11,11 @@ import {
   VERIFICATION_CODE_ACQUISITION_INTERVAL,
   VERIFICATION_CODE_VALIDITY_TIME
 } from "@/controllers/user/const";
-import {sendMail} from "@/utils/email";
-import {APP_NAME} from "@/utils/common";
+import {sendMail, sendPhoneVerificationCode} from "@/utils/verificationCode";
+import {APP_NAME, padWithZeros} from "@/utils/common";
+import phoneVerificationCode, {IPhoneVerificationCodeSchema} from "@/models/phoneVerificationCode";
 
 export interface ILoginControllersReqParams {
-  userName: string;
   password: string;
   phone: number;
   email: string;
@@ -28,11 +28,10 @@ export interface IGetVerCodeReqParams {
   email: string;
 }
 
-const loginResKeyList: (keyof IUserInfo)[] = ['userName', 'uid', 'phone', 'avatar', 'email', 'lastLoginTime'];
+const loginResKeyList: (keyof IUserInfo)[] = ['uid', 'phone', 'avatar', 'email', 'lastLoginTime'];
 
 export const loginControllers = async (ctx: TDefaultRouter<ILoginControllersReqParams>, next: TNext) => {
   let {
-    userName,
     password,
     phone,
     email,
@@ -40,74 +39,67 @@ export const loginControllers = async (ctx: TDefaultRouter<ILoginControllersReqP
     emailVerCode,
   } = ctx.request.body || {};
 
-  if (!userName && !phone && !email) return sendResponse.error(ctx, '用户名，手机号或邮箱不能为空');
+  if (!phone && !email) return sendResponse.error(ctx, '手机号或邮箱不能为空');
   if (!phoneVerCode && !emailVerCode && !password) return sendResponse.error(ctx, '验证码或密码不能为空');
 
   let userInfo: IUserInfo | undefined;
-  const accountKey = (['userName', 'phone', 'email'] as (keyof ILoginControllersReqParams)[]).find((item) => ctx.body[item]);
+
+  const accountKey = (['phone', 'email'] as (keyof ILoginControllersReqParams)[]).find((item) => ctx.request.body[item]);
   try {
     if (accountKey && ctx.body[accountKey]) {
       userInfo = await userModel.findOne({
-        [accountKey]: ctx.body[accountKey],
+        [accountKey]: ctx.request.body[accountKey],
       })
     }
   } catch (error) {
     sendResponse.error(ctx, error);
     logger.error("登录失败:" + error);
   }
-  if (userInfo) {
-    if (phoneVerCode) {
-      if (userInfo.phoneVerCode !== phoneVerCode) return sendResponse.error(ctx, '验证码错误!');
-      if (userInfo.phoneVerCodeExpireTime < new Date().getTime()) return sendResponse.error(ctx, '验证码已过期，请重新获取!');
-    }
-    if (emailVerCode) {
-      if (userInfo.emailVerCode !== emailVerCode) return sendResponse.error(ctx, '验证码错误!');
-      if (userInfo.emailVerCodeExpireTime < new Date().getTime()) return sendResponse.error(ctx, '验证码已过期，请重新获取!');
-    }
-    if (password) {
-      if (userInfo.password !== md5(password)) return sendResponse.error(ctx, '密码错误，请检查后重试!');
-    }
+  if (phoneVerCode) {
+    const phoneVerCodeInfo: IPhoneVerificationCodeSchema | null = await phoneVerificationCode.findOne({phone});
+    if (!phoneVerCodeInfo || (phoneVerCodeInfo && phoneVerCodeInfo.expireTime < new Date().getTime()))
+      return sendResponse.error(ctx, '验证码已过期，请重新获取!');
+    if (phoneVerCodeInfo.code !== phoneVerCode) return sendResponse.error(ctx, '验证码错误!');
+  }
 
+  if (emailVerCode) {
+    const mailVerCodeInfo: IEmailVerificationCode | null = await emailVerificationCodeModel.findOne({email});
+    if (!mailVerCodeInfo || (mailVerCodeInfo && mailVerCodeInfo.expireTime < new Date().getTime()))
+      return sendResponse.error(ctx, '验证码已过期，请重新获取!');
+    if (mailVerCodeInfo.code !== emailVerCode) return sendResponse.error(ctx, '验证码错误!');
+  }
+
+  if (userInfo) {
+    if (!userInfo.password) return sendResponse.error(ctx, '账号未设置密码，请通过其他方式登录后进行设置!');
+    if (password && userInfo.password !== md5(password)) return sendResponse.error(ctx, '密码错误，请检查后重试!');
     const token = signToken(userInfo);
-    ctx.header.token = token;
+    ctx.cookies.set('uid',userInfo.uid);
+    ctx.cookies.set('token',token);
     try {
       await userModel.findOneAndUpdate({uid: userInfo.uid}, {token, lastLoginTime: new Date().getTime()})
     } catch (error) {
       sendResponse.error(ctx, error);
       logger.error("登录失败:" + error);
     }
-    sendResponse.success(ctx);
+    return sendResponse.success(ctx);
   }
 
-  //
-  // if (!userInfo) {
-  //   if (userName)
-  // }
 
-  // 查询数据库用户名是否存在，通过md5对用户密码进行md5()加密和和数据库进行查询
-  // try {
-  //   // 后面是要查询的字段
-  //   let loginUser = await userModel.findOne({
-  //     userName,
-  //     userPwd: md5(password)
-  //   }, 'userId userName userEmail job mobile deptId state role roleList')
-  //   console.log(loginUser._doc, "loginUser");
-  //   if (loginUser) {
-  //     //报错： TypeError: Converting circular structure to JSON，starting at object with constructor 'MongoClient'
-  //     // 解决： mongoose不能直接返回loginUser，需要返回res._doc
-  //     // 设置token： 使用用户名和密码设置token
-  //     const data = loginUser._doc;
-  //     let token = signToken({userName, userPwd});
-  //
-  //     data.token = "Bearer " + token
-  //     sendResponse.success(ctx);
-  //     logger.info(userName + "登录成功");
-  //   }
-  //
-  // } catch (error) {
-  //   sendResponse.error(ctx, error);
-  //   logger.error(userName + "尝试登录失败:" + error);
-  // }
+  if (!userInfo) {
+    const userCount = await userModel.collection.count();
+    const userInfo: IUserInfo = {
+      ...getDefaultUserInfo(),
+      uid: padWithZeros(userCount + 1),
+      phone: phone || 0,
+      email: email || '',
+    }
+    const token = signToken(userInfo);
+    userInfo.token = token;
+    ctx.cookies.set('uid',userInfo.uid);
+    ctx.cookies.set('token',token);
+    await userModel.insertMany([userInfo]);
+    return sendResponse.success(ctx);
+  }
 }
 
 export const getVerCode = async (ctx: TDefaultRouter<IGetVerCodeReqParams>, next: TNext) => {
@@ -125,9 +117,9 @@ export const getVerCode = async (ctx: TDefaultRouter<IGetVerCodeReqParams>, next
   const verificationCode = createVerificationCode();
 
   try {
-    if (email){
-      const mailVerCodeInfo: IEmailVerificationCode|null = await emailVerificationCodeModel.findOne({email});
-      if (mailVerCodeInfo && ((mailVerCodeInfo.sendTime + VERIFICATION_CODE_ACQUISITION_INTERVAL) < new Date().getTime() ))
+    if (email) {
+      const mailVerCodeInfo: IEmailVerificationCode | null = await emailVerificationCodeModel.findOne({email});
+      if (mailVerCodeInfo && ((mailVerCodeInfo.sendTime + VERIFICATION_CODE_ACQUISITION_INTERVAL) > new Date().getTime()))
         return sendResponse.error(ctx, '验证码获取太频繁啦，请稍后再试~');
       await sendMail({
         senAimEmail: email,
@@ -143,9 +135,43 @@ export const getVerCode = async (ctx: TDefaultRouter<IGetVerCodeReqParams>, next
         expireTime: timeMs + VERIFICATION_CODE_VALIDITY_TIME
       }]);
     }
-  }catch (err){
+    if (phone) {
+      const phoneVerCodeInfo: IPhoneVerificationCodeSchema | null = await phoneVerificationCode.findOne({phone});
+      if (phoneVerCodeInfo && ((phoneVerCodeInfo.sendTime + VERIFICATION_CODE_ACQUISITION_INTERVAL) > new Date().getTime()))
+        return sendResponse.error(ctx, '验证码获取太频繁啦，请稍后再试~');
+      await sendPhoneVerificationCode(phone, verificationCode)
+      await phoneVerificationCode.deleteOne({phone});
+      const timeMs = new Date().getTime();
+      await phoneVerificationCode.insertMany([{
+        phone,
+        code: verificationCode,
+        sendTime: timeMs,
+        expireTime: timeMs + VERIFICATION_CODE_VALIDITY_TIME
+      }]);
+    }
+  } catch (err) {
     return sendResponse.error(ctx, `获取验证码失败: ${JSON.stringify(err)}`);
   }
   sendResponse.success(ctx);
 }
 
+export const checkLogin = async (ctx: TDefaultRouter<{}>, next: TNext)=>{
+  const uid = ctx.cookies.get('uid');
+  const token = ctx.cookies.get('token');
+  if (!uid || !token) return false;
+  let userInfo: IUserInfo = userModel.collection.findOne({uid});
+  if (!userInfo || userInfo.token !== token) return false;
+  return true;
+}
+
+export const checkLoginControllers = async (ctx: TDefaultRouter<{}>, next: TNext)=>{
+  const checkRes = await checkLogin(ctx,next);
+  if (checkRes) return sendResponse.error(ctx, '登录态校验失败');
+  return sendResponse.success(ctx);
+}
+
+export const logOutControllers = async (ctx: TDefaultRouter<{}>, next: TNext)=>{
+  ctx.cookies.set('uid','');
+  ctx.cookies.set('token','');
+  return sendResponse.success(ctx);
+}

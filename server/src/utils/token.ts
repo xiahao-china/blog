@@ -11,7 +11,7 @@ export const getToken = (ctx: TDefaultRouter) => {
 
 // 加密token
 export const signToken = (userInfo: IUserInfo) => {
-  const tokenPayload = {username: userInfo.userName, password: userInfo.password};
+  const tokenPayload = {uid: userInfo.uid, password: userInfo.password};
   // 定义 secret 密钥
   const token = sign(tokenPayload, SECRET_KEY, {expiresIn: '30d'});
   return token;
