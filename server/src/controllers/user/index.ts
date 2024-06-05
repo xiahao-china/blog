@@ -7,13 +7,14 @@ import {sendResponse, TDefaultRouter, TNext} from "@/routes/const";
 import {signToken} from "@/utils/token";
 import {isMail, isPhone} from "@/utils/reg";
 import {
-  createVerificationCode,
+  createVerificationCode, LOGIN_RES_KEY_LIST, USER_TOKEN_EXPIRED_INTERVAL_MS,
   VERIFICATION_CODE_ACQUISITION_INTERVAL,
   VERIFICATION_CODE_VALIDITY_TIME
 } from "@/controllers/user/const";
 import {sendMail, sendPhoneVerificationCode} from "@/utils/verificationCode";
 import {APP_NAME, padWithZeros} from "@/utils/common";
 import phoneVerificationCode, {IPhoneVerificationCodeSchema} from "@/models/phoneVerificationCode";
+import {IObject} from "@/utils/const";
 
 export interface ILoginControllersReqParams {
   password: string;
@@ -28,7 +29,6 @@ export interface IGetVerCodeReqParams {
   email: string;
 }
 
-const loginResKeyList: (keyof IUserInfo)[] = ['uid', 'phone', 'avatar', 'email', 'lastLoginTime'];
 
 export const loginControllers = async (ctx: TDefaultRouter<ILoginControllersReqParams>, next: TNext) => {
   let {
@@ -73,10 +73,15 @@ export const loginControllers = async (ctx: TDefaultRouter<ILoginControllersReqP
     if (!userInfo.password) return sendResponse.error(ctx, '账号未设置密码，请通过其他方式登录后进行设置!');
     if (password && userInfo.password !== md5(password)) return sendResponse.error(ctx, '密码错误，请检查后重试!');
     const token = signToken(userInfo);
-    ctx.cookies.set('uid',userInfo.uid);
-    ctx.cookies.set('token',token);
+    ctx.cookies.set('uid', userInfo.uid);
+    ctx.cookies.set('token', token);
     try {
-      await userModel.findOneAndUpdate({uid: userInfo.uid}, {token, lastLoginTime: new Date().getTime()})
+      const nowMs = new Date().getTime();
+      await userModel.findOneAndUpdate({uid: userInfo.uid}, {
+        token,
+        lastLoginTime: nowMs,
+        tokenExpiredTime: nowMs + USER_TOKEN_EXPIRED_INTERVAL_MS,
+      })
     } catch (error) {
       sendResponse.error(ctx, error);
       logger.error("登录失败:" + error);
@@ -95,8 +100,8 @@ export const loginControllers = async (ctx: TDefaultRouter<ILoginControllersReqP
     }
     const token = signToken(userInfo);
     userInfo.token = token;
-    ctx.cookies.set('uid',userInfo.uid);
-    ctx.cookies.set('token',token);
+    ctx.cookies.set('uid', userInfo.uid);
+    ctx.cookies.set('token', token);
     await userModel.insertMany([userInfo]);
     return sendResponse.success(ctx);
   }
@@ -155,23 +160,26 @@ export const getVerCode = async (ctx: TDefaultRouter<IGetVerCodeReqParams>, next
   sendResponse.success(ctx);
 }
 
-export const checkLogin = async (ctx: TDefaultRouter<{}>, next: TNext)=>{
+export const checkLogin = async (ctx: TDefaultRouter<{}>, next: TNext) => {
   const uid = ctx.cookies.get('uid');
   const token = ctx.cookies.get('token');
   if (!uid || !token) return false;
   let userInfo: IUserInfo = userModel.collection.findOne({uid});
   if (!userInfo || userInfo.token !== token) return false;
-  return true;
+  if (userInfo.tokenExpiredTime < new Date().getTime()) return false;
+  return userInfo;
 }
 
-export const checkLoginControllers = async (ctx: TDefaultRouter<{}>, next: TNext)=>{
-  const checkRes = await checkLogin(ctx,next);
-  if (checkRes) return sendResponse.error(ctx, '登录态校验失败');
-  return sendResponse.success(ctx);
+export const checkLoginControllers = async (ctx: TDefaultRouter<{}>, next: TNext) => {
+  const checkRes = await checkLogin(ctx, next);
+  if (!checkRes) return sendResponse.error(ctx, '您的登录态已过期');
+  const userInfo: IObject = {};
+  LOGIN_RES_KEY_LIST.forEach((item) => userInfo[item] = checkRes[item]);
+  return sendResponse.success(ctx, userInfo);
 }
 
-export const logOutControllers = async (ctx: TDefaultRouter<{}>, next: TNext)=>{
-  ctx.cookies.set('uid','');
-  ctx.cookies.set('token','');
+export const logOutControllers = async (ctx: TDefaultRouter<{}>, next: TNext) => {
+  ctx.cookies.set('uid', '');
+  ctx.cookies.set('token', '');
   return sendResponse.success(ctx);
 }

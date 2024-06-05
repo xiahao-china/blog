@@ -1,3 +1,5 @@
+import {USER_TOKEN_EXPIRED_INTERVAL_MS} from "@/controllers/user/const";
+
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -29,33 +31,40 @@ export interface IUserInfo {
   phone: number;
   createTime: number;
   lastLoginTime: number;
-  collectArticlesId: number[];
+  collectNum: number;
+  likeNum: number;
   state: EUserStatus;
   role: ERole;
   remark: string;
   token: string;
+  tokenExpiredTime: number;
 }
 
-export const getDefaultUserInfo = (): IUserInfo => ({
-  uid: '',
-  nick: '',
-  password: '',
-  avatar: '',
-  sex: ESex.unknow,
-  email: '',
-  phone: 0,
-  createTime: new Date().getTime(),
-  lastLoginTime: new Date().getTime(),
+export const getDefaultUserInfo = (): IUserInfo => {
+  const nowMs = new Date().getTime();
+  return ({
+    uid: '',
+    nick: '',
+    password: '',
+    avatar: '',
+    sex: ESex.unknow,
+    email: '',
+    phone: 0,
+    createTime: nowMs,
+    lastLoginTime: nowMs,
 
-  collectArticlesId: [] as number[],
-  state: EUserStatus.using,
-  role: ERole.normal,
+    collectNum: 0,
+    likeNum: 0,
+    state: EUserStatus.using,
+    role: ERole.normal,
 
-  // token
-  token: '',
-  // 备用的字段
-  remark: ''
-});
+    // token
+    token: '',
+    tokenExpiredTime: nowMs + USER_TOKEN_EXPIRED_INTERVAL_MS,
+    // 备用的字段
+    remark: ''
+  })
+};
 
 const usersSchema = new Schema({
   // _id : 605d8f81e1ed264a867cfcc2,
@@ -72,12 +81,14 @@ const usersSchema = new Schema({
   createTime: Number,
   lastLoginTime: Number,
 
-  collectArticlesId: Array,
+  collectNum: Number,
+  likeNum: Number,
   state: Number,
   role: Number,
 
   // token
   token: String,
+  tokenExpiredTime: Number,
   // 备用的字段
   remark: String
 });

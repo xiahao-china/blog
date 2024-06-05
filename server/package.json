@@ -59,6 +59,7 @@
     "webpack": "4",
     "webpack-cli": "3",
     "webpack-merge": "^5.10.0",
-    "webpack-node-externals": "^3.0.0"
+    "webpack-node-externals": "^3.0.0",
+    "xss": "^1.0.15"
   }
 }

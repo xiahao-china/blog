@@ -1,5 +1,3 @@
-import {IUserInfo} from "@/models/user";
-
 export const createVerificationCode = (len = 4)=>{
     let code = (Math.random() * Math.pow(10, len + 1)).toFixed(0).slice(0,len);
     const codeLen = code.length;
@@ -14,9 +12,3 @@ export const VERIFICATION_CODE_ACQUISITION_INTERVAL = 1 * 60 * 1000;
 
 // 验证码过期时长
 export const VERIFICATION_CODE_VALIDITY_TIME = 10 * 60 * 1000;
-
-// 用户token过期间隔 10天;
-export const USER_TOKEN_EXPIRED_INTERVAL_MS = 10 * 24 * 60 * 60 * 1000;
-
-
-export const LOGIN_RES_KEY_LIST: (keyof IUserInfo)[] = ['uid', 'nick', 'avatar', 'lastLoginTime', 'sex', 'collectNum', 'likeNum'];

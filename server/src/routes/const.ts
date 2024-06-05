@@ -9,6 +9,11 @@ export type TDefaultRouter<T = any> = Application.ParameterizedContext<any, Rout
 }
 export type TNext = Application.Next;
 
+export interface IPageReqBase {
+  pageSize: number;
+  pageNumber: number;
+}
+
 export enum EReqStatus {
   success = 200,
   generalError = 500,
