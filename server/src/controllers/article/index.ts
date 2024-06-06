@@ -1,11 +1,12 @@
 import xss from "xss";
-import articleModel, {getDefaultArticle} from '@/models/article';
+import articleModel, {getDefaultArticle, IArticle} from '@/models/article';
 
 import {IPageReqBase, sendResponse, TDefaultRouter, TNext} from "@/routes/const";
 import {checkLogin} from "@/controllers/user";
 
 
 export interface ICreateArticleControllersReqParams {
+  id: string;
   title: string;
   content: string;
 }
@@ -15,26 +16,39 @@ export interface ISearchArticleControllersReqParams extends IPageReqBase {
   text: string;
 }
 
-export const createArticleControllers = async (ctx: TDefaultRouter<ICreateArticleControllersReqParams>, next: TNext) => {
+export const createAndEditArticleControllers = async (ctx: TDefaultRouter<ICreateArticleControllersReqParams>, next: TNext) => {
   const userInfo = await checkLogin(ctx, next);
   if (!userInfo) return sendResponse.error(ctx, '您的登录态已过期');
   const {
+    id,
     title,
     content,
   } = ctx.request.body || {};
-
   if (!title && !content) return sendResponse.error(ctx, '文章标题或内容不能为空!');
-  const articleNum = await articleModel.collection.count();
+  try{
+    const nowArticle: IArticle = id ? await articleModel.collection.findOne({id}) : undefined;
+    if (nowArticle){
+      await articleModel.collection.findOneAndUpdate({id},{
+        title: title || nowArticle.title,
+        content: content || nowArticle.content,
+      })
+      return sendResponse.success(ctx);
+    }
 
-  await articleModel.collection.insertMany([{
-    ...getDefaultArticle(),
-    id: `${new Date().getTime()}${articleNum + 1}`,
-    createrUid: userInfo.uid,
-    title: xss(title),
-    content: xss(content),
-  }]);
+    const articleNum = await articleModel.collection.count();
 
-  sendResponse.success(ctx);
+    await articleModel.collection.insertMany([{
+      ...getDefaultArticle(),
+      id: `${new Date().getTime()}${articleNum + 1}`,
+      createrUid: userInfo.uid,
+      title: xss(title),
+      content: xss(content),
+    }]);
+
+    return sendResponse.success(ctx);
+  } catch (err) {
+    return sendResponse.error(ctx, JSON.stringify(err));
+  }
 }
 
 export const getArticleDetailControllers = async (ctx: TDefaultRouter<{ id: string }>, next: TNext) => {
@@ -87,6 +101,19 @@ export const articleListControllers = async (ctx: TDefaultRouter<IPageReqBase>, 
       list: articleList,
       total,
     });
+  } catch (err) {
+    return sendResponse.error(ctx, JSON.stringify(err));
+  }
+}
+
+export const deleteArticleControllers = async (ctx: TDefaultRouter<{id: string}>, next: TNext) => {
+  const {id} = ctx.request.body || {};
+  if (!id) return sendResponse.error(ctx, '传参缺失，请检查id!');
+  try {
+    const article = await articleModel.collection.findOne({id});
+    if (!article) return sendResponse.error(ctx, '文章不存在');
+    await articleModel.collection.deleteOne({id});
+    return sendResponse.success(ctx);
   } catch (err) {
     return sendResponse.error(ctx, JSON.stringify(err));
   }
