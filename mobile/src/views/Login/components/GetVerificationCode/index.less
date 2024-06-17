@@ -1,0 +1,62 @@
+@import "/src/assets/globalStyle/commonStyle.less";
+
+.get-verification-code{
+  display: inline-flex;
+  width: 100%;
+  flex-direction: column;
+  *{
+    display: inline-flex;
+  }
+  .account,
+  .password{
+    position: relative;
+    flex-direction: column;
+    margin-bottom: 32px;
+    .label{
+      font-size: 24px;
+      color: @weak-text-gray;
+    }
+    .login-input-shell{
+      width: 100%;
+      .decorative-thread{
+        position: absolute;
+        content: '';
+        bottom: 0;
+        width: 0%;
+        height: 2px;
+        background: #7e6ce8;
+        transition: width ease 0.2s;
+      }
+      .login-input{
+        width: 100%;
+        padding: 16px 8px;
+        background: none;
+        border: none;
+        border-bottom: 2px solid @weak-gray;
+        color: @main-text-color;
+        font-size: 24px;
+        &::placeholder{
+          color: @weak-text-gray;
+        }
+        &:focus{
+          &+.decorative-thread{
+            width: 100%;
+          }
+        }
+      }
+      .get-verification-code-btn{
+        background: white;
+        position: absolute;
+        bottom: 12px;
+        right: 0;
+        font-size: 24px;
+        border: 2px solid #7e6ce8;
+        border-radius: 6px;
+        color: #7e6ce8;
+        padding: 8px 24px;
+      }
+
+    }
+  }
+
+}

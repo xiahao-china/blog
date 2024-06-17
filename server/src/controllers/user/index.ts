@@ -164,7 +164,7 @@ export const checkLogin = async (ctx: TDefaultRouter<{}>, next: TNext) => {
   const uid = ctx.cookies.get('uid');
   const token = ctx.cookies.get('token');
   if (!uid || !token) return false;
-  let userInfo: IUserInfo = userModel.collection.findOne({uid});
+  let userInfo: IUserInfo = await userModel.collection.findOne({uid});
   if (!userInfo || userInfo.token !== token) return false;
   if (userInfo.tokenExpiredTime < new Date().getTime()) return false;
   return userInfo;

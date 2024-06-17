@@ -10,3 +10,11 @@ export default {
   aliAccessKeySecret: '',
 }
 ```
+
+# mac启动mangodb
+
+```
+rm -rf /usr/local/mongodb/mongod.lock
+mongod --fork --dbpath data --logpath /usr/local/mongodb/log/mongo.log --logappend
+mongosh
+```

@@ -25,7 +25,7 @@ export default {
   actions: {
     checkLoginStatus: async (context) => {
       const res = await checkLoginStatusReq();
-      if (res.code === 200) context.dispatch("updateUserInfo", res.data);
+      if (res.code === 200) context.commit("updateAllUserInfo", res.data);
     },
   },
   modules: {},
