@@ -4,12 +4,15 @@ const Schema = mongoose.Schema;
 export interface IArticle {
   id: string;
   title: string;
+  cover: string; // 封面
   content: string;
   createrUid: string;
+  createrNick: string;
   createTime: number;
   lastUpdateTime: number;
-  collectNum: number;
-  likeNum: number;
+  browseNum: number; // 浏览量
+  collectNum: number; // 收藏量
+  likeNum: number; // 点赞量
   reviewId: number[];
 }
 
@@ -18,10 +21,13 @@ export const getDefaultArticle = ()=>{
   return {
     id: '',
     title: '',
+    cover: '',
     content: '',
     createrUid: '',
+    createrNick: '',
     createTime: nowMs,
     lastUpdateTime: nowMs,
+    browseNum: 0,
     collectNum: 0,
     likeNum: 0,
     reviewId: [],
@@ -31,11 +37,14 @@ export const getDefaultArticle = ()=>{
 const articleSchema = new Schema({
   id: String,
   title: String,
+  cover: String,
   content: String,
   createrUid: String,
+  createrNick: String,
   createTime: Number,
   lastUpdateTime: Number,
   collectNum: Number,
+  browseNum: Number,
   likeNum: Number,
   reviewId: Array,
 });

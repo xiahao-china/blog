@@ -1,0 +1,72 @@
+@import "/src/assets/globalStyle/commonStyle.less";
+
+.blog-item{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  align-items: center;
+  *{
+    display: inline-flex;
+  }
+  .top-block{
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    .title{
+      color: @main-text-color;
+      font-size: 32px;
+      font-weight: 500;
+    }
+  }
+  .mid-block{
+    width: 100%;
+    margin-top: 8px;
+    flex-direction: row;
+    .introductory-shell{
+      flex: 1;
+      .introductory{
+        overflow : hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        line-height: 73px;
+        font-size: 26px;
+        font-weight: 400;
+        color: @weak-text-gray;
+      }
+    }
+    .cover{
+      display: inline-block;
+      margin-left: 16px;
+      height: 144px;
+      width: 220px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+  }
+
+  .bottom-block{
+    width: 100%;
+    margin-top: 4px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    .author,
+    .browseNum,
+    .collectNum,
+    .likeNum{
+      margin-left: 24px;
+      font-size: 26px;
+      font-weight: 500;
+      color: @weak-text-gray;
+    }
+    .author{
+      flex: 1;
+      margin-left: 0;
+    }
+  }
+
+}
+

@@ -7,7 +7,7 @@ import {
 } from "@/controllers/article";
 
 export default (router: Router) => {
-  router.get('/article/createAndEdit', createAndEditArticleControllers);
+  router.post('/article/createAndEdit', createAndEditArticleControllers);
   router.get('/article/getDetail', getArticleDetailControllers);
   router.post('/article/search', searchArticleControllers);
   router.post('/article/list', articleListControllers);

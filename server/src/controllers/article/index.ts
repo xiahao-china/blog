@@ -41,6 +41,7 @@ export const createAndEditArticleControllers = async (ctx: TDefaultRouter<ICreat
       ...getDefaultArticle(),
       id: `${new Date().getTime()}${articleNum + 1}`,
       createrUid: userInfo.uid,
+      createrNick: userInfo.nick,
       title: xss(title),
       content: xss(content),
     }]);

@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 import { IObject } from "@/util";
 
-const routes: Array<RouteRecordRaw & IObject> = [
+export const routes: Array<RouteRecordRaw & IObject> = [
   {
     path: "/",
     redirect: "/home",
@@ -9,6 +9,7 @@ const routes: Array<RouteRecordRaw & IObject> = [
   {
     path: "/Home",
     name: "Home",
+    needNavBar: true,
     meta: {
       pageName: "首页",
     },
