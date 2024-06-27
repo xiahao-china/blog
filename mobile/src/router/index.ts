@@ -25,6 +25,26 @@ export const routes: Array<RouteRecordRaw & IObject> = [
     component: () =>
         import(/* webpackChunkName: "Login" */ "src/views/Login/index.vue"),
   },
+  {
+    path: "/ArticleDetail",
+    name: "ArticleDetail",
+    needNavBar: true,
+    meta: {
+      pageName: "文章详情",
+    },
+    component: () =>
+      import(/* webpackChunkName: "ArticleDetail" */ "src/views/ArticleDetail/index.vue"),
+  },
+  {
+    path: "/CreateAndEditArticleByPc",
+    name: "CreateAndEditArticleByPc",
+    meta: {
+      pageName: "写文章",
+    },
+    component: () =>
+      import(/* webpackChunkName: "CreateAndEditArticleByPc" */ "src/views/CreateAndEditArticleByPc/index.vue"),
+  },
+
 ];
 
 const router = createRouter({
@@ -33,7 +53,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  document.title = (to.meta as IObject)?.pageName.toString() || "";
+  document.title = `${(to.meta as IObject)?.pageName.toString() || ""}-即刻`;
   next();
 });
 export default router;

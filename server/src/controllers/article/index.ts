@@ -3,6 +3,7 @@ import articleModel, {getDefaultArticle, IArticle} from '@/models/article';
 
 import {IPageReqBase, sendResponse, TDefaultRouter, TNext} from "@/routes/const";
 import {checkLogin} from "@/controllers/user";
+import userModel, {IUserInfo} from "@/models/user";
 
 
 export interface ICreateArticleControllersReqParams {
@@ -55,9 +56,18 @@ export const createAndEditArticleControllers = async (ctx: TDefaultRouter<ICreat
 export const getArticleDetailControllers = async (ctx: TDefaultRouter<{ id: string }>, next: TNext) => {
   const {id} = ctx.request.body || {};
   if (!id) return sendResponse.error(ctx, '传参缺失，请检查id!');
-  const article = await articleModel.collection.findOne({id});
+  const article: IArticle = await articleModel.collection.findOne({id});
   if (!article) return sendResponse.error(ctx, '文章不存在!');
-  sendResponse.success(ctx, article);
+  const createrUserInfo: IUserInfo = await userModel.collection.findOne({uid: article.createrUid});
+  const userInfo = await checkLogin(ctx, next);
+  sendResponse.success(ctx, {
+    ...article,
+    createrNick: createrUserInfo ? createrUserInfo.nick : '已注销用户',
+    createrAvatar: createrUserInfo?.avatar || '',
+    hasLike: (userInfo ? userInfo.likeArticleId : []).includes(id),
+    hasCollect: (userInfo ? userInfo.collectArticleId : []).includes(id),
+    hasFollow: (userInfo ? userInfo.followUid : []).includes(createrUserInfo.uid),
+  });
 }
 
 export const searchArticleControllers = async (ctx: TDefaultRouter<ISearchArticleControllersReqParams>, next: TNext) => {
@@ -109,11 +119,56 @@ export const articleListControllers = async (ctx: TDefaultRouter<IPageReqBase>, 
 
 export const deleteArticleControllers = async (ctx: TDefaultRouter<{id: string}>, next: TNext) => {
   const {id} = ctx.request.body || {};
-  if (!id) return sendResponse.error(ctx, '传参缺失，请检查id!');
+  if (!id) return sendResponse.error(ctx, '传参缺失，请检查文章id!');
+  const userInfo = await checkLogin(ctx, next);
+  if (!userInfo) return sendResponse.error(ctx, '您的登录态已过期');
   try {
-    const article = await articleModel.collection.findOne({id});
+    const article: IArticle = await articleModel.collection.findOne({id});
     if (!article) return sendResponse.error(ctx, '文章不存在');
+    if (article.createrUid !== userInfo.uid) return sendResponse.error(ctx, '权限不足');
     await articleModel.collection.deleteOne({id});
+    return sendResponse.success(ctx);
+  } catch (err) {
+    return sendResponse.error(ctx, JSON.stringify(err));
+  }
+}
+
+export const likeArticleControllers = async (ctx: TDefaultRouter<{id: string}>, next: TNext) => {
+  const {id} = ctx.request.body || {};
+  if (!id) return sendResponse.error(ctx, '传参缺失，请检查文章id!');
+  const userInfo = await checkLogin(ctx, next);
+  if (!userInfo) return sendResponse.error(ctx, '您的登录态已过期');
+  try {
+    const article: IArticle = await articleModel.collection.findOne({id});
+    if (!article) return sendResponse.error(ctx, '文章不存在');
+    await articleModel.collection.findOneAndUpdate({id}, {likeNum: article.likeNum + 1});
+    const likeIdList = userInfo.likeArticleId;
+    likeIdList.push(id);
+    await userModel.collection.findOneAndUpdate({uid: userInfo.uid}, {
+      likeArticleId: likeIdList,
+      likeNum: likeIdList.length,
+    })
+    return sendResponse.success(ctx);
+  } catch (err) {
+    return sendResponse.error(ctx, JSON.stringify(err));
+  }
+}
+
+export const collectArticleControllers = async (ctx: TDefaultRouter<{id: string}>, next: TNext) => {
+  const {id} = ctx.request.body || {};
+  if (!id) return sendResponse.error(ctx, '传参缺失，请检查文章id!');
+  const userInfo = await checkLogin(ctx, next);
+  if (!userInfo) return sendResponse.error(ctx, '您的登录态已过期');
+  try {
+    const article: IArticle = await articleModel.collection.findOne({id});
+    if (!article) return sendResponse.error(ctx, '文章不存在');
+    await articleModel.collection.findOneAndUpdate({id}, {collectNum: article.collectNum + 1});
+    const collectIdList = userInfo.collectArticleId;
+    collectIdList.push(id);
+    await userModel.collection.findOneAndUpdate({uid: userInfo.uid}, {
+      collectArticleId: collectIdList,
+      collectNum: collectIdList.length,
+    })
     return sendResponse.success(ctx);
   } catch (err) {
     return sendResponse.error(ctx, JSON.stringify(err));

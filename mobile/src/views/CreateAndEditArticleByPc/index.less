@@ -1,0 +1,63 @@
+@import "/src/assets/globalStyle/commonStyle.less";
+
+.create-and-edit-article-by-pc{
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #F7F8F9;
+  .head-block{
+    height: 13px;
+    background: white;
+    padding: 0 7px;
+    align-items: center;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    *{
+      display: inline-flex;
+    }
+    .create-title{
+      flex: 1;
+      .create-title-input{
+        border: none;
+        font-size: 4.5px;
+        font-weight: 500;
+      }
+    }
+    .save-tip{
+      font-size: 3px;
+      color: #c9cdd4;
+      margin-right:4px;
+    }
+    .publish{
+      padding: 0.9px 2px;
+      border-radius: 0.5px;
+      font-size: 3px;
+      color: @main-color;
+      border: 0.2px solid @main-color;
+      margin-right:4px;
+    }
+    .user-info{
+      border-radius: 50%;
+      overflow: hidden;
+      height: 7px;
+      width: 7px;
+      background: #c9cdd4;
+      .head-img{
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+      }
+    }
+  }
+  .markdown-container{
+    width: 100%;
+    height: calc(100% - 13px);
+    .toastui-editor-md-preview{
+      background: white;
+    }
+  }
+}
+

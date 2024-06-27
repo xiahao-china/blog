@@ -2,6 +2,8 @@
 .vscode
 sshpass-1.06
 *.log
+dist
+node_modules
 
 
 ./pre-env/config.sh

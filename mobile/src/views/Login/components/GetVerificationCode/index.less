@@ -11,9 +11,9 @@
   .password{
     position: relative;
     flex-direction: column;
-    margin-bottom: 32px;
+    margin-bottom: 16px;
     .label{
-      font-size: 24px;
+      font-size: 12px;
       color: @weak-text-gray;
     }
     .login-input-shell{
@@ -23,18 +23,18 @@
         content: '';
         bottom: 0;
         width: 0%;
-        height: 2px;
+        height: 1px;
         background: #7e6ce8;
         transition: width ease 0.2s;
       }
       .login-input{
         width: 100%;
-        padding: 16px 8px;
+        padding: 8px 4px;
         background: none;
         border: none;
-        border-bottom: 2px solid @weak-gray;
+        border-bottom: 1px solid @weak-gray;
         color: @main-text-color;
-        font-size: 24px;
+        font-size: 12px;
         &::placeholder{
           color: @weak-text-gray;
         }
@@ -47,13 +47,13 @@
       .get-verification-code-btn{
         background: white;
         position: absolute;
-        bottom: 12px;
+        bottom: 6px;
         right: 0;
-        font-size: 24px;
-        border: 2px solid #7e6ce8;
-        border-radius: 6px;
+        font-size: 12px;
+        border: 1px solid #7e6ce8;
+        border-radius: 3px;
         color: #7e6ce8;
-        padding: 8px 24px;
+        padding: 4px 12px;
       }
 
     }

@@ -1,0 +1,20 @@
+export const defaultArticleDetail = {
+  id: '1',
+  title: '测试测试标题测试测试标题测试测试标题',
+  cover: 'http://m-t.iyangyang.fun/cdnQiniu/mobile/DragonBoatFestival/banner.png',
+  content: '测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题',
+  createrUid: '',
+  createrNick: '',
+  createrAvatar: '',
+  createTime: new Date().getTime(),
+  createTimeStr: '2023-08-22 18:34',
+  lastUpdateTime: new Date().getTime(),
+  browseNum: 0,
+  collectNum: 0,
+  likeNum: 0,
+  reviewNum: 0,
+  reviewId: [],
+  hasLike: false,
+  hasFollow: false,
+  hasCollect: false
+}

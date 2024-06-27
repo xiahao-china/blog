@@ -7,7 +7,6 @@ export interface IArticle {
   cover: string; // 封面
   content: string;
   createrUid: string;
-  createrNick: string;
   createTime: number;
   lastUpdateTime: number;
   browseNum: number; // 浏览量
@@ -24,7 +23,6 @@ export const getDefaultArticle = ()=>{
     cover: '',
     content: '',
     createrUid: '',
-    createrNick: '',
     createTime: nowMs,
     lastUpdateTime: nowMs,
     browseNum: 0,
@@ -40,7 +38,6 @@ const articleSchema = new Schema({
   cover: String,
   content: String,
   createrUid: String,
-  createrNick: String,
   createTime: Number,
   lastUpdateTime: Number,
   collectNum: Number,

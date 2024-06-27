@@ -31,11 +31,16 @@ export interface IUserInfo {
   phone: number;
   createTime: number;
   lastLoginTime: number;
-  collectNum: number;
-  likeNum: number;
+
+  collectArticleId: string[]; // 收藏的文章
+
+  likeArticleId: string[]; // 点赞的文章
+
+  followUid: string[]; // 关注的人uid
+
   state: EUserStatus;
   role: ERole;
-  remark: string;
+  remark: string; // 备注
   token: string;
   tokenExpiredTime: number;
 }
@@ -53,8 +58,10 @@ export const getDefaultUserInfo = (): IUserInfo => {
     createTime: nowMs,
     lastLoginTime: nowMs,
 
-    collectNum: 0,
-    likeNum: 0,
+    collectArticleId: [],
+    likeArticleId: [],
+    followUid: [],
+
     state: EUserStatus.using,
     role: ERole.normal,
 
@@ -81,8 +88,10 @@ const usersSchema = new Schema({
   createTime: Number,
   lastLoginTime: Number,
 
-  collectNum: Number,
-  likeNum: Number,
+  collectArticleId: Array,
+  likeArticleId: Array,
+  followUid: Array,
+
   state: Number,
   role: Number,
 

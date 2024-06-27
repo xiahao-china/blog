@@ -27,6 +27,7 @@
     "weixin-js-sdk": "^1.6.5"
   },
   "devDependencies": {
+    "@toast-ui/editor": "^3.2.2",
     "@types/lodash": "^4.14.200",
     "@types/node": "^20.10.5",
     "@typescript-eslint/eslint-plugin": "^4.18.0",

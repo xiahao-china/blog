@@ -1,21 +1,24 @@
 <template>
-  <div class="blog-item">
+  <div class="blog-item" @click="toDetail">
     <div class="top-block">
       <div class="title">{{handleArticleInfo.title}}</div>
-      <div class="options"></div>
+      <div class="options"><span class="iconfont icon-options-horizontal"/></div>
     </div>
     <div class="mid-block">
       <div class="introductory-shell">
         <div class="introductory">{{handleArticleInfo.content}}</div>
       </div>
-      <img class="cover" v-if="handleArticleInfo.cover" :src="handleArticleInfo.cover" />
+      <div class="cover-shell">
+        <img class="cover" v-if="handleArticleInfo.cover" :src="handleArticleInfo.cover" />
+      </div>
     </div>
     <div class="bottom-block">
+      <div class="browseNum"><span class="iconfont icon-eye"/>{{handleArticleInfo.browseNum}}</div>
+      <div class="collectNum"><span class="iconfont icon-uutcollect"/>{{handleArticleInfo.collectNum}}</div>
+      <div class="likeNum"><span class="iconfont icon-like"/>{{handleArticleInfo.likeNum}}</div>
       <div class="author">{{handleArticleInfo.createrNick || '---'}}</div>
-      <div class="browseNum">{{handleArticleInfo.browseNum}}</div>
-      <div class="collectNum">{{handleArticleInfo.collectNum}}</div>
-      <div class="likeNum">{{handleArticleInfo.likeNum}}</div>
     </div>
+    <div class="split"/>
   </div>
 </template>
 
@@ -23,6 +26,7 @@
 import {computed, defineComponent, PropType, ref} from "vue";
 import {formatNumToWan} from "@/util/format";
 import {IArticle} from "@/api/article/const";
+import {useRouter} from "vue-router";
 
 export default defineComponent({
   name: "BlogItem",
@@ -34,15 +38,24 @@ export default defineComponent({
     }
   },
   setup: (props) => {
+    const router = useRouter();
     const handleArticleInfo = computed(()=>({
       ...props.article,
       browseNum: formatNumToWan(props.article.browseNum),
       collectNum: formatNumToWan(props.article.collectNum),
       likeNum: formatNumToWan(props.article.likeNum),
-    }))
+    }));
+
+    const toDetail = () => {
+      router.push({
+        query: {id: props.article.id},
+        path: '/ArticleDetail'
+      })
+    }
 
     return {
-      handleArticleInfo
+      handleArticleInfo,
+      toDetail
     };
   },
 });

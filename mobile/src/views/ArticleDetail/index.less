@@ -1,0 +1,146 @@
+@import "/src/assets/globalStyle/commonStyle.less";
+
+.article-detail-shell{
+  background: white;
+  width: 100%;
+  min-height: 100vh;
+  padding: 24px;
+  display: flex;
+}
+.article-detail{
+  display: inline-flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  .title{
+    width: 100%;
+    display: inline-flex;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 32px;
+    color: @main-text-color;
+  }
+
+  .article-info{
+    width: 100%;
+    flex-direction: column;
+    display: inline-flex;
+    margin-top: 16px;
+    .author{
+      width: 100%;
+      display: inline-flex;
+      color: @second-text-color;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 22px;
+    }
+    .main-info{
+      width: 100%;
+      display: inline-flex;
+      flex-direction: row;
+      align-items: center;
+      .date,
+      .browseNum,
+      .likeNum{
+        display: inline-flex;
+        align-items: center;
+        color: @second-text-color;
+        margin-right: 16px;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 17px;
+        .iconfont{
+          font-weight: 400;
+          margin-right: 5px;
+          font-size: 14px;
+        }
+      }
+      .browseNum{
+        .iconfont{
+          font-weight: 500;
+          margin-right: 5px;
+          font-size: 12px;
+        }
+      }
+    }
+  }
+
+  .content{
+    margin-top: 40px;
+    font-size: 14px;
+    color: @table-weak-text-gray;
+    line-height: 25px;
+  }
+}
+
+.bottom-options{
+  border-top: 1px solid #e4e6eb;
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  width: 100vw;
+  left: 0;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 54px;
+  *{
+    display: inline-flex;
+  }
+
+  .options-list{
+    width: 286px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 13px;
+
+    .options-item{
+      flex-direction: row;
+      align-items: center;
+      .iconfont{
+        font-size: 24px;
+        color: @second-text-color;
+        font-weight: 400;
+      }
+      .text{
+        margin-left: 4px;
+        color: @second-text-color;
+        font-weight: 500;
+        font-size: 13px;
+        line-height: 15px;
+      }
+      &.active{
+        .iconfont,
+        .text{
+          color: @main-color;
+        }
+      }
+    }
+  }
+
+  .article-creater{
+    flex: 1;
+    justify-content: center;
+    border-left: 1px solid #e4e6eb;
+    position: relative;
+    .avatar{
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    .follow{
+      position: absolute;
+      align-items: center;
+      border-radius: 8px;
+      bottom: -8px;
+      background: @main-color;
+      height: 16px;
+      padding: 0 8px;
+      color: white;
+      font-size: 10px;
+    }
+  }
+}
+
