@@ -2,6 +2,7 @@
 node_modules
 /dist
 ./config.js
+./logs
 #serverConfig.js
 output.js
 

@@ -37,24 +37,24 @@ export const createAndEditArticleControllers = async (ctx: TDefaultRouter<ICreat
     }
 
     const articleNum = await articleModel.collection.count();
-
-    await articleModel.collection.insertMany([{
+    const newArticle: IArticle = {
       ...getDefaultArticle(),
       id: `${new Date().getTime()}${articleNum + 1}`,
       createrUid: userInfo.uid,
-      createrNick: userInfo.nick,
       title: xss(title),
       content: xss(content),
-    }]);
+    };
 
-    return sendResponse.success(ctx);
+    await articleModel.collection.insertMany([newArticle]);
+
+    return sendResponse.success(ctx, {id: newArticle.id});
   } catch (err) {
     return sendResponse.error(ctx, JSON.stringify(err));
   }
 }
 
 export const getArticleDetailControllers = async (ctx: TDefaultRouter<{ id: string }>, next: TNext) => {
-  const {id} = ctx.request.body || {};
+  const {id} = ctx.request.query || {};
   if (!id) return sendResponse.error(ctx, '传参缺失，请检查id!');
   const article: IArticle = await articleModel.collection.findOne({id});
   if (!article) return sendResponse.error(ctx, '文章不存在!');

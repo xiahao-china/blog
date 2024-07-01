@@ -11,17 +11,6 @@ const webpackConfig = merge(baseConfig, {
     children: false, // webpack打包时子模块信息设置不显示
     modules: false // 不显示模块信息
   },
-  module: {
-    rules: [
-      {
-        test: /.ts/,
-        use: {
-          loader: 'ts-loader'
-        },
-        exclude: /node_modules/
-      }
-    ]
-  },
   externals: [nodeExternals()] // 排除对node_modules里的依赖进行打包
 })
 

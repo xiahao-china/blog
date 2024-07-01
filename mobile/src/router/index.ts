@@ -53,7 +53,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  document.title = `${(to.meta as IObject)?.pageName.toString() || ""}-即刻`;
+  document.title = `${(to.meta as IObject)?.pageName?.toString() || ""}-即刻`;
   next();
 });
 export default router;

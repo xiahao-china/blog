@@ -8,7 +8,7 @@ import {
 } from "./const";
 
 export const createAndEditArticle = async (params: Partial<ICreateAndEditArticleReqParams>) => {
-  const res = await request.post<IBaseRes>('/api/article/createAndEdit', params);
+  const res = await request.post<IBaseRes<{id: string}>>('/api/article/createAndEdit', params);
   return res;
 }
 

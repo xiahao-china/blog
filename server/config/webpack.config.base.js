@@ -17,19 +17,19 @@ const webpackConfig = {
   module: {
     rules: [
       {
-        test: /\.js|jsx$/,
+        test: /\.js|ts$/,
         use: {
           loader: 'babel-loader'
         },
         // 尽量将 loader 应用于最少数量的必要模块，因此设置include
         // 只针对该目录下的js文件进行babel处理
-        include: path.join(__dirname, '../src')
+        include: [path.join(__dirname, '../src'), path.join(__dirname, '')]
       }
     ]
   },
   resolve: {
     // modules: 告诉webpack哪些目录需要搜索去匹配解析
-    modules: [path.join(__dirname, '../src/index.ts'), 'node_modules'],
+    modules: [path.join(__dirname, '../src/index.ts')],
     // extensions: 告诉webpack这些后缀文件需要去搜索匹配
     extensions: ['.ts', '.js', '.json'],
     alias: {

@@ -42,7 +42,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, PropType, ref, watch} from "vue";
+import {defineComponent, onMounted, PropType, ref, watch} from "vue";
 import {showToast} from "vant";
 import {
   checkInput,
@@ -83,7 +83,6 @@ export default defineComponent({
         showToast("获取的太频繁啦，请稍后再试吧~");
         return;
       }
-      console.log('props.loginInputInfo',props.loginInputInfo);
       const isMail = props.loginInputInfo.accountType === ELoginAccountType.mail;
       const res = await getVerCode({
         phone: isMail ? '' : account.value,
@@ -93,6 +92,7 @@ export default defineComponent({
         showToast(res.message || '获取验证码失败，请稍后再试~');
         return;
       }
+      showToast('获取验证码成功，快去看看吧~');
       let interVal = VERIFICATION_CODE_ACQUISITION_INTERVAL;
       timeId = setInterval(() => {
         interVal--;
@@ -120,6 +120,10 @@ export default defineComponent({
 
     watch(()=>props.loginInputInfo, ()=>{
       account.value = withdrawAccount(props.loginInputInfo)
+    })
+
+    onMounted(()=>{
+      onUpdateInfo();
     })
 
     return {

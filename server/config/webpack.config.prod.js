@@ -46,16 +46,6 @@ const webpackConfig = merge(baseConfig, {
       }
     }
   },
-  module: {
-    rules: [
-      {
-        test: /.ts/,
-        use: {
-          loader: 'ts-loader'
-        }
-      }
-    ]
-  },
 })
 
 module.exports = webpackConfig

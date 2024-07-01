@@ -2,8 +2,8 @@ import Koa from "koa";
 import RouterClass from "koa-router";
 import {bodyParser} from "@koa/bodyparser";
 
-import initRouter from "./routes/index";
 import { connectMongoDB } from "@/lib/mongodb";
+import initRouter from "./routes/index";
 
 const app = new Koa();
 const router = new RouterClass;

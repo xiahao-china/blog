@@ -4,7 +4,7 @@ log4js.configure({
   appenders: {
     access: {
       type: 'dateFile', // 根据日期生成日志文件
-      filename: 'out',// 文件写入名称
+      filename: 'logs/out',// 文件写入名称
       pattern: 'yyyy-MM-dd.log',// 日志文件切割模式，默认为yyyy-MM-dd，按日期（天）切割
       alwaysIncludePattern: true,// 开启生成的文件必须包含(pattern)此格式
       layout: {

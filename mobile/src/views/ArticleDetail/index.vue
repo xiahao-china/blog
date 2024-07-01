@@ -87,7 +87,7 @@ export default defineComponent({
     onMounted(()=>{
       const query = route.query;
       if(!query.id) return;
-      initBlogDetail(query.id as string);
+      initBlogDetail(query.id.toString());
     })
 
     return {

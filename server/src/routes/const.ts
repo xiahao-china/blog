@@ -4,7 +4,8 @@ import {IObject} from "@/utils/const";
 
 export type TDefaultRouter<T = any> = Application.ParameterizedContext<any, Router.IRouterParamContext<any, {}>, any> & {
   request: {
-    body?: T
+    body?: T,
+    query?: T,
   }
 }
 export type TNext = Application.Next;

@@ -83,7 +83,7 @@ export default defineComponent({
         showToast('发布成功');
         router.push({
           query: {
-            id: res.data
+            id: res.data.id.toString()
           },
           path: '/ArticleDetail',
         });
