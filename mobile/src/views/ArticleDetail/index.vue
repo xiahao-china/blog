@@ -44,6 +44,7 @@ import Loading from "@/components/Loading/index.vue";
 import {useRoute} from "vue-router";
 import {defaultArticleDetail} from "@/views/ArticleDetail/const";
 import {showToast} from "vant";
+import dayjs from "dayjs";
 
 export default defineComponent({
   name: "ArticleDetail",
@@ -54,9 +55,12 @@ export default defineComponent({
     const articleInfo = ref<IGetArticleDetailResItem & {createTimeStr: string}>(defaultArticleDetail);
 
 
-    const initBlogList = async (articleId: string) => {
+    const initBlogDetail = async (articleId: string) => {
       const res = await getArticleDetail({id: articleId});
-      // articleInfo.value = res.data;
+      articleInfo.value = {
+        ...res.data,
+        createTimeStr: dayjs(res.data.createTime).format('YYYY-MM-DD HH:mm'),
+      };
     }
 
 
@@ -83,12 +87,12 @@ export default defineComponent({
     onMounted(()=>{
       const query = route.query;
       if(!query.id) return;
-      initBlogList(query.id as string);
+      initBlogDetail(query.id as string);
     })
 
     return {
       articleInfo,
-      initBlogList,
+      initBlogDetail,
       bottomOptionsRef,
       toLikeOrCancel,
       toCollectOrCancel

@@ -36,7 +36,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import { showToast } from "vant";
 import { useStore } from "vuex";
 
@@ -57,6 +57,7 @@ export default defineComponent({
   setup: () => {
     const store = useStore();
     const router = useRouter();
+    const route = useRoute();
     const staticImgs = ref({
       logoIcon: require("@/assets/staticImg/common/logo.png"),
       qqIcon: require("@/assets/staticImg/login/qqIcon.png"),
@@ -107,6 +108,12 @@ export default defineComponent({
       if (res.code === 200) {
         showToast({ type: "success", message: "登录成功！" });
         store.dispatch("checkLoginStatus");
+        if (route.query.backPageHash){
+          router.push({
+            path: route.query.backPageHash as string,
+            query: JSON.parse(route.query.backQuery as string || '{}')
+          })
+        }
         return;
       }
       showToast(res.message || "登录失败");

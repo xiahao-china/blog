@@ -1,3 +1,6 @@
+import {checkIsMobile, isMobile} from "@/util/reg";
+import app from "@/App.vue";
+
 export interface IObject {
   [key: string]: any;
 }
@@ -78,4 +81,17 @@ export const getMethodUrlLink = (params: IObject, needEncodeURI?: boolean) => {
     });
   if (!turnData.length) return '';
   return `?${turnData.join('&')}`;
+}
+
+// 校验pc端进行部分页面的ui转换，使其可用
+export const checkPcUiTransform = (callback: (needTransform: boolean) => void)=>{
+  const excludePath = '/CreateAndEditArticleByPc';
+  const htmlEl = document.getElementsByTagName('html')[0];
+  if (!htmlEl) callback(false);
+  if (!window.location.hash.includes(excludePath) && !checkIsMobile()) {
+    htmlEl.setAttribute('style', 'font-size: 37.5px');
+    callback(true);
+  }else {
+    callback(false);
+  }
 }

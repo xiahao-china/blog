@@ -1,6 +1,7 @@
 export const isPhone = (str: string) => /^1[3456789]\d{9}$/.test(str);
 
-export const isMobile = /ipad|iphone|midp|rv:1.2.3.4|ucweb|android|windows ce|windows mobile/.test(navigator.userAgent.toLowerCase());
+export const checkIsMobile = ()=> /ipad|iphone|midp|rv:1.2.3.4|ucweb|android|windows ce|windows mobile/.test(navigator.userAgent.toLowerCase());
+export const isMobile = checkIsMobile();
 
 //Android终端
 export const isAndroid = navigator.userAgent.indexOf("Android") > -1 || navigator.userAgent.indexOf("Adr") > -1;

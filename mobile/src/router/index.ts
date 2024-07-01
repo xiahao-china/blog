@@ -4,17 +4,17 @@ import { IObject } from "@/util";
 export const routes: Array<RouteRecordRaw & IObject> = [
   {
     path: "/",
-    redirect: "/home",
+    redirect: "/HomePage",
   },
   {
-    path: "/Home",
-    name: "Home",
+    path: "/HomePage",
+    name: "HomePage",
     needNavBar: true,
     meta: {
       pageName: "首页",
     },
     component: () =>
-      import(/* webpackChunkName: "Home" */ "src/views/Home/index.vue"),
+      import(/* webpackChunkName: "HomePage" */ "src/views/HomePage/index.vue"),
   },
   {
     path: "/Login",
