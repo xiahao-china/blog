@@ -23,8 +23,11 @@
           @input="onUpdateInfo"
         />
         <div class="decorative-thread"/>
-        <div
+        <van-button
           class="get-verification-code-btn"
+          plain
+          :loading="true"
+          loading-text="获取中..."
           :class="
             isMailOrPhone && !canGetVerificationCodeBtnCountdown ? 'active' : ''
           "
@@ -35,7 +38,7 @@
               ? `${canGetVerificationCodeBtnCountdown}s后获取`
               : "获取验证码"
           }}
-        </div>
+        </van-button>
       </div>
     </div>
   </div>
@@ -69,6 +72,7 @@ export default defineComponent({
     });
     const account = ref(withdrawAccount(props.loginInputInfo));
     const canGetVerificationCodeBtnCountdown = ref(0);
+    const getVerCodeLoading = ref(true);
     const isMailOrPhone = ref(false);
 
     const password = ref("");
@@ -134,6 +138,7 @@ export default defineComponent({
       isMailOrPhone,
       canGetVerificationCodeBtnCountdown,
       clickGetVerificationCodeBtn,
+      getVerCodeLoading,
 
     };
   },

@@ -7,7 +7,7 @@ import {sendResponse, TDefaultRouter, TNext} from "@/routes/const";
 import {signToken} from "@/utils/token";
 import {isMail, isPhone} from "@/utils/reg";
 import {
-  createVerificationCode, LOGIN_RES_KEY_LIST, USER_TOKEN_EXPIRED_INTERVAL_MS,
+  createVerificationCode, generateRandomUsername, LOGIN_RES_KEY_LIST, USER_TOKEN_EXPIRED_INTERVAL_MS,
   VERIFICATION_CODE_ACQUISITION_INTERVAL,
   VERIFICATION_CODE_VALIDITY_TIME
 } from "@/controllers/user/const";
@@ -95,6 +95,7 @@ export const loginControllers = async (ctx: TDefaultRouter<ILoginControllersReqP
     const userInfo: IUserInfo = {
       ...getDefaultUserInfo(),
       uid: padWithZeros(userCount + 1),
+      nick: generateRandomUsername(Math.min(4, userCount.toString().length)),
       phone: phone || 0,
       email: email || '',
     }

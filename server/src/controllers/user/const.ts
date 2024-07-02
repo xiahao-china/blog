@@ -20,3 +20,16 @@ export const USER_TOKEN_EXPIRED_INTERVAL_MS = 10 * 24 * 60 * 60 * 1000;
 
 
 export const LOGIN_RES_KEY_LIST: (keyof IUserInfo)[] = ['uid', 'nick', 'avatar', 'lastLoginTime', 'sex'];
+
+
+export const generateRandomUsername = (length: number) => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    let result = '';
+    const charactersLength = characters.length;
+
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    return result;
+}

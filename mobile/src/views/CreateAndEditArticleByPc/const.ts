@@ -1,5 +1,6 @@
 import {createArrayByLen} from "@/util";
 import {IArticle} from "@/api/article/const";
+import Editor from "@toast-ui/editor";
 
 export const DEFAULT_BLOG_LIST = createArrayByLen(10).map((item,index)=>({
   id: index.toString(),
@@ -17,3 +18,14 @@ export const DEFAULT_BLOG_LIST = createArrayByLen(10).map((item,index)=>({
   reviewId: [],
   reviewNum: 0,
 }) as IArticle)
+
+export const tranMarkdownContentToHTML = (markDownStr: string)=>{
+  return new Editor({
+    el: document.createElement('div'),
+    height: '',
+    language: 'zh-CN',
+    initialEditType: 'wysiwyg',
+    previewStyle: 'vertical',
+    initialValue: markDownStr,
+  }).getHTML();
+}

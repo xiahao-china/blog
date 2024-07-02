@@ -4,6 +4,8 @@ import articleModel, {getDefaultArticle, IArticle} from '@/models/article';
 import {IPageReqBase, sendResponse, TDefaultRouter, TNext} from "@/routes/const";
 import {checkLogin} from "@/controllers/user";
 import userModel, {IUserInfo} from "@/models/user";
+import { filterObjItemByKey } from "@/utils/common";
+import { ARTICLE_RES_KEY_LIST } from "@/controllers/article/const";
 
 
 export interface ICreateArticleControllersReqParams {
@@ -59,15 +61,21 @@ export const getArticleDetailControllers = async (ctx: TDefaultRouter<{ id: stri
   const article: IArticle = await articleModel.collection.findOne({id});
   if (!article) return sendResponse.error(ctx, '文章不存在!');
   const createrUserInfo: IUserInfo = await userModel.collection.findOne({uid: article.createrUid});
+  try {
+    articleModel.collection.updateOne({id}, {$set:{browseNum: article.browseNum + 1}}, {});
+  }catch (err){
+    console.log(err);
+  }
   const userInfo = await checkLogin(ctx, next);
   sendResponse.success(ctx, {
-    ...article,
+    ...filterObjItemByKey(article, ARTICLE_RES_KEY_LIST),
     createrNick: createrUserInfo ? createrUserInfo.nick : '已注销用户',
     createrAvatar: createrUserInfo?.avatar || '',
     hasLike: (userInfo ? userInfo.likeArticleId : []).includes(id),
     hasCollect: (userInfo ? userInfo.collectArticleId : []).includes(id),
     hasFollow: (userInfo ? userInfo.followUid : []).includes(createrUserInfo.uid),
   });
+
 }
 
 export const searchArticleControllers = async (ctx: TDefaultRouter<ISearchArticleControllersReqParams>, next: TNext) => {
@@ -91,7 +99,7 @@ export const searchArticleControllers = async (ctx: TDefaultRouter<ISearchArticl
       .limit(pageSize) // 限制每页的记录数
       .toArray();
     return sendResponse.success(ctx, {
-      list: articleList,
+      list: filterObjItemByKey(articleList, ARTICLE_RES_KEY_LIST),
       total,
     });
   } catch (err) {
@@ -109,7 +117,7 @@ export const articleListControllers = async (ctx: TDefaultRouter<IPageReqBase>, 
       .limit(pageSize) // 限制每页的记录数
       .toArray();
     return sendResponse.success(ctx, {
-      list: articleList,
+      list: filterObjItemByKey(articleList, ARTICLE_RES_KEY_LIST),
       total,
     });
   } catch (err) {

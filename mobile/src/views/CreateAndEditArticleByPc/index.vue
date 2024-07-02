@@ -2,32 +2,36 @@
   <div class="create-and-edit-article-by-pc">
     <div class="head-block">
       <div class="create-title">
-        <input v-model="title" class="create-title-input" placeholder='文章标题...'/>
+        <input
+          v-model="title"
+          class="create-title-input"
+          placeholder="文章标题..."
+        />
       </div>
       <div class="save-tip">文章将自动保存到草稿箱</div>
       <div class="publish" @click="createOrEditArticle">发布</div>
       <div class="user-info">
-        <img class="head-img" :src="usrInfo.avatar"/>
+        <img class="head-img" :src="usrInfo.avatar" />
       </div>
     </div>
 
-    <div class="markdown-container" ref='mdContainerRef'>
-    </div>
-
+    <div class="markdown-container" ref="mdContainerRef"></div>
   </div>
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, onMounted, ref} from "vue";
-import {useStore} from "vuex";
-import {useRoute, useRouter} from "vue-router";
-import {showToast} from "vant";
+import { computed, defineComponent, onMounted, ref } from "vue";
+import { useStore } from "vuex";
+import { useRoute, useRouter } from "vue-router";
+import { showToast } from "vant";
+import Editor from "@toast-ui/editor";
+import "@toast-ui/editor/dist/i18n/zh-cn";
+import "@toast-ui/editor/dist/toastui-editor.css";
 
-import Editor from '@toast-ui/editor';
-import {createAndEditArticle, getArticleDetail} from "@/api/article";
-import {IGetArticleDetailResItem} from "@/api/article/const";
+import { createAndEditArticle, getArticleDetail } from "@/api/article";
+import { IGetArticleDetailResItem } from "@/api/article/const";
 
-import '@toast-ui/editor/dist/toastui-editor.css';
+import { tranMarkdownContentToHTML } from "./const";
 
 export default defineComponent({
   name: "CreateAndEditArticleByPc",
@@ -40,37 +44,47 @@ export default defineComponent({
     const mdContainerRef = ref<HTMLDivElement>();
     const editor = ref<Editor>();
 
-    const title = ref('');
+    const title = ref("");
     const nowBlogInfo = ref<IGetArticleDetailResItem>();
 
-    const usrInfo = computed(()=>store.state.usrInfo);
+    const usrInfo = computed(() => store.state.usrInfo);
 
     const initBlog = async () => {
       const query = route.query;
-      let initContent = '';
+      let initContent = "";
       if (query.articleId) {
-        const blogInfo = await getArticleDetail({id: query.articleId?.toString()})
+        const blogInfo = await getArticleDetail({
+          id: query.articleId?.toString(),
+        });
         title.value = blogInfo.data.title;
         nowBlogInfo.value = blogInfo.data;
       }
       if (!mdContainerRef.value) return;
       editor.value = new Editor({
         el: mdContainerRef.value,
-        height: '',
-        initialEditType: 'markdown',
-        previewStyle: 'vertical',
+        height: "",
+        language: "zh-CN",
+        initialEditType: "markdown",
+        previewStyle: "vertical",
         initialValue: initContent,
       });
-    }
+      // editor.value.setMarkdown("", false);
+      // editor.on('blur', () => {
+      //   const markdownValue = editor.getMarkdown();
+      //   emit('saveArticle', markdownValue);
+      // });
+    };
     const createOrEditArticle = async () => {
-      if(!title.value){
-        showToast('请填写文章标题');
+      if (!title.value) {
+        showToast("请填写文章标题");
         return;
       }
       if (!editor.value) return;
-      const content = editor.value.getMarkdown();
-      if(!content){
-        showToast('文章内容不能为空!');
+      const content = tranMarkdownContentToHTML(
+        editor.value?.getMarkdown() || ""
+      );
+      if (!content) {
+        showToast("文章内容不能为空!");
         return;
       }
       console.log(content);
@@ -80,40 +94,38 @@ export default defineComponent({
         content: content.toString(),
       });
       if (res.code === 200) {
-        showToast('发布成功');
+        showToast("发布成功");
         router.push({
           query: {
-            id: res.data.id.toString()
+            id: res.data.id.toString(),
           },
-          path: '/ArticleDetail',
+          path: "/ArticleDetail",
         });
         return;
       }
-      showToast(res.message || '啊哦~服务器似乎出了点问题~');
-    }
+      showToast(res.message || "啊哦~服务器似乎出了点问题~");
+    };
 
-
-
-    onMounted(()=>{
-      if (!usrInfo.value.uid){
-        showToast('请登录后再写作吧~');
+    onMounted(() => {
+      if (!usrInfo.value.uid) {
+        showToast("请登录后再写作吧~");
         router.push({
           query: {
             backPageHash: route.hash,
             backPageQuery: JSON.stringify(route.query),
           },
-          path: '/Login'
-        })
+          path: "/Login",
+        });
       }
 
       initBlog();
-    })
+    });
 
     return {
       mdContainerRef,
       createOrEditArticle,
       usrInfo,
-      title
+      title,
     };
   },
 });

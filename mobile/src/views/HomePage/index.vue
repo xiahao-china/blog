@@ -25,7 +25,7 @@ export default defineComponent({
     BlogItem
   },
   setup: () => {
-    const blogList = ref<IArticle[]>(DEFAULT_BLOG_LIST);
+    const blogList = ref<IArticle[]>([]);
     const loading = ref(false);
     const total = ref(0);
     const pageNum = ref(0);
@@ -39,8 +39,8 @@ export default defineComponent({
         pageNumber: pageNum.value,
       });
       loading.value = false;
-      // blogList.value = blogList.value.concat(res.data.list || []);
-      // total.value = res.data.total || 0;
+      blogList.value = blogList.value.concat(res.data.list || []);
+      total.value = res.data.total || 0;
     }
 
     const loadFinish = computed(() => (pageNum.value * 10) > total.value);

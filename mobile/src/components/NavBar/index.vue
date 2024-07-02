@@ -1,7 +1,7 @@
 <template>
   <div class="nav-bar-shell">
     <div class="nav-bar">
-      <div class="logo">
+      <div class="logo" @click="toHome">
         <img class="logo-img" :src="staticImgs.logoIcon"/>
         <div class="text">即刻</div>
       </div>
@@ -87,6 +87,10 @@ export default defineComponent({
       })
     }
 
+    const toHome = ()=>{
+      router.push('/HomePage');
+    }
+
     const searchKeyDownHandle = () => {
       if ((event as IObject).key === 'Enter') toSearch();
     }
@@ -100,7 +104,8 @@ export default defineComponent({
       toSearch,
       searchHistoryRecord,
       searchKeyDownHandle,
-      searchInput
+      searchInput,
+      toHome
     };
   }
 });

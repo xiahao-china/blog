@@ -28,9 +28,12 @@
           <div class="text">{{articleInfo.hasCollect ? '已收藏' : '收藏'}}</div>
         </div>
       </div>
-      <div class="article-creater">
+      <div class="delete-options" v-if="isCreater">
+        <div class="btn" @click="toDelete">删除</div>
+      </div>
+      <div class="article-creater" v-else>
         <img class="avatar" :src="articleInfo.createrAvatar"/>
-        <div class="follow">{{articleInfo.hasFollow ? '已关注' : '关注'}}</div>
+        <div class="follow" v-if="articleInfo.createrUid">{{articleInfo.hasFollow ? '已关注' : '关注'}}</div>
       </div>
     </div>
   </div>
@@ -38,19 +41,24 @@
 
 <script lang="ts">
 import {computed, defineComponent, onMounted, ref} from "vue";
-import { IGetArticleDetailResItem} from "@/api/article/const";
-import {collectArticle, getArticleDetail, likeArticle} from "@/api/article";
-import Loading from "@/components/Loading/index.vue";
-import {useRoute} from "vue-router";
-import {defaultArticleDetail} from "@/views/ArticleDetail/const";
-import {showToast} from "vant";
+import {showDialog, showToast} from "vant";
 import dayjs from "dayjs";
+import {useRoute, useRouter} from "vue-router";
+import {useStore} from "vuex";
+
+import Loading from "@/components/Loading/index.vue";
+import { IGetArticleDetailResItem} from "@/api/article/const";
+import {collectArticle, deleteArticle, getArticleDetail, likeArticle} from "@/api/article";
+import {defaultArticleDetail} from "@/views/ArticleDetail/const";
+
 
 export default defineComponent({
   name: "ArticleDetail",
   components: {Loading},
   setup: () => {
     const route = useRoute();
+    const store = useStore();
+    const router = useRouter();
     const bottomOptionsRef = ref(null);
     const articleInfo = ref<IGetArticleDetailResItem & {createTimeStr: string}>(defaultArticleDetail);
 
@@ -84,6 +92,23 @@ export default defineComponent({
       }
     }
 
+    const toDelete = ()=>{
+      if (!articleInfo.value) return;
+      showDialog({
+        title: '删除文章',
+        message: '您确定要删除该文章吗，删除后无法恢复哦!',
+        showCancelButton: true,
+      }).then(async ()=>{
+        const res = await deleteArticle({id: articleInfo.value.id});
+        showToast('删除成功，即将回到首页');
+        setTimeout(()=>{
+          router.push('/HomePage');
+        },800);
+      })
+    }
+
+    const isCreater = computed(()=> articleInfo.value.createrUid && articleInfo.value.createrUid === store.state.usrInfo.uid);
+
     onMounted(()=>{
       const query = route.query;
       if(!query.id) return;
@@ -95,7 +120,9 @@ export default defineComponent({
       initBlogDetail,
       bottomOptionsRef,
       toLikeOrCancel,
-      toCollectOrCancel
+      toCollectOrCancel,
+      isCreater,
+      toDelete
     };
   },
 });
