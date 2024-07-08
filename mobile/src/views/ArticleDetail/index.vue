@@ -10,7 +10,7 @@
           <div class="likeNum"><span class="iconfont icon-like"/>{{articleInfo.likeNum}}</div>
         </div>
       </div>
-      <div class="content" v-html="articleInfo.content"/>
+      <div class="content" ref="contentRef"/>
     </div>
     <Loading v-else/>
     <div class="bottom-options" ref="bottomOptionsRef">
@@ -45,6 +45,9 @@ import {showDialog, showToast} from "vant";
 import dayjs from "dayjs";
 import {useRoute, useRouter} from "vue-router";
 import {useStore} from "vuex";
+import Editor from "@toast-ui/editor";
+import "@toast-ui/editor/dist/i18n/zh-cn";
+import "@toast-ui/editor/dist/toastui-editor.css";
 
 import Loading from "@/components/Loading/index.vue";
 import { IGetArticleDetailResItem} from "@/api/article/const";
@@ -60,6 +63,8 @@ export default defineComponent({
     const store = useStore();
     const router = useRouter();
     const bottomOptionsRef = ref(null);
+    const contentRef = ref<HTMLDivElement>();
+    const viewer = ref<any>();
     const articleInfo = ref<IGetArticleDetailResItem & {createTimeStr: string}>(defaultArticleDetail);
 
 
@@ -69,6 +74,15 @@ export default defineComponent({
         ...res.data,
         createTimeStr: dayjs(res.data.createTime).format('YYYY-MM-DD HH:mm'),
       };
+      if (contentRef.value){
+        viewer.value = Editor.factory({
+          el: contentRef.value,
+          initialValue: res.data.content,
+          height: '',
+          viewer: true,
+        })
+        console.log('isViewer', viewer.value.isViewer());
+      }
     }
 
 
@@ -122,7 +136,8 @@ export default defineComponent({
       toLikeOrCancel,
       toCollectOrCancel,
       isCreater,
-      toDelete
+      toDelete,
+      contentRef
     };
   },
 });

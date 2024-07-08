@@ -44,7 +44,10 @@ export const routes: Array<RouteRecordRaw & IObject> = [
     component: () =>
       import(/* webpackChunkName: "CreateAndEditArticleByPc" */ "src/views/CreateAndEditArticleByPc/index.vue"),
   },
-
+  {
+    path:"/:pathMatch(.*)*",
+    redirect: "/HomePage",
+  }
 ];
 
 const router = createRouter({

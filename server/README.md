@@ -15,6 +15,7 @@ export default {
 
 ```
 rm -rf /usr/local/mongodb/mongod.lock
-mongod --fork --dbpath data --logpath /usr/local/mongodb/log/mongo.log --logappend
+rm -rf /usr/local/mongodb/data/mongod.lock
+sudo mongod --fork --dbpath /usr/local/mongodb/data --logpath /usr/local/mongodb/log/mongo.log --logappend
 mongosh
 ```

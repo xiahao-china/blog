@@ -26,7 +26,7 @@
         <van-button
           class="get-verification-code-btn"
           plain
-          :loading="true"
+          :loading="getVerCodeLoading"
           loading-text="获取中..."
           :class="
             isMailOrPhone && !canGetVerificationCodeBtnCountdown ? 'active' : ''
@@ -47,13 +47,15 @@
 <script lang="ts">
 import {defineComponent, onMounted, PropType, ref, watch} from "vue";
 import {showToast} from "vant";
+import {getVerCode} from "@/api/usr";
 import {
   checkInput,
   ELoginAccountType,
-  getDefaultLoginInputInfo, ILoginInputInfo, withdrawAccount,
+  getDefaultLoginInputInfo,
+  ILoginInputInfo,
+  withdrawAccount,
 } from "@/views/Login/const";
 import {VERIFICATION_CODE_ACQUISITION_INTERVAL} from "./const";
-import {getVerCode} from "@/api/usr";
 
 export default defineComponent({
   name: "GetVerificationCode",
@@ -72,13 +74,14 @@ export default defineComponent({
     });
     const account = ref(withdrawAccount(props.loginInputInfo));
     const canGetVerificationCodeBtnCountdown = ref(0);
-    const getVerCodeLoading = ref(true);
+    const getVerCodeLoading = ref(false);
     const isMailOrPhone = ref(false);
 
     const password = ref("");
 
     let timeId = 0;
     const clickGetVerificationCodeBtn = async () => {
+      if (getVerCodeLoading.value) return true;
       if (!isMailOrPhone.value) {
         showToast("请检查邮箱或手机号后重试~");
         return;
@@ -87,11 +90,13 @@ export default defineComponent({
         showToast("获取的太频繁啦，请稍后再试吧~");
         return;
       }
+      getVerCodeLoading.value = true;
       const isMail = props.loginInputInfo.accountType === ELoginAccountType.mail;
       const res = await getVerCode({
         phone: isMail ? '' : account.value,
         email: isMail ? account.value : ''
       });
+      getVerCodeLoading.value = false;
       if (res.code.toString() !== '200') {
         showToast(res.message || '获取验证码失败，请稍后再试~');
         return;
@@ -110,15 +115,14 @@ export default defineComponent({
     };
 
     const onUpdateInfo = () => {
-      const checkRes = {
-        ...checkInput(account.value),
-        password: password.value,
-      };
-      isMailOrPhone.value = checkRes.accountType
-        ? [ELoginAccountType.mail, ELoginAccountType.phone].includes(
-          checkRes.accountType
-        )
-        : false;
+      const checkRes = checkInput(account.value)
+      if (checkRes.accountType && [ELoginAccountType.mail, ELoginAccountType.phone].includes(checkRes.accountType)) {
+        isMailOrPhone.value = true;
+        checkRes.verificationCode = password.value;
+      } else {
+        isMailOrPhone.value = false;
+        checkRes.password = password.value;
+      }
       emit("update", checkRes);
     };
 

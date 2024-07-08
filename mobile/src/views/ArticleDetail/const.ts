@@ -1,8 +1,8 @@
 export const defaultArticleDetail = {
   id: '1',
-  title: '测试测试标题测试测试标题测试测试标题',
+  title: '',
   cover: 'http://m-t.iyangyang.fun/cdnQiniu/mobile/DragonBoatFestival/banner.png',
-  content: '测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题测试测试标题',
+  content: '',
   createrUid: '',
   createrNick: '',
   createrAvatar: '',

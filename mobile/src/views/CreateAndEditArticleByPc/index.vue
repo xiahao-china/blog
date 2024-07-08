@@ -30,8 +30,7 @@ import "@toast-ui/editor/dist/toastui-editor.css";
 
 import { createAndEditArticle, getArticleDetail } from "@/api/article";
 import { IGetArticleDetailResItem } from "@/api/article/const";
-
-import { tranMarkdownContentToHTML } from "./const";
+import {uploadFile} from "@/api/file";
 
 export default defineComponent({
   name: "CreateAndEditArticleByPc",
@@ -60,7 +59,7 @@ export default defineComponent({
         nowBlogInfo.value = blogInfo.data;
       }
       if (!mdContainerRef.value) return;
-      editor.value = new Editor({
+      const editorObj = new Editor({
         el: mdContainerRef.value,
         height: "",
         language: "zh-CN",
@@ -68,6 +67,16 @@ export default defineComponent({
         previewStyle: "vertical",
         initialValue: initContent,
       });
+      editorObj.eventEmitter.removeEventHandler('addImageBlobHook');
+      editorObj.eventEmitter.listen('addImageBlobHook',async (blob, callback) => {
+        const formData = new FormData();
+        formData.append('file', blob);
+        const res = await uploadFile(formData);
+        if (res.code === 200) callback(`${location.origin}${res.data.filePath}`);
+        else showToast(res.message || '上传失败，请稍后再试！');
+      });
+      editor.value = editorObj;
+
       // editor.value.setMarkdown("", false);
       // editor.on('blur', () => {
       //   const markdownValue = editor.getMarkdown();
@@ -80,14 +89,11 @@ export default defineComponent({
         return;
       }
       if (!editor.value) return;
-      const content = tranMarkdownContentToHTML(
-        editor.value?.getMarkdown() || ""
-      );
+      const content = editor.value?.getMarkdown() || "";
       if (!content) {
         showToast("文章内容不能为空!");
         return;
       }
-      console.log(content);
       const res = await createAndEditArticle({
         id: nowBlogInfo.value?.id,
         title: title.value,
@@ -109,6 +115,7 @@ export default defineComponent({
     onMounted(() => {
       if (!usrInfo.value.uid) {
         showToast("请登录后再写作吧~");
+        console.log('route.hash',route.hash);
         router.push({
           query: {
             backPageHash: route.hash,

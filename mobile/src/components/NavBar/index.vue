@@ -63,7 +63,7 @@ export default defineComponent({
           backPageHash: route.hash,
           backPageQuery: JSON.stringify(route.query),
         },
-        hash: '/Login'
+        path: '/Login'
       })
     }
 
