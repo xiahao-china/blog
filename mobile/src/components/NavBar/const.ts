@@ -18,3 +18,8 @@ export const getSearchRecord = ()=>{
 export const setSearchRecord = (list: ISearchRecordItem[])=>{
   localStorage.setItem(BLOG_SEARCH_RECORD, JSON.stringify(list));
 }
+
+export const DROPDOWN_SELECT_OPTIONS = [
+  { text: '首页', value: 'HomePage' },
+  { text: '小工具', value: 'Gadget' },
+];

@@ -11,7 +11,7 @@
       <div class="save-tip">文章将自动保存到草稿箱</div>
       <div class="publish" @click="createOrEditArticle">发布</div>
       <div class="user-info">
-        <img class="head-img" :src="usrInfo.avatar" />
+        <img class="head-img" :src="usrInfo.avatar || staticImgs.defaultHeadImg" />
       </div>
     </div>
 
@@ -39,6 +39,10 @@ export default defineComponent({
     const store = useStore();
     const route = useRoute();
     const router = useRouter();
+
+    const staticImgs = ref({
+      defaultHeadImg: require("@/assets/staticImg/common/defaultHeadImg.png"),
+    });
 
     const mdContainerRef = ref<HTMLDivElement>();
     const editor = ref<Editor>();
@@ -133,6 +137,7 @@ export default defineComponent({
       createOrEditArticle,
       usrInfo,
       title,
+      staticImgs
     };
   },
 });

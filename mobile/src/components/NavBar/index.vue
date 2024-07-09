@@ -1,9 +1,13 @@
 <template>
   <div class="nav-bar-shell">
     <div class="nav-bar">
-      <div class="logo" @click="toHome">
-        <img class="logo-img" :src="staticImgs.logoIcon"/>
-        <div class="text">即刻</div>
+      <div class="logo">
+        <img class="logo-img" :src="staticImgs.logoIcon" @click="toHome"/>
+        <div class="select-block">
+          <van-dropdown-menu class="dropdown" >
+            <van-dropdown-item v-model="nowSelect" @change="onChangeDropdownSelect" :options="DROPDOWN_SELECT_OPTIONS" />
+          </van-dropdown-menu>
+        </div>
       </div>
       <div class="search" :class="inputActive ? 'search-active' : ''">
         <div class="content">
@@ -22,7 +26,7 @@
       </div>
       <div class="right-block" :class="inputActive ? 'hidden-right-block' : ''">
         <div class="login-btn" v-if="!userInfo.uid" @click="toLogin">登录</div>
-        <img class="head-img" v-else :src="userInfo.avatar"/>
+        <img class="head-img" v-else :src="userInfo.avatar || staticImgs.defaultHeadImg"/>
       </div>
     </div>
   </div>
@@ -36,7 +40,7 @@ import {computed, defineComponent, ref} from "vue";
 import {IUserInfo} from "@/api/usr/const";
 import {IObject} from "@/util";
 
-import {getSearchRecord, setSearchRecord} from "./const";
+import {DROPDOWN_SELECT_OPTIONS, getSearchRecord, setSearchRecord} from "./const";
 
 export default defineComponent({
   name: "NavBar",
@@ -46,6 +50,7 @@ export default defineComponent({
     const staticImgs = ref({
       logoIcon: require("@/assets/staticImg/common/logo.png"),
       searchIcon: require("@/assets/staticImg/common/search.png"),
+      defaultHeadImg: require("@/assets/staticImg/common/defaultHeadImg.png"),
     });
     const store = useStore();
     const router = useRouter();
@@ -56,6 +61,7 @@ export default defineComponent({
     const inputActive = ref(false);
     const searchHistoryRecord = ref(getSearchRecord());
     const searchText = ref('');
+    const nowSelect = ref(DROPDOWN_SELECT_OPTIONS.find((item)=>route.path.includes(item.value))?.value || '');
 
     const toLogin = () => {
       router.push({
@@ -95,6 +101,11 @@ export default defineComponent({
       if ((event as IObject).key === 'Enter') toSearch();
     }
 
+    const onChangeDropdownSelect = (val: string)=>{
+      console.log('val',val);
+      router.push(val);
+    }
+
     return {
       staticImgs,
       userInfo,
@@ -105,7 +116,10 @@ export default defineComponent({
       searchHistoryRecord,
       searchKeyDownHandle,
       searchInput,
-      toHome
+      nowSelect,
+      toHome,
+      DROPDOWN_SELECT_OPTIONS,
+      onChangeDropdownSelect
     };
   }
 });

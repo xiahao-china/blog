@@ -23,7 +23,7 @@ export const routes: Array<RouteRecordRaw & IObject> = [
       pageName: "登录",
     },
     component: () =>
-        import(/* webpackChunkName: "Login" */ "src/views/Login/index.vue"),
+      import(/* webpackChunkName: "Login" */ "src/views/Login/index.vue"),
   },
   {
     path: "/ArticleDetail",
@@ -33,7 +33,9 @@ export const routes: Array<RouteRecordRaw & IObject> = [
       pageName: "文章详情",
     },
     component: () =>
-      import(/* webpackChunkName: "ArticleDetail" */ "src/views/ArticleDetail/index.vue"),
+      import(
+        /* webpackChunkName: "ArticleDetail" */ "src/views/ArticleDetail/index.vue"
+      ),
   },
   {
     path: "/CreateAndEditArticleByPc",
@@ -42,12 +44,23 @@ export const routes: Array<RouteRecordRaw & IObject> = [
       pageName: "写文章",
     },
     component: () =>
-      import(/* webpackChunkName: "CreateAndEditArticleByPc" */ "src/views/CreateAndEditArticleByPc/index.vue"),
+      import(
+        /* webpackChunkName: "CreateAndEditArticleByPc" */ "src/views/CreateAndEditArticleByPc/index.vue"
+      ),
   },
   {
-    path:"/:pathMatch(.*)*",
+    path: "/Gadget",
+    name: "Gadget",
+    meta: {
+      pageName: "小工具",
+    },
+    component: () =>
+      import(/* webpackChunkName: "Gadget" */ "src/views/Gadget/index.vue"),
+  },
+  {
+    path: "/:pathMatch(.*)*",
     redirect: "/HomePage",
-  }
+  },
 ];
 
 const router = createRouter({

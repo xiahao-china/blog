@@ -30,11 +30,25 @@
     .logo-img{
       height: 35px;
     }
-    .text{
-      font-size: 16px;
-      font-weight: bold;
-      white-space: nowrap;
+    .select-block{
+      flex-direction: row;
+      align-items: center;
+      .dropdown{
+        /deep/.van-dropdown-menu__bar{
+          box-shadow: none;
+          .van-dropdown-menu__item{
+            .van-dropdown-menu__title{
+              padding-left: 0;
+              font-size: 16px;
+              font-weight: bold;
+              white-space: nowrap;
+
+            }
+          }
+        }
+      }
     }
+
   }
   .search{
     width: 150px;
@@ -99,7 +113,7 @@
       width: 36px;
       height: 36px;
       border-radius: 50%;
-      border: 1px solid @weak-text-gray;
+      border: 1px solid @table-weak-gray;
       object-fit: cover;
     }
   }
