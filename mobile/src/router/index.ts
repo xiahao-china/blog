@@ -51,6 +51,7 @@ export const routes: Array<RouteRecordRaw & IObject> = [
   {
     path: "/Gadget",
     name: "Gadget",
+    needNavBar: true,
     meta: {
       pageName: "小工具",
     },

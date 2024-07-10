@@ -10,6 +10,7 @@ export enum EGadget {
 }
 
 export interface IGadgetMapItem {
+  gadget: EGadget;
   path: string;
   title: string;
   subTitle: string;
@@ -24,6 +25,7 @@ export const GADGET_MAX = Math.max(...Object.keys(EGadget).map((item)=>parseInt(
 
 export const GADGET_MAP: { [key in EGadget]: IGadgetMapItem } = {
   [EGadget.dice]: {
+    gadget: EGadget.dice,
     path: '/Dice',
     title: '随机骰子',
     subTitle: '自定义投掷点数与内容，解决选择困难',
@@ -33,15 +35,17 @@ export const GADGET_MAP: { [key in EGadget]: IGadgetMapItem } = {
     iconName: 'icon-touzi',
   },
   [EGadget.fictionCrawler]: {
+    gadget: EGadget.fictionCrawler,
     path: '/FictionCrawler',
     title: '小说爬虫',
-    subTitle: '爬取指定站点小说生成txt，解决资源获取难',
+    subTitle: '爬取站点小说下载txt，解决获取资源',
     coverImg: require("@/assets/staticImg/gadget/dice.png"),
     cardBgColor: '#1a1a19',
     bgColor: '#111111',
     iconName: 'icon-touzi',
   },
   [EGadget.timeShifting]: {
+    gadget: EGadget.timeShifting,
     path: '/TimeShifting',
     title: '时间转换',
     subTitle: '快速选择转换，计算您要的时间',
