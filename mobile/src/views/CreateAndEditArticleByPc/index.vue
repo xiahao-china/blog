@@ -9,7 +9,7 @@
         />
       </div>
       <div class="save-tip">文章将自动保存到草稿箱</div>
-      <div class="publish" @click="createOrEditArticle">发布</div>
+      <div class="publish" @click="createOrEditArticle">{{nowBlogInfo ? '保存' : '发布'}}</div>
       <div class="user-info">
         <img class="head-img" :src="usrInfo.avatar || staticImgs.defaultHeadImg" />
       </div>
@@ -61,6 +61,7 @@ export default defineComponent({
         });
         title.value = blogInfo.data.title;
         nowBlogInfo.value = blogInfo.data;
+        initContent = blogInfo.data.content;
       }
       if (!mdContainerRef.value) return;
       const editorObj = new Editor({
@@ -105,12 +106,14 @@ export default defineComponent({
       });
       if (res.code === 200) {
         showToast("发布成功");
-        router.push({
-          query: {
-            id: res.data.id.toString(),
-          },
-          path: "/ArticleDetail",
-        });
+        setTimeout(()=>{
+          router.push({
+            query: {
+              id: res.data.id.toString(),
+            },
+            path: "/ArticleDetail",
+          });
+        }, 500);
         return;
       }
       showToast(res.message || "啊哦~服务器似乎出了点问题~");
@@ -133,11 +136,13 @@ export default defineComponent({
     });
 
     return {
+      staticImgs,
       mdContainerRef,
+
       createOrEditArticle,
       usrInfo,
       title,
-      staticImgs
+      nowBlogInfo
     };
   },
 });

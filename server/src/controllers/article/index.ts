@@ -31,11 +31,14 @@ export const createAndEditArticleControllers = async (ctx: TDefaultRouter<ICreat
   try {
     const nowArticle: IArticle = id ? await articleModel.collection.findOne({ id }) : undefined;
     if (nowArticle) {
-      await articleModel.collection.findOneAndUpdate({ id }, {
-        title: title || nowArticle.title,
-        content: content || nowArticle.content
+      if (nowArticle.createrUid !== userInfo.uid) return sendResponse.error(ctx, "权限不足");
+      await articleModel.collection.updateOne({ id }, {
+        $set: {
+          title: xss(title),
+          content: xss(content)
+        }
       });
-      return sendResponse.success(ctx);
+      return sendResponse.success(ctx, { id: nowArticle.id });
     }
 
     const articleNum = await articleModel.collection.count();
@@ -51,6 +54,7 @@ export const createAndEditArticleControllers = async (ctx: TDefaultRouter<ICreat
 
     return sendResponse.success(ctx, { id: newArticle.id });
   } catch (err) {
+    console.log("err", err);
     return sendResponse.error(ctx, JSON.stringify(err));
   }
 };
@@ -108,7 +112,7 @@ export const searchArticleControllers = async (ctx: TDefaultRouter<ISearchArticl
 };
 
 export const articleListControllers = async (ctx: TDefaultRouter<IPageReqBase>, next: TNext) => {
-  console.log('ctx.request.body',ctx.request.body);
+  console.log("ctx.request.body", ctx.request.body);
   const { pageSize, pageNumber } = ctx.request.body || {};
   if (!pageSize || !pageNumber) return sendResponse.error(ctx, "传参缺失，请检查pageSize与pageNumber!");
   try {

@@ -29,7 +29,6 @@ export const REQ_STATUS_MAP: { [key in EReqStatus]: string } = {
 
 export const sendResponse = {
   success: (ctx: TDefaultRouter, data?: IObject) => {
-    console.log('success', ctx.body);
     ctx.body = {
       code: EReqStatus.success,
       message: REQ_STATUS_MAP[EReqStatus.success],

@@ -86,7 +86,7 @@ export default defineComponent({
       randomList.value.splice(index, 1);
     };
 
-    const editInput = (index: number, str: string) => {
+    const editInput = function(index: number, str: string){
       randomList.value[index].name = str;
     };
 
