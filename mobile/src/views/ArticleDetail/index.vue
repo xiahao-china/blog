@@ -95,7 +95,6 @@ export default defineComponent({
           height: "",
           viewer: true
         });
-        console.log("isViewer", viewer.value.isViewer());
       }
     };
 

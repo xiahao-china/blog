@@ -154,12 +154,16 @@ export const likeArticleControllers = async (ctx: TDefaultRouter<{ id: string }>
   try {
     const article: IArticle = await articleModel.collection.findOne({ id });
     if (!article) return sendResponse.error(ctx, "文章不存在");
-    await articleModel.collection.findOneAndUpdate({ id }, { likeNum: article.likeNum + 1 });
+    await articleModel.collection.updateOne({ id }, {
+      $set: { likeNum: article.likeNum + 1 }
+    });
     const likeIdList = userInfo.likeArticleId;
     likeIdList.push(id);
-    await userModel.collection.findOneAndUpdate({ uid: userInfo.uid }, {
-      likeArticleId: likeIdList,
-      likeNum: likeIdList.length
+    await userModel.collection.updateOne({ uid: userInfo.uid }, {
+      $set: {
+        likeArticleId: likeIdList,
+        likeNum: likeIdList.length
+      }
     });
     return sendResponse.success(ctx);
   } catch (err) {
@@ -175,12 +179,16 @@ export const collectArticleControllers = async (ctx: TDefaultRouter<{ id: string
   try {
     const article: IArticle = await articleModel.collection.findOne({ id });
     if (!article) return sendResponse.error(ctx, "文章不存在");
-    await articleModel.collection.findOneAndUpdate({ id }, { collectNum: article.collectNum + 1 });
+    await articleModel.collection.updateOne({ id }, {
+      $set: { collectNum: article.collectNum + 1 }
+    });
     const collectIdList = userInfo.collectArticleId;
     collectIdList.push(id);
-    await userModel.collection.findOneAndUpdate({ uid: userInfo.uid }, {
-      collectArticleId: collectIdList,
-      collectNum: collectIdList.length
+    await userModel.collection.updateOne({ uid: userInfo.uid }, {
+      $set:{
+        collectArticleId: collectIdList,
+        collectNum: collectIdList.length
+      }
     });
     return sendResponse.success(ctx);
   } catch (err) {
