@@ -6,7 +6,7 @@ export interface IArticle {
   content: string;
   cover: string;
   createrUid: string;
-  createrNick: string;
+  nick: string;
   createrAvatar: string;
   createTime: number;
   lastUpdateTime: number;

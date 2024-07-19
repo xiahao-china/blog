@@ -4,7 +4,7 @@ import articleModel, { getDefaultArticle, IArticle } from "@/models/article";
 import { EReqStatus, IPageReqBase, sendResponse, TDefaultRouter, TNext } from "@/routes/const";
 import { checkLogin } from "@/controllers/user";
 import userModel, { IUserInfo } from "@/models/user";
-import { filterObjItemByKey } from "@/utils/common";
+import { filterObjItemByKey, uniqueArray } from "@/utils/common";
 import { ARTICLE_RES_KEY_LIST } from "@/controllers/article/const";
 
 
@@ -112,17 +112,24 @@ export const searchArticleControllers = async (ctx: TDefaultRouter<ISearchArticl
 };
 
 export const articleListControllers = async (ctx: TDefaultRouter<IPageReqBase>, next: TNext) => {
-  console.log("ctx.request.body", ctx.request.body);
   const { pageSize, pageNumber } = ctx.request.body || {};
   if (!pageSize || !pageNumber) return sendResponse.error(ctx, "传参缺失，请检查pageSize与pageNumber!");
   try {
     const total = await articleModel.collection.count();
-    const articleList = await articleModel.collection.find({})
+    const articleList:IArticle[] = await articleModel.collection.find({})
       .skip((pageNumber - 1) * pageSize) // 跳过前面的记录
       .limit(pageSize) // 限制每页的记录数
       .toArray();
+    const uidList = uniqueArray(articleList.map((item)=>item.createrUid));
+    const userInfoList:IUserInfo[] = await Promise.all(uidList.map(async (item)=>  await userModel.collection.findOne({uid:item})))
+    const userInfoMap:{[key:string]:IUserInfo} = {};
+    userInfoList.forEach((item)=>userInfoMap[item.uid]=item);
+    const resList = filterObjItemByKey(articleList, ARTICLE_RES_KEY_LIST) as (IArticle & {nick: string})[];
+    resList.forEach((item,index)=>{
+      resList[index].nick = userInfoMap[item.createrUid].nick;
+    })
     return sendResponse.success(ctx, {
-      list: filterObjItemByKey(articleList, ARTICLE_RES_KEY_LIST),
+      list: resList,
       total
     });
   } catch (err) {

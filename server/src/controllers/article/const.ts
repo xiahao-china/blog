@@ -26,5 +26,5 @@ export const ARTICLE_RES_KEY_LIST: (keyof IArticle)[] = [
   "browseNum",
   "collectNum",
   "likeNum",
-  "reviewId"
+  "reviewId",
 ];
