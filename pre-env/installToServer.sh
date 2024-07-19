@@ -25,6 +25,7 @@ else
   fi
 fi
 
+echo "使用前请先使用ssh root@xxx.xxx.xxx登录一次"
 # 压缩文件内容以准备传输
 source ../config.sh
 

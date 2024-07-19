@@ -8,21 +8,14 @@
 
 module.exports = {
   defaultServerConfig: {
-    host: '',
-    port: '',
-    username: '',
-    password: '',
+    host: '123.60.24.107',
+    port: '22',
+    username: 'root',
+    password: 'Xx031226',
   },
-  overseasServerConfig: {
-    host: '',
-    port: '',
-    username: '',
-    password: '',
-  },
-
-  devPath: '/home/blog/static/mobile-test',
-  path: '/home/blog/static/mobile',
-  cdnStaticPath: '/home/blog/static/static',
+  devPath: '/home/BlogServer/static/mobile-test',
+  path: '/home/BlogServer/static/mobile',
+  cdnStaticPath: '/home/BlogServer/static/static',
 
 
   // 填入测试环境tick和uid

@@ -24,11 +24,10 @@ const params = Object.fromEntries(
     }, []),
 );
 
-const isSea = params.AIM.includes('sea');
 const isDev = params.AIM.includes('dev');
 const isCdnStaticPage = params.AIM.includes('static');
 
-console.log(`将在1s后为${isSea ? '海外' : '国内'}服务的${isDev ? '测试' : '正式'}环境进行部署`);
+console.log(`将在1s后${isDev ? '测试' : '正式'}环境服务进行部署`);
 
 // 静态页面部署
 if (isCdnStaticPage){
@@ -55,7 +54,7 @@ if (isCdnStaticPage){
   return;
 }
 // 获取用户输入密码
-sftp.connect(isSea ? config.overseasServerConfig : config.defaultServerConfig)
+sftp.connect(config.defaultServerConfig)
   .then(() => {
     console.log('成功连接到SFTP服务器');
     // 上传文件夹

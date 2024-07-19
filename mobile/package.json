@@ -8,14 +8,10 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "analyze": "OPTION_TYPE=analyze vue-cli-service build",
-    "push-test": "OPTION_TYPE=test vue-cli-service build; node publish.js --AIM=dev",
+    "push-test": "cross-env OPTION_TYPE=test vue-cli-service build; node publish.js --AIM=dev",
     "push": "vue-cli-service build; node publish.js --AIM=pro",
     "push-test-static": "node publish.js --AIM=dev-static",
-    "push-static": "node publish.js --AIM=static",
-    "push-test-sea": "OPTION_TYPE=test vue-cli-service build; node publish.js --AIM=dev-sea",
-    "push-sea": "vue-cli-service build; node publish.js --AIM=pro-sea",
-    "push-win-test": "cross-env OPTION_TYPE=test vue-cli-service build && node publish.js --AIM=dev",
-    "push-win": "vue-cli-service build && node publish.js --AIM=pro"
+    "push-static": "node publish.js --AIM=static"
   },
   "dependencies": {
     "core-js": "^3.6.5",

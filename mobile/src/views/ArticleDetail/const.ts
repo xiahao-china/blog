@@ -27,7 +27,7 @@ export const defaultArticleDetail = {
   cover: "http://m-t.iyangyang.fun/cdnQiniu/mobile/DragonBoatFestival/banner.png",
   content: "",
   createrUid: "",
-  createrNick: "",
+  nick: "",
   createrAvatar: "",
   createTime: new Date().getTime(),
   createTimeStr: "2023-08-22 18:34",
