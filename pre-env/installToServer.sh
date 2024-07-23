@@ -43,6 +43,7 @@ echo "前置依赖已传输，将为您安装，请稍后..."
 # 解压服务端内容并开始安装前置依赖
 sshpass -p $BLOG_SERVER_PASSWORD ssh $BLOG_SERVER_USERNAME@$BLOG_SERVER_IP -p $BLOG_SERVER_PORT -o StrictHostKeyChecking=no "
 tar -zxvf $SERVER_ROOT_PATH/PreEnvFiles.tar.gz -C $SERVER_ROOT_PATH
+mv $SERVER_ROOT_PATH/linux-pre-env-file/dbToolShell $SERVER_ROOT_PATH/dbToolShell
 cd $SERVER_ROOT_PATH/linux-pre-env-file
 sh $SERVER_ROOT_PATH/linux-pre-env-file/install.sh
 exit

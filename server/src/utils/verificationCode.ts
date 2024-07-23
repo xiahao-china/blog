@@ -1,7 +1,6 @@
 import {createTransport} from 'nodemailer';
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 import Core from "@alicloud/pop-core";
-import RPCClient from "@alicloud/pop-core";
 import {APP_NAME} from "@/utils/common";
 import {IObject} from "@/utils/const";
 
@@ -27,7 +26,7 @@ const TRANSPORT_USER_CONFIG: SMTPTransport.Options = {
   secure: true, // 加密发送
 }
 
-const ALI_CLOUD_PHONE_SERVER_CONFIG: RPCClient.Config = {
+const ALI_CLOUD_PHONE_SERVER_CONFIG: Core.Config = {
   // Please ensure that the environment variables ALIBABA_CLOUD_ACCESS_KEY_ID and ALIBABA_CLOUD_ACCESS_KEY_SECRET are set.
   accessKeyId: globalConfig.aliAccessKeyId,
   accessKeySecret: globalConfig.aliAccessKeySecret,
