@@ -10,7 +10,10 @@
     "webpack:debug": "node --inspect-brk ./node_modules/.bin/webpack --config config/webpack.config.prod.js --progress",
     "build": "cross-env NODE_ENV=production webpack --config config/webpack.config.prod.js",
     "push": "pnpm run build; sh publish.sh",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dbclone": "cd ./tools/mongodb;sh backup.sh",
+    "update:db": "cd ./tools/mongodb;sh synToServer.sh",
+    "update:ng": "cd ./tools/nginx; sh updateNgConf.sh"
   },
   "engines": {
     "node": ">=16.20.2"

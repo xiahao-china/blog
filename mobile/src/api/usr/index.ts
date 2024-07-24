@@ -16,5 +16,5 @@ export const checkLoginStatusReq = async () => {
 }
 
 export const logOutReq = async () => {
-    return request.post<IBaseRes<IUserInfo>>("/api/usr/logOut", {});
+    return request.get<IBaseRes<IUserInfo>>("/api/usr/logOut", {});
 }

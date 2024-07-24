@@ -1,3 +1,5 @@
+import { debounce } from "lodash";
+
 export interface IRandomListItem {
   id: string;
   name: string;
@@ -12,9 +14,14 @@ export const RANDOM_LIST_DEFAULT_ITEM: IRandomListItem = {
 
 export const RANDOM_DICE_CONFIG_HISTORY_KEY = "RANDOM_DICE_CONFIG_HISTORY_KEY";
 
+
 export const setRandomDiceConfigHistory = (data: IRandomListItem[]) => {
   localStorage.setItem(RANDOM_DICE_CONFIG_HISTORY_KEY, JSON.stringify(data));
 };
+
+export const deSetRandomDiceConfigHistory = debounce((data: IRandomListItem[]) => {
+  setRandomDiceConfigHistory(data);
+}, 1000);
 
 export const getRandomDiceConfigHistory = (): IRandomListItem[] => {
   const res = localStorage.getItem(RANDOM_DICE_CONFIG_HISTORY_KEY);
@@ -47,8 +54,8 @@ export const startRandom = (randomlist: IRandomListItem[]): IStartRandomRes => {
   return {
     item: randomlist[resIndex],
     textList: [
-      ...handleRandom.map((item)=>item.name),
-      handleRandom[resIndex].name,
+      ...handleRandom.map((item) => item.name),
+      handleRandom[resIndex].name
     ]
   };
 };

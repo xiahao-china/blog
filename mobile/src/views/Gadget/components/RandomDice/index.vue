@@ -19,13 +19,11 @@
               </div>
               <div class="config-item">
                 <div class="name">内容</div>
-                <van-field
+                <input
                   class="field"
-                  label=""
-                  placeholder="抽取项名称"
                   :value="item.name"
-                  clearable
                   @update:modelValue="(val)=>editInput(index, val)"
+                  placeholder="抽取项名称"
                 />
               </div>
               <div class="config-item">
@@ -55,6 +53,7 @@
 <script lang="ts">
 import { computed, defineComponent, nextTick, onMounted, ref } from "vue";
 import {
+  deSetRandomDiceConfigHistory,
   getRandomDiceConfigHistory,
   IRandomListItem,
   RANDOM_LIST_DEFAULT_ITEM, startRandom
@@ -75,6 +74,10 @@ export default defineComponent({
       rollingTextList.value = randomRes.textList;
     };
 
+    const updateRandomDiceConfigHistory = ()=>{
+      deSetRandomDiceConfigHistory(randomList.value);
+    }
+
     const addRandomItem = () => {
       randomList.value.push({
         ...RANDOM_LIST_DEFAULT_ITEM,
@@ -88,10 +91,12 @@ export default defineComponent({
 
     const editInput = function(index: number, str: string){
       randomList.value[index].name = str;
+      updateRandomDiceConfigHistory();
     };
 
     const editWeight = (index: number, weight: number) => {
       randomList.value[index].weight = weight;
+      updateRandomDiceConfigHistory();
     };
 
     const emptyCount = computed(() => randomList.value.filter((item) => !item.name).length);

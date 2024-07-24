@@ -14,9 +14,12 @@
         @update="(val) => (loginInfo = val)"
       />
       <GetVerificationCode v-else :login-input-info="loginInfo" @update="(val) => (loginInfo = val)" />
-      <div class="change-login-method" @click="changeLoginMethod">
-        使用{{ loginInfo.method === ELoginMethod.password ? "验证码" : "密码" }}
+      <div class="change-login-method-shell">
+        <div class="change-login-method" @click="changeLoginMethod">
+          使用{{ loginInfo.method === ELoginMethod.password ? "验证码" : "密码" }}
+        </div>
       </div>
+
       <div class="to-login-btn" @click="toLogin">登录</div>
       <div class="fast-login">
         <div class="title">快速登录</div>

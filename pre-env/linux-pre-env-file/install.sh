@@ -24,6 +24,8 @@ echo "返回根目录"
 cd $ENV_FILE_ROOT_PATH || exit
 echo "删除ng解压文件"
 rm -rf ./uncompress-file/$nginx_name
+echo "删除ng压缩文件"
+rm -rf ./nginx.tar.gz
 
 ## ------------------ 安装nvm ------------------
 echo "开始为nvm解压tar包"
@@ -56,6 +58,8 @@ npm install -g pm2
 
 echo "删除nvm解压文件"
 rm -rf ./uncompress-file/$nvm_name
+echo "删除nvm压缩文件"
+rm -rf ./nvm.tar.gz
 
 ## ------------------ 安装redis ------------------ 需要配置安全组开放6379端口
 #echo "开始为redis解压tar包..."
@@ -103,7 +107,7 @@ tar -zxvf mongosh.tgz -C ./uncompress-file
 echo "读取解压后mongosh文件夹名称"
 mongosh_name=$(ls -d uncompress-file/* | head -n 1 | sed 's/uncompress-file\///')
 echo "注入关键脚本文件到mongodb"
-mv ./uncompress-file/$mongotool_name/bin/mongodump $ENV_FILE_ROOT_PATH/mongodb/bin
+mv ./uncompress-file/$mongotool_name/bin/mongosh $ENV_FILE_ROOT_PATH/mongodb/bin
 echo "删除mongosh解压文件"
 rm -rf ./uncompress-file/$mongosh_name
 rm -rf mongosh.tgz

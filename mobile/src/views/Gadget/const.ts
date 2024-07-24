@@ -5,7 +5,7 @@ export enum ETurningDirection {
 
 export enum EGadget {
   dice = 1,
-  fictionCrawler,
+  // fictionCrawler,
   timeShifting,
 }
 
@@ -34,16 +34,16 @@ export const GADGET_MAP: { [key in EGadget]: IGadgetMapItem } = {
     bgColor: '#111111',
     iconName: 'icon-touzi',
   },
-  [EGadget.fictionCrawler]: {
-    gadget: EGadget.fictionCrawler,
-    path: '/FictionCrawler',
-    title: '小说爬虫',
-    subTitle: '爬取站点小说下载txt，解决获取资源',
-    coverImg: require("@/assets/staticImg/gadget/dice.png"),
-    cardBgColor: '#1a1a19',
-    bgColor: '#111111',
-    iconName: 'icon-touzi',
-  },
+  // [EGadget.fictionCrawler]: {
+  //   gadget: EGadget.fictionCrawler,
+  //   path: '/FictionCrawler',
+  //   title: '小说爬虫',
+  //   subTitle: '爬取站点小说下载txt，解决获取资源',
+  //   coverImg: require("@/assets/staticImg/gadget/dice.png"),
+  //   cardBgColor: '#1a1a19',
+  //   bgColor: '#111111',
+  //   iconName: 'icon-touzi',
+  // },
   [EGadget.timeShifting]: {
     gadget: EGadget.timeShifting,
     path: '/TimeShifting',

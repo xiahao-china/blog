@@ -1,12 +1,10 @@
-import request, { IBaseRes } from "@/api/request";
-import {getVerCode} from "@/api/usr/index";
-
 export interface IUserInfo {
   uid: string;
   username: string;
   avatar: string;
-  name: string;
+  nick: string;
   mail: string;
+  lastLoginTime: number;
   followNum: number;
   likesNum: number;
   collectNum: number;

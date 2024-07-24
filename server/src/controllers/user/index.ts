@@ -178,6 +178,9 @@ export const checkLoginControllers = async (ctx: TDefaultRouter<{}>, next: TNext
   if (!checkRes) return sendResponse.error(ctx, "", EReqStatus.noLogin);
   const userInfo: IObject = {};
   LOGIN_RES_KEY_LIST.forEach((item) => userInfo[item] = checkRes[item]);
+  userInfo.likesNum = checkRes.likeArticleId?.length;
+  userInfo.followNum = checkRes.followUid?.length;
+  userInfo.collectNum = checkRes.collectArticleId?.length;
   return sendResponse.success(ctx, userInfo);
 };
 

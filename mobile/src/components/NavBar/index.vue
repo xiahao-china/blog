@@ -30,7 +30,46 @@
       </div>
       <div class="right-block" :class="inputActive ? 'hidden-right-block' : ''">
         <div class="login-btn" v-if="!userInfo.uid" @click="toLogin">登录</div>
-        <img class="head-img" v-else :src="userInfo.avatar || staticImgs.defaultHeadImg" />
+        <van-dropdown-menu ref="userDropdownMenuRef" class="user-dropdown" teleport="body">
+          <van-dropdown-item>
+            <template #title>
+              <img class="head-img" v-if="userInfo.uid" :src="userInfo.avatar || staticImgs.defaultHeadImg" />
+            </template>
+            <div class="user-options" >
+              <div class="user-info">
+                <img class="user-head-img" :src="userInfo.avatar || staticImgs.defaultHeadImg" />
+                <div class="text-info">
+                  <div class="nick-shell">
+                    <div class="nick">{{userInfo.nick}}</div>
+                    <span class="iconfont icon-edit"/>
+                  </div>
+                  <div class="last-login">上次登录：{{userPreLoginStr}}</div>
+                </div>
+              </div>
+              <div class="statistical-data">
+                <div class="data-item">
+                  <div class="num">{{userInfo.likesNum || 0}}</div>
+                  <div class="desc">点赞</div>
+                </div>
+                <div class="data-item">
+                  <div class="num">{{userInfo.followNum || 0}}</div>
+                  <div class="desc">关注</div>
+                </div>
+                <div class="data-item">
+                  <div class="num">{{userInfo.collectNum || 0}}</div>
+                  <div class="desc">收藏</div>
+                </div>
+              </div>
+              <div class="btn-list">
+                <div class="btn-item" @click="toCreateArticle">
+                  <span class="iconfont icon-icf_wirte"/>
+                  开始创作
+                </div>
+                <div class="btn-item warning" @click="logOut">退出登录</div>
+              </div>
+            </div>
+          </van-dropdown-item>
+        </van-dropdown-menu>
       </div>
     </div>
   </div>
@@ -45,6 +84,9 @@ import { IUserInfo } from "@/api/usr/const";
 import { IObject } from "@/util";
 
 import { DROPDOWN_SELECT_OPTIONS, getSearchRecord, setSearchRecord } from "./const";
+import dayjs from "dayjs";
+import { logOutReq } from "@/api/usr";
+import { showToast } from "vant";
 
 export default defineComponent({
   name: "NavBar",
@@ -60,6 +102,7 @@ export default defineComponent({
     const router = useRouter();
     const route = useRoute();
     const searchInput = ref<HTMLInputElement>();
+    const userDropdownMenuRef = ref<{close: ()=>void}>();
     const userInfo = computed(() => store.state.usrInfo as IUserInfo);
 
     const inputActive = ref(false);
@@ -101,6 +144,18 @@ export default defineComponent({
       router.push("/HomePage");
     };
 
+    const logOut = async ()=>{
+      const res = await logOutReq();
+      if (res.code !== 200) showToast(res.message || '登出失败！');
+      else {
+        store.dispatch("checkLoginStatus");
+        userDropdownMenuRef.value?.close();
+      }
+    }
+
+    const toCreateArticle = () => {
+      router.push("/CreateAndEditArticleByPc");
+    };
     const searchKeyDownHandle = () => {
       if ((event as IObject).key === "Enter") toSearch();
     };
@@ -109,12 +164,19 @@ export default defineComponent({
       router.push(val);
     };
 
+    const userPreLoginStr = computed(()=>{
+      return userInfo.value.lastLoginTime ? dayjs(userInfo.value.lastLoginTime).format('YYYY-DD-MM HH:mm') :
+        '----'
+    })
+
     watch(() => route.path, () => {
       nowSelect.value = DROPDOWN_SELECT_OPTIONS.find((item) => route.path.includes(item.value))?.value || "";
     }, { immediate: true });
 
     return {
       staticImgs,
+      DROPDOWN_SELECT_OPTIONS,
+
       userInfo,
       toLogin,
       inputActive,
@@ -125,8 +187,11 @@ export default defineComponent({
       searchInput,
       nowSelect,
       toHome,
-      DROPDOWN_SELECT_OPTIONS,
-      onChangeDropdownSelect
+      onChangeDropdownSelect,
+      userPreLoginStr,
+      toCreateArticle,
+      logOut,
+      userDropdownMenuRef
     };
   }
 });
