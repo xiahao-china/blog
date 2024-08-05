@@ -1,0 +1,108 @@
+@import "/src/assets/globalStyle/commonStyle.less";
+
+.user-options{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 12px;
+  width: 100%;
+  height: 100%;
+  &{
+    display: inline-flex;
+  }
+  .user-info{
+    margin-top: 12px;
+    align-items: center;
+    flex-direction: row;
+    .user-head-img{
+      height: 46px;
+      width: 46px;
+      border-radius: 50%;
+    }
+    .text-info{
+      margin-left: 8px;
+      flex-direction: column;
+      align-items: flex-start;
+      .nick-shell{
+        width: 100%;
+        justify-content: space-between;
+        flex-direction: row;
+        align-items: center;
+        .nick{
+          font-size: 14px;
+          font-weight: 400;
+          color: @main-text-color;
+          line-height: 20px;
+        }
+        .iconfont{
+          font-size: 14px;
+          color: @table-weak-text-gray;
+        }
+      }
+
+      .last-login{
+        margin-top: 4px;
+        line-height: 16px;
+        font-size: 10px;
+        color: @weak-text-gray;
+      }
+    }
+  }
+  .statistical-data{
+    flex-direction: row;
+    margin-top: 16px;
+    align-items: center;
+
+    .data-item{
+      width: 80px;
+      flex-direction: column;
+      align-items: center;
+      .num{
+        font-weight: 600;
+        color: @main-text-color;
+        font-size: 14px;
+        line-height: 16px;
+      }
+      .desc{
+        margin-top: 4px;
+        font-weight: 400;
+        font-size: 10px;
+        line-height: 16px;
+        color: @table-weak-text-gray;
+      }
+    }
+  }
+
+  .btn-list{
+    margin-top: 8px;
+    margin-bottom: 4px;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+    padding-top: 10px;
+    &:before{
+      position: absolute;
+      top: 0;
+      content: '';
+      height: 0.5px;
+      width: 100%;
+      background: rgba(182,182,182,0.5);
+    }
+  }
+  .btn-item{
+    font-size: 13px;
+    line-height: 17px;
+    font-weight: 400;
+    color: @main-color;
+    .iconfont{
+      margin-right: 2px;
+      transform: translateY(-1px);
+    }
+    &.warning{
+      color: @heavy-main-color;
+    }
+  }
+  .btn-item + .btn-item{
+    margin-left: 76px;
+  }
+}

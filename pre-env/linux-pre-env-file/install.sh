@@ -18,7 +18,7 @@ sh ./uncompress-file/$nginx_name/configure --prefix=$ENV_FILE_ROOT_PATH/nginx
 echo "进如ng安装目录"
 cd ./uncompress-file/$nginx_name || exit
 echo "安装"
-./configure --with-http_stub_status_module --with-http_ssl_module
+./configure --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module
 make && make install
 echo "返回根目录"
 cd $ENV_FILE_ROOT_PATH || exit

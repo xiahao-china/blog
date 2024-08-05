@@ -1,5 +1,5 @@
 <template>
-  <div :class="needTransform ? 'pc-transform' : ''">
+  <div class="app" :class="needTransform ? 'pc-transform' : ''">
     <NavBar v-if="currentNeedNavBar"/>
     <router-view/>
   </div>
