@@ -6,7 +6,7 @@
 }
 
 .nav-bar {
-  box-shadow: 0 1px 4px #f2f3f5;
+  transition: background-color ease 0.2s;
   position: fixed;
   display: flex;
   flex-direction: row;
@@ -14,11 +14,16 @@
   left: 0;
   width: 100vw;
   height: 60px;
-  background-color: white;
+  background-color: @main-bg-color;
   align-items: center;
   justify-content: flex-start;
   padding: 0 16px;
   z-index: 9;
+
+  &.has-scroll{
+    background-color: white;
+    box-shadow: 0 1px 4px @weak-gray;
+  }
 
   * {
     display: inline-flex;
@@ -38,6 +43,7 @@
     align-items: center;
     .dropdown {
       /deep/.van-dropdown-menu__bar {
+        background: transparent;
         box-shadow: none;
 
         .van-dropdown-menu__item {
@@ -51,6 +57,7 @@
             .mini-app{
               font-weight: normal;
               font-size: 19px;
+              color: @main-text-color2;
             }
             &:after{
               display: none;
@@ -62,54 +69,38 @@
 
   }
 
-
-  .search-icon-shell {
+  .search-icon{
     margin-left: 16px;
-    .search-icon {
-      height: 19px;
-      width: 19px;
-    }
+    font-weight: 600;
+    font-size: 19px;
+    color: @main-text-color2;
   }
 
-  .right-block {
-    transition: width ease 0.2s;
-    flex-direction: row;
+  .chat-icon{
+    padding-top: 1px;
+    margin-left: 16px;
+    font-size: 23px;
+    color: @main-text-color2;
+  }
+
+  .progress{
+    width: 22px;
+    height: 22px;
+    background: @main-text-color2;
+    color: white;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
+    font-size: 12px;
+    transition: ease all 0.2s;
+    border-radius: 50%;
     margin-left: 16px;
-    overflow: hidden;
-
-    .login-btn {
-      padding: 4px 9px;
-      font-size: 13px;
-      color: @main-color;
-      border: 1px solid @main-color;
-      background: rgba(30, 128, 255, .05);
-      border-radius: 4px;
-      white-space: nowrap;
-    }
-
-    .head-img {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: 1px solid @table-weak-gray;
-      object-fit: cover;
-    }
-
-    .user-dropdown {
-      /deep/ .van-dropdown-menu__bar {
-        box-shadow: none;
-        background: transparent;
-
-        .van-dropdown-menu__item {
-          .van-dropdown-menu__title {
-            padding: 0;
-          }
-        }
-      }
+    &.progress-none{
+      width: 4px;
+      height: 4px;
+      background: @table-weak-text-gray;
     }
   }
+
 
 }
 

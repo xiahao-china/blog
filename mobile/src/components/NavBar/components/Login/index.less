@@ -1,0 +1,45 @@
+@import "/src/assets/globalStyle/commonStyle.less";
+
+.nav-bar-login {
+  display: inline-flex;
+  transition: width ease 0.2s;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: 16px;
+  overflow: hidden;
+
+  &{
+    display: inline-flex;
+  }
+
+  .login-btn {
+    padding: 4px 9px;
+    font-size: 13px;
+    color: white;
+    background: linear-gradient(45deg,rgba(14, 106, 199), @main-text-color 20%,  @main-text-color2, rgb(13, 90, 166));
+    border-radius: 8px;
+    white-space: nowrap;
+  }
+
+  .head-img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid @table-weak-gray;
+    object-fit: cover;
+  }
+
+  .user-dropdown {
+    /deep/ .van-dropdown-menu__bar {
+      box-shadow: none;
+      background: transparent;
+
+      .van-dropdown-menu__item {
+        .van-dropdown-menu__title {
+          padding: 0;
+        }
+      }
+    }
+  }
+}

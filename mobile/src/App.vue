@@ -1,6 +1,6 @@
 <template>
   <div class="app" :class="needTransform ? 'pc-transform' : ''">
-    <NavBar v-if="currentNeedNavBar"/>
+    <NavBar v-show="currentNeedNavBar"/>
     <router-view/>
   </div>
 </template>
@@ -41,7 +41,7 @@ export default defineComponent({
     onMounted(() => {
       window.addEventListener("resize", () => {
         checkPcUiTransform((val) => {
-          needTransform.value = val
+            needTransform.value = val
         });
       })
     })
