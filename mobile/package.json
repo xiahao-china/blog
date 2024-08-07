@@ -60,6 +60,8 @@
     "vant": "^4.7.2",
     "vconsole-webpack-plugin": "^1.8.0",
     "webpack-bundle-analyzer": "^4.9.1",
-    "wx-jssdk-ts": "^1.1.1"
+    "wx-jssdk-ts": "^1.1.1",
+    "node-ssh": "^13.2.0",
+    "iconv-lite": "^0.6.3"
   }
 }

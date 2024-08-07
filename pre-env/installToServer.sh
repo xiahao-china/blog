@@ -14,7 +14,7 @@ else
   elif [[ "$(expr substr $(uname -s) 1 5)" == "MINGW" ]]; then
       # 如果是 Windows 系统，则执行 Windows 相关指令
       echo "当前系统是 Windows 将为您安装sshpass"
-      tar xvzf ./application-file/sshpass-1.06.tar.gz
+      tar xvzf ./application-file/sshpass-1.10.tar.gz
       ./sshpass-1.06/configure
       make
       sudo make install

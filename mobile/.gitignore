@@ -5,6 +5,9 @@ activityDist
 #serverConfig.js
 output.js
 
+mobile-test.tar.gz
+mobile.tar.gz
+
 # local env files
 .env.local
 .env.*.local
