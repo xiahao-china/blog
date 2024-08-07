@@ -4,8 +4,8 @@ sshpass-1.06
 *.log
 dist
 node_modules
-server.tar.gz
-server-test.tar.gz
+
+serverConfig.js
 
 
 ./pre-env/config.sh

@@ -5,6 +5,8 @@ node_modules
 ./logs
 #serverConfig.js
 output.js
+server.tar.gz
+server-test.tar.gz
 
 # local env files
 .env.local

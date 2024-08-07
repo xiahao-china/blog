@@ -21,3 +21,26 @@ export BLOG_SERVER_PASSWORD="your_server_password"
 # 服务器存放根目录
 export SERVER_ROOT_PATH="/home/BlogServer"
 ```
+
+# 2.在根目录加入config.sh作为配置信息文件，内容如下
+```
+module.exports = {
+  // 服务器信息 
+  defaultServerConfig: {
+    host: '',
+    port: '',
+    username: '',
+    password: '',
+  },
+  // 服务部署位置
+  path: '/home/BlogServer/static',
+  serverRootPath: '/home/BlogServer',
+  cdnStaticPath: '/home/BlogServer/static/static',
+  ngRootPath: '/usr/local/nginx/',
+
+  // 填入测试环境tick和uid
+  mockUid: '',
+  mockTicket: '',
+}
+
+```

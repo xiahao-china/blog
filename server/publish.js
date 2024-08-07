@@ -24,8 +24,9 @@ const params = Object.fromEntries(
     }, [])
 )
 
-const isDev = params.AIM.includes('dev')
-const isWindows = os.type() === 'Windows_NT'
+const isDev = params.AIM.includes('dev');
+const isNg = params.AIM.includes('ng');
+const isWindows = os.type() === 'Windows_NT';
 
 const FILE_PATH = {
   localFileName: `server${isDev ? '-test' : ''}`,
@@ -33,21 +34,35 @@ const FILE_PATH = {
   uploadPath: config.serverRootPath
 }
 
+const COMMON_STR_LIST = {
+  server: [
+    `rm -rf ${FILE_PATH.uploadPath}/server`,
+    `tar -zxvf ${FILE_PATH.uploadPath}/${FILE_PATH.localFileName}.tar.gz`,
+    `cd ${FILE_PATH.uploadPath}/server`,
+    `pnpm i`,
+    `pm2 restart ./server.bundle.js`,
+    `rm -rf ${FILE_PATH.uploadPath}/${FILE_PATH.localFileName}.tar.gz`
+  ],
+  ng: [
+    `${config.ngRootPath}/sbin/nginx -s reload`,
+  ],
+}
+
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 })
 
+
+
 // 打包并压缩部署文件
-const zipFile = () => {
+const zipServerFile = () => {
   const filePathName = FILE_PATH.localFileName
   try {
     const hasFile = fs.existsSync(`./${filePathName}`);
     const hasTar = fs.existsSync(`./${filePathName}.tar.gz`);
     if (hasFile) execSync(isWindows ? `rmdir /s /q ${filePathName}` : `rm -rf ${filePathName}`);
-
     if (hasTar) execSync(isWindows ? `del ${filePathName}.tar.gz` : `rm -rf ${filePathName}.tar.gz`);
-
     execSync(`mkdir ${filePathName}`);
     execSync(isWindows ? `xcopy dist\\server.bundle.js ${filePathName}` : `cp ./dist/server.bundle.js ./${filePathName}`);
     execSync(isWindows ? `xcopy package.json ${filePathName}` : `cp ./package.json ./${filePathName}`);
@@ -62,21 +77,16 @@ const zipFile = () => {
 
 // 上传打包产物
 
-const uploadFile = async () => {
+const uploadFile = async (localPath, remotePath) => {
   async function uploadFolder(localPath, remotePath) {
     await sftp.put(localPath, remotePath)
     console.log(`已上传文件: ${localPath} -> ${remotePath}`)
   }
-
-  console.log(`将为${isDev ? '测试' : '正式'}环境进行部署`)
   try {
-    await sftp.connect(config.defaultServerConfig)
-    console.log('成功连接到SFTP服务器，开始传输部署tar文件，请稍后...')
-    await uploadFolder(
-      `${FILE_PATH.local}.tar.gz`,
-      `${FILE_PATH.uploadPath}/${FILE_PATH.localFileName}.tar.gz`
-    )
-    console.log('文件上传完成')
+    await sftp.connect(config.defaultServerConfig);
+    console.log('成功连接到SFTP服务器，开始传输部署文件，请稍后...');
+    await uploadFolder(localPath, remotePath);
+    console.log('文件上传完成');
     rl.close()
     sftp.end()
   } catch (err) {
@@ -88,7 +98,7 @@ const uploadFile = async () => {
 
 // 解压并部署打包产物
 
-const decompressionServerTar = () => {
+const deployByCommonArray = (commonStrList) => {
   const ssh = new NodeSSH()
 
   async function run() {
@@ -100,14 +110,6 @@ const decompressionServerTar = () => {
         username: handleConfig.username,
         password: handleConfig.password
       })
-      const commonStrList = [
-        `rm -rf ${FILE_PATH.uploadPath}/server`,
-        `tar -zxvf ${FILE_PATH.uploadPath}/${FILE_PATH.localFileName}.tar.gz`,
-        `cd ${FILE_PATH.uploadPath}/server`,
-        `pnpm i`,
-        `pm2 restart ./server.bundle.js`,
-        `rm -rf ${FILE_PATH.uploadPath}/${FILE_PATH.localFileName}.tar.gz`
-      ]
       await ssh.execCommand(commonStrList.join(';'))
       console.log('部署完成!')
       // 关闭连接
@@ -121,13 +123,24 @@ const decompressionServerTar = () => {
 }
 
 const main = async () => {
-  const res = zipFile();
+  // ng配置更新
+  if (isNg){
+    console.log("开始上传更新nginx.conf文件...");
+    await uploadFile(`./tools/nginx/nginx.conf`, `${config.ngRootPath}/conf/nginx.conf`);
+    console.log("nginx.conf文件上传完成");
+    deployByCommonArray(COMMON_STR_LIST.ng);
+    console.log("nginx重启完毕!");
+    return true;
+  }
+  // 服务部署
+  const res = zipServerFile();
   if (!res){
     console.log('部署异常中断，请检查!');
-    return 0;
+    return res;
   }
-  await uploadFile();
-  decompressionServerTar();
+  console.log(`将为${isDev ? '测试' : '正式'}环境进行部署`)
+  await uploadFile(`${FILE_PATH.local}.tar.gz`, `${FILE_PATH.uploadPath}/${FILE_PATH.localFileName}.tar.gz`);
+  deployByCommonArray(COMMON_STR_LIST.server);
 }
 
 main();

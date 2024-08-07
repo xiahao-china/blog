@@ -12,13 +12,7 @@ else
       yum -y install sshpass
       echo "sshpass 安装完成"
   elif [[ "$(expr substr $(uname -s) 1 5)" == "MINGW" ]]; then
-      # 如果是 Windows 系统，则执行 Windows 相关指令
-      echo "当前系统是 Windows 将为您安装sshpass"
-      tar xvzf ./application-file/sshpass-1.10.tar.gz
-      ./sshpass-1.06/configure
-      make
-      sudo make install
-      echo "sshpass 安装完成"
+      echo "windows暂无sshpass"
   else
       # 如果无法确定系统类型，则输出错误信息
       echo "无法确定当前系统类型"
