@@ -7,21 +7,22 @@
       finished-text="没有更多文章了~"
       @load="initBlogList"
     >
-      <BlogItem
-        v-for="(item, index) in blogList"
-        :key="item.id"
-        :class="{
-          'last-item': index+1 === blogList.length
-        }"
-        :article="item"
-      />
+      <div class="blog-list">
+        <BlogItem
+          v-for="(item, index) in blogList"
+          :key="item.id"
+          :class="{
+            'last-item': index + 1 === blogList.length,
+          }"
+          :article="item"
+        />
+      </div>
     </van-list>
   </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
-import { DEFAULT_BLOG_LIST } from "@/views/HomePage/const";
 import BlogItem from "@/views/HomePage/components/BlogItem/index.vue";
 import { IArticle } from "@/api/article/const";
 import { articleList } from "@/api/article";
@@ -29,7 +30,7 @@ import { articleList } from "@/api/article";
 export default defineComponent({
   name: "Home",
   components: {
-    BlogItem
+    BlogItem,
   },
   setup: () => {
     const blogList = ref<IArticle[]>([]);
@@ -43,14 +44,14 @@ export default defineComponent({
 
       const res = await articleList({
         pageSize: 10,
-        pageNumber: pageNum.value
+        pageNumber: pageNum.value,
       });
       loading.value = false;
       blogList.value = blogList.value.concat(res.data.list || []);
       total.value = res.data.total || 0;
     };
 
-    const loadFinish = computed(() => (pageNum.value * 10) > total.value);
+    const loadFinish = computed(() => pageNum.value * 10 > total.value);
 
     onMounted(() => {
       initBlogList();
@@ -60,9 +61,9 @@ export default defineComponent({
       blogList,
       loading,
       initBlogList,
-      loadFinish
+      loadFinish,
     };
-  }
+  },
 });
 </script>
 

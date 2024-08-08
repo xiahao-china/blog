@@ -6,13 +6,15 @@
       class="user-dropdown"
       teleport="body"
     >
-      <van-dropdown-item>
+      <van-dropdown-item class="user-dropdown-item">
         <template #title>
-          <img
-            class="head-img"
-            v-if="userInfo.uid"
-            :src="userInfo.avatar || staticImgs.defaultHeadImg"
-          />
+          <div class="head-img-shell">
+            <img
+                class="head-img"
+                v-if="userInfo.uid"
+                :src="userInfo.avatar || staticImgs.defaultHeadImg"
+            />
+          </div>
         </template>
         <UserInfo @logout="logOutHandle" />
       </van-dropdown-item>

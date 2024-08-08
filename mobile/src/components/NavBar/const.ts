@@ -1,5 +1,3 @@
-import { throttle } from "lodash";
-
 export interface ISearchRecordItem {
   text: string;
   time: number;

@@ -15,6 +15,7 @@ export interface IArticle {
   likeNum: number; // 点赞量
   reviewNum: number; // 评论数
   reviewId: number[];
+  tag?: string[]; // 标签
 }
 
 export interface ICreateAndEditArticleReqParams {

@@ -22,24 +22,45 @@
     white-space: nowrap;
   }
 
-  .head-img {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: 1px solid @table-weak-gray;
-    object-fit: cover;
+  .head-img-shell{
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    .head-img {
+      position: relative;
+      z-index: 9;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid @table-weak-gray;
+      object-fit: cover;
+
+    }
   }
 
+
   .user-dropdown {
+
     /deep/ .van-dropdown-menu__bar {
       box-shadow: none;
       background: transparent;
+
+
 
       .van-dropdown-menu__item {
         .van-dropdown-menu__title {
           padding: 0;
         }
       }
+    }
+
+    /deep/.user-dropdown-item{
+      .van-dropdown-item__content{
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+      }
+
     }
   }
 }

@@ -1,35 +1,53 @@
 <template>
   <div class="user-options" >
-    <div class="user-info">
-      <img class="user-head-img" :src="userInfo.avatar || staticImgs.defaultHeadImg" />
-      <div class="text-info">
-        <div class="nick-shell">
-          <div class="nick">{{userInfo.nick}}</div>
-          <span class="iconfont icon-edit"/>
+    <div class="top-block">
+      <div class="user-info">
+        <img class="user-head-img" :src="userInfo.avatar || staticImgs.defaultHeadImg" />
+        <div class="text-info">
+          <div class="nick-shell">
+            <div class="nick">{{userInfo.nick}}</div>
+          </div>
+          <div class="last-login">上次登录：{{userPreLoginStr}}</div>
         </div>
-        <div class="last-login">上次登录：{{userPreLoginStr}}</div>
+      </div>
+      <div class="statistical-data">
+        <div class="data-item">
+          <div class="num">{{userInfo.likesNum || 0}}</div>
+          <div class="desc">点赞</div>
+        </div>
+        <div class="data-item">
+          <div class="num">{{userInfo.followNum || 0}}</div>
+          <div class="desc">关注</div>
+        </div>
+        <div class="data-item">
+          <div class="num">{{userInfo.collectNum || 0}}</div>
+          <div class="desc">收藏</div>
+        </div>
       </div>
     </div>
-    <div class="statistical-data">
-      <div class="data-item">
-        <div class="num">{{userInfo.likesNum || 0}}</div>
-        <div class="desc">点赞</div>
-      </div>
-      <div class="data-item">
-        <div class="num">{{userInfo.followNum || 0}}</div>
-        <div class="desc">关注</div>
-      </div>
-      <div class="data-item">
-        <div class="num">{{userInfo.collectNum || 0}}</div>
-        <div class="desc">收藏</div>
-      </div>
-    </div>
+
     <div class="btn-list">
       <div class="btn-item" @click="toCreateArticle">
-        <span class="iconfont icon-icf_wirte"/>
-        开始创作
+        <div class="btn-icon">
+          <span class="iconfont icon-edit"/>
+        </div>
+        <div class="text">编辑信息</div>
+        <div class="right-arrow">></div>
       </div>
-      <div class="btn-item warning" @click="logOut">退出登录</div>
+      <div class="btn-item" @click="toCreateArticle">
+        <div class="btn-icon">
+          <span class="iconfont icon-icf_wirte"/>
+        </div>
+        <div class="text">开始创作</div>
+        <div class="right-arrow">></div>
+      </div>
+      <div class="btn-item warning" @click="logOut">
+        <div class="btn-icon">
+          <span class="iconfont icon-logout"/>
+        </div>
+        <div class="text">退出登录</div>
+        <div class="right-arrow">></div>
+      </div>
     </div>
   </div>
 </template>
