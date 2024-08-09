@@ -3,6 +3,7 @@ node_modules
 ./dist
 ./config.js
 ./logs
+./tools/mongodb/dataBase
 #serverConfig.js
 output.js
 server.tar.gz

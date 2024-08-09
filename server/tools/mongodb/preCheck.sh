@@ -35,7 +35,7 @@ check_mongodump_res() {
         echo "当前系统是 Linux"
         ;;
       "Windows")
-        echo "当前系统是 Windows"
+        echo "当前系统是 Windows，请前往 https://www.mongodb.com/try/download/database-tools 自行下载后配置环境Path重启后再运行脚本"
         ;;
       *)
         echo "无法检测到系统类型"
