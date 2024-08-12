@@ -59,6 +59,16 @@ export const routes: Array<RouteRecordRaw & IObject> = [
       import(/* webpackChunkName: "Gadget" */ "src/views/Gadget/index.vue"),
   },
   {
+    path: "/ChangeUserInfo",
+    name: "ChangeUserInfo",
+    needNavBar: true,
+    meta: {
+      pageName: "修改个人信息",
+    },
+    component: () =>
+      import(/* webpackChunkName: "ChangeUserInfo" */ "src/views/ChangeUserInfo/index.vue"),
+  },
+  {
     path: "/:pathMatch(.*)*",
     redirect: "/HomePage",
   },

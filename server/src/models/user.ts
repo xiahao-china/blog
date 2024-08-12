@@ -40,6 +40,7 @@ export interface IUserInfo {
 
   state: EUserStatus;
   role: ERole;
+  hasChangeNick: boolean;
   remark: string; // 备注
   token: string;
   tokenExpiredTime: number;
@@ -64,6 +65,7 @@ export const getDefaultUserInfo = (): IUserInfo => {
 
     state: EUserStatus.using,
     role: ERole.normal,
+    hasChangeNick: false,
 
     // token
     token: '',
@@ -94,6 +96,7 @@ const usersSchema = new Schema({
 
   state: Number,
   role: Number,
+  hasChangeNick: Boolean,
 
   // token
   token: String,

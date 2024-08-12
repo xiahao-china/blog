@@ -19,3 +19,7 @@ export const isMail = (mail?: string) => {
         msg
     }
 }
+
+export const isUrl = () => {
+
+}

@@ -16,7 +16,7 @@
             />
           </div>
         </template>
-        <UserInfo @logout="logOutHandle" />
+        <UserInfo @close-dropdown="closeDropdown"/>
       </van-dropdown-item>
     </van-dropdown-menu>
   </div>
@@ -56,7 +56,7 @@ export default defineComponent({
       });
     };
 
-    const logOutHandle = async () => {
+    const closeDropdown = async () => {
       userDropdownMenuRef.value?.close();
     };
 
@@ -64,7 +64,8 @@ export default defineComponent({
       staticImgs,
       userInfo,
       toLogin,
-      logOutHandle,
+      closeDropdown,
+      userDropdownMenuRef
     };
   },
 });

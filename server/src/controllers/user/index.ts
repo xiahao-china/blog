@@ -7,14 +7,18 @@ import { EReqStatus, sendResponse, TDefaultRouter, TNext } from "@/routes/const"
 import { signToken } from "@/utils/token";
 import { isMail, isPhone } from "@/utils/reg";
 import {
-  createVerificationCode, generateRandomUsername, LOGIN_RES_KEY_LIST, USER_TOKEN_EXPIRED_INTERVAL_MS,
+  createVerificationCode,
+  generateRandomUsername,
+  LOGIN_RES_KEY_LIST,
+  USER_TOKEN_EXPIRED_INTERVAL_MS,
   VERIFICATION_CODE_ACQUISITION_INTERVAL,
   VERIFICATION_CODE_VALIDITY_TIME
 } from "@/controllers/user/const";
 import { sendMail, sendPhoneVerificationCode } from "@/utils/verificationCode";
-import { APP_NAME, padWithZeros } from "@/utils/common";
+import { APP_NAME, padWithZeros, WHITELIST_HOST } from "@/utils/common";
 import phoneVerificationCode, { IPhoneVerificationCodeSchema } from "@/models/phoneVerificationCode";
 import { IObject } from "@/utils/const";
+import xss from "xss";
 
 export interface ILoginControllersReqParams {
   password: string;
@@ -22,6 +26,13 @@ export interface ILoginControllersReqParams {
   email: string;
   phoneVerCode: number;
   emailVerCode: number;
+}
+
+export interface IChangeUsrControllers {
+  nick: IUserInfo["nick"];
+  originPassword: IUserInfo["password"];
+  password: IUserInfo["password"];
+  avatar: IUserInfo["avatar"];
 }
 
 export interface IGetVerCodeReqParams {
@@ -187,5 +198,63 @@ export const checkLoginControllers = async (ctx: TDefaultRouter<{}>, next: TNext
 export const logOutControllers = async (ctx: TDefaultRouter<{}>, next: TNext) => {
   ctx.cookies.set("uid", "");
   ctx.cookies.set("token", "");
+  return sendResponse.success(ctx);
+};
+
+// nick 限制10字以下
+// password 限制大写小写英文数字起码两种 长度6-24字符
+// avatar 限制上传的头像
+export const changeUsrControllers = async (ctx: TDefaultRouter<IChangeUsrControllers>, next: TNext) => {
+  let {
+    nick,
+    password,
+    originPassword,
+    avatar
+  } = ctx.request.body || {};
+  const userInfo = await checkLogin(ctx, next);
+  if (!userInfo) return sendResponse.error(ctx, "", EReqStatus.noLogin);
+  if (password) {
+    if (!originPassword) return sendResponse.error(ctx, "参数缺失，请检查原密码！");
+    if (md5(originPassword) !== userInfo.password) return sendResponse.error(ctx, "原密码错误，请检查！");
+    const testPassword = /^[a-zA-Z\d\,\.\@\$\!\%\*\?\&\#\%\^\-\+\=\<\>\`\'\"]{8,20}$/.test(password);
+    let regNum = 0;
+    [
+      /[a-z]/,
+      /[A-Z]/,
+      /\d/,
+      /[\,\.\@\$\!\%\*\?\&\#\%\^\-\+\=\<\>\`\'\"]/
+    ].forEach((item) => {
+      if (item.test(password)) ++regNum;
+    });
+    if (!testPassword || regNum < 2) return sendResponse.error(ctx, "密码需满足6-24位，且包含大写英文，小写英文，数字，特殊符号起码两种组成，请检查！");
+  }
+  if (nick) {
+    if (userInfo.hasChangeNick) return sendResponse.error(ctx, "您已经修改过昵称！");
+    const testNick = nick.length > 0 && nick.length <= 10;
+    if (!testNick) return sendResponse.error(ctx, "您的用户昵称长度超出10个字符，请检查！");
+  }
+  if (avatar) {
+    try {
+      const decodeUrl = decodeURI(avatar);
+      const urlcheck = new URL(decodeUrl);
+      if (urlcheck.search) return sendResponse.error(ctx, "头像url非法，请检查！");
+      let checkRes = false;
+      WHITELIST_HOST.forEach((item) => {
+        checkRes = checkRes || new RegExp(`^${item}`).test(avatar);
+      });
+      if (!checkRes) return sendResponse.error(ctx, "头像url非法，请检查！");
+    } catch (err) {
+      return sendResponse.error(ctx, "头像url错误，请检查！");
+    }
+  }
+
+  await userModel.updateOne({ uid: userInfo.uid }, {
+    $set: {
+      nick: xss(nick) || userInfo.nick,
+      password: md5(password) || userInfo.password,
+      avatar: avatar || userInfo.avatar,
+      hasChangeNick: userInfo.hasChangeNick || Boolean(nick)
+    }
+  });
   return sendResponse.success(ctx);
 };

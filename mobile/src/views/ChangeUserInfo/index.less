@@ -1,0 +1,130 @@
+@import "/src/assets/globalStyle/commonStyle.less";
+
+.change-user-info{
+  display: inline-flex;
+  width: 100%;
+  flex-direction: column;
+  padding-bottom: 120px;
+  align-items: center;
+
+  .bg{
+    .common-bg();
+  }
+
+  .chose-head-img-shell{
+    display: inline-flex;
+    margin-top: 12px;
+    margin-bottom: 24px;
+    width: 100%;
+    justify-content: center;
+
+    .chose-head-img{
+      display: inline-flex;
+      justify-content: center;
+      border-radius: 14px;
+      background: white;
+      padding: 16px;
+      /deep/.van-uploader{
+        .van-uploader__wrapper{
+          .van-uploader__upload{
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
+
+  .common-input-item{
+    width: 344px;
+    border-radius: 14px;
+    overflow: hidden;
+    /deep/.van-field{
+      .van-field__label{
+        font-size: 13px;
+        font-weight: bold;
+      }
+      .van-field__value{
+        border: 1px solid @weak-text-gray;
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-size: 13px;
+
+      }
+    }
+    .nick-label{
+      width: 100%;
+      display: inline-flex;
+      align-items: flex-end;
+      .tip{
+        flex: 1;
+        justify-content: flex-end;
+        display: inline-flex;
+        margin-left: 4px;
+        font-size: 10px;
+        font-weight: 400;
+        color: @weak-text-gray2;
+      }
+    }
+
+    &.sex{
+      position: relative;
+      &:before{
+        content: '';
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        position: absolute;
+        z-index: 9;
+      }
+    }
+  }
+  .common-input-item + .common-input-item{
+    margin-top: 12px;
+  }
+
+  .password-collapse{
+    margin-top: 12px;
+    /deep/.van-collapse-item{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      .van-collapse-item__title{
+        margin-bottom: 12px;
+        width: 48px;
+        border-radius: 8px;
+
+        justify-content: center;
+        .van-cell__right-icon{
+          margin-left: 0;
+        }
+      }
+    }
+    /deep/.van-collapse-item__wrapper{
+      .van-collapse-item__content{
+        background: transparent;
+        padding: 0;
+      }
+    }
+  }
+
+  .confirm-btn{
+    position: fixed;
+    width: 100%;
+    display: flex;
+    padding: 0 16px 32px;
+    justify-content: center;
+    backdrop-filter: blur(3px);
+    bottom: 0;
+    .confirm-btn-body{
+      width: 100%;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 16px;
+      background-color: @main-color2;
+      border: none;
+    }
+  }
+
+}
+

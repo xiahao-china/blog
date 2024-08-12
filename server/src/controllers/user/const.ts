@@ -19,8 +19,7 @@ export const VERIFICATION_CODE_VALIDITY_TIME = 10 * 60 * 1000;
 export const USER_TOKEN_EXPIRED_INTERVAL_MS = 10 * 24 * 60 * 60 * 1000;
 
 
-export const LOGIN_RES_KEY_LIST: (keyof IUserInfo)[] = ['uid', 'nick', 'avatar', 'lastLoginTime', 'sex'];
-
+export const LOGIN_RES_KEY_LIST: (keyof IUserInfo)[] = ['uid', 'nick', 'avatar', 'lastLoginTime', 'sex', 'hasChangeNick'];
 
 export const generateRandomUsername = (length: number) => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';

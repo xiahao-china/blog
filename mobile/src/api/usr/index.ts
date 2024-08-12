@@ -1,5 +1,5 @@
 import request, {IBaseRes} from "@/api/request";
-import {IGetVerCode, ILoginReqParams, IUserInfo} from "@/api/usr/const";
+import { IChangeUsrInfo, IGetVerCode, ILoginReqParams, IUserInfo } from "@/api/usr/const";
 
 export const loginReq = async (params: Partial<ILoginReqParams>) => {
     const res = await request.post<IBaseRes<IUserInfo>>('/api/usr/login', params);
@@ -17,4 +17,9 @@ export const checkLoginStatusReq = async () => {
 
 export const logOutReq = async () => {
     return request.get<IBaseRes<IUserInfo>>("/api/usr/logOut", {});
+}
+
+export const changeUsrInfo = async (params: Partial<IChangeUsrInfo>) => {
+    const res = await request.post<IBaseRes>('/api/usr/changeUsrInfo', params);
+    return res;
 }

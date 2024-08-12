@@ -1,9 +1,19 @@
+import { changeUsrInfo } from "@/api/usr/index";
+
+export enum ESex {
+  unknow = 1,
+  male,
+  female
+}
+
 export interface IUserInfo {
   uid: string;
   username: string;
   avatar: string;
   nick: string;
+  sex: ESex;
   mail: string;
+  hasChangeNick: boolean;
   lastLoginTime: number;
   followNum: number;
   likesNum: number;
@@ -21,4 +31,17 @@ export interface ILoginReqParams {
 export interface IGetVerCode {
   phone: string;
   email: string;
+}
+
+export interface IChangeUsrInfo {
+  nick: string;
+  originPassword: string;
+  password: string;
+  avatar: string;
+}
+
+export const SEX_MAP = {
+  [ESex.unknow]: '未知',
+  [ESex.female]: '女性',
+  [ESex.male]: '男性',
 }

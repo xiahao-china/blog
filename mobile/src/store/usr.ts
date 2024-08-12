@@ -1,5 +1,5 @@
 import { StoreOptions } from "vuex";
-import { IUserInfo } from "@/api/usr/const";
+import { ESex, IUserInfo } from "@/api/usr/const";
 import { checkLoginStatusReq } from "@/api/usr";
 
 export interface IUserState {usrInfo: IUserInfo}
@@ -12,6 +12,8 @@ export default {
       avatar: "",
       nick: "",
       mail: "",
+      hasChangeNick: false,
+      sex: ESex.unknow,
       lastLoginTime: 0,
       followNum: 0,
       likesNum: 0,
