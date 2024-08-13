@@ -1,5 +1,3 @@
-import { changeUsrInfo } from "@/api/usr/index";
-
 export enum ESex {
   unknow = 1,
   male,
@@ -38,6 +36,7 @@ export interface IChangeUsrInfo {
   originPassword: string;
   password: string;
   avatar: string;
+  sex: ESex;
 }
 
 export const SEX_MAP = {

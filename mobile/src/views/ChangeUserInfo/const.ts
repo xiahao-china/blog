@@ -6,3 +6,9 @@ export const SEX_COLUMNS = Object.keys(SEX_MAP).map((item)=>{
     value: parseInt(item) as ESex,
   })
 })
+
+export const PASSWORD_RULERS = [{
+  pattern: /^[a-zA-Z\d,.@$!%*?&#%^\-+=<>`'"]{8,20}$/,
+  tigger: 'onChange',
+  validateEmpty: false,
+}]

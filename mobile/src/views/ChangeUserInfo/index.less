@@ -26,8 +26,18 @@
       padding: 16px;
       /deep/.van-uploader{
         .van-uploader__wrapper{
+          .van-uploader__preview{
+            margin: 0;
+          }
+          .van-uploader__preview + .van-uploader__upload{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+          }
           .van-uploader__upload{
             margin: 0;
+
           }
         }
       }

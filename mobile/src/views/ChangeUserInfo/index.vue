@@ -3,8 +3,11 @@
     <div class="chose-head-img-shell">
       <div class="chose-head-img">
         <van-uploader
-          :value="[avatar]"
+          class="uploader-img"
+          v-model="avatar"
           accept="image/png, image/jpeg, image/jpg"
+          :after-read="uploadHeadImg"
+          :deletable="false"
         />
       </div>
     </div>
@@ -60,13 +63,14 @@
             label-align="top"
             clearable
             clear-trigger="always"
+            :rules="PASSWORD_RULERS"
           />
         </div>
       </van-collapse-item>
     </van-collapse>
 
     <div class="confirm-btn">
-      <van-button @click="toChangeInfo" :loading="submitLoding" class="confirm-btn-body" type="primary">确认修改</van-button>
+      <van-button @click="toChangeInfo" :loading="submitLoading" class="confirm-btn-body" type="primary">确认修改</van-button>
     </div>
 
     <van-popup teleport="#app" position="bottom" v-model:show="showChoseSex" round>
@@ -96,8 +100,9 @@ import { useStore } from "vuex";
 import "@toast-ui/editor/dist/i18n/zh-cn";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import { ESex, SEX_MAP } from "@/api/usr/const";
-import { SEX_COLUMNS } from "@/views/ChangeUserInfo/const";
+import { PASSWORD_RULERS, SEX_COLUMNS } from "@/views/ChangeUserInfo/const";
 import { changeUsrInfo } from "@/api/usr";
+import { uploadFile } from "@/api/file";
 
 export default defineComponent({
   name: "ChangeUserInfo",
@@ -117,13 +122,14 @@ export default defineComponent({
     const password = ref("");
     const originPassword = ref("");
 
-    const avatar = ref<UploaderFileListItem>({
+    const avatar = ref<UploaderFileListItem[]>(usrInfo.value.avatar ? [{
       url: usrInfo.value.avatar || "",
-    });
+    }] : []);
 
     const showChoseSex = ref(false);
     const collapseStatus = ref([]);
-    const submitLoding = ref(false);
+    const submitLoading = ref(false);
+    const uploadLoading = ref(false);
 
     const onSexConfirm = (data: { selectedValues: (number | string)[] }) => {
       sex.value = data.selectedValues[0] as ESex;
@@ -143,23 +149,41 @@ export default defineComponent({
         showToast("您修改后的密码格式有误，请检查!");
         return;
       }
-      submitLoding.value = true;
+      submitLoading.value = true;
       const res = await changeUsrInfo({
         nick: nick.value,
-        avatar: avatar.value.url,
+        avatar: avatar.value[0].url,
         password: password.value,
-        originPassword: originPassword.value
+        originPassword: originPassword.value,
+        sex: sex.value
       });
-      submitLoding.value = false;
+      submitLoading.value = false;
       if (res.code !== 200) showToast(res.message || "修改个人信息失败！");
       else {
+        showToast('修改成功！');
         store.dispatch("checkLoginStatus");
       }
     };
 
+    const uploadHeadImg = async (data: UploaderFileListItem) =>{
+      if (!data.file) return;
+      const formData = new FormData();
+      formData.append('file', data.file);
+      uploadLoading.value = true;
+      const res = await uploadFile(formData);
+      uploadLoading.value = false;
+      if (res.code !== 200) showToast(res.message || '上传失败!');
+      else {
+        avatar.value = [{
+          url: `${location.origin}${res.data.filePath}`,
+        }];
+      }
+    }
+
     return {
       SEX_COLUMNS,
       SEX_MAP,
+      PASSWORD_RULERS,
       usrInfo,
       nick,
       avatar,
@@ -170,7 +194,8 @@ export default defineComponent({
       password,
       originPassword,
       toChangeInfo,
-      submitLoding
+      submitLoading,
+      uploadHeadImg
     };
   },
 });

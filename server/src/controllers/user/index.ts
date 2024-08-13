@@ -1,5 +1,5 @@
 import md5 from "md5";
-import userModel, { getDefaultUserInfo, IUserInfo } from "@/models/user";
+import userModel, { ESex, getDefaultUserInfo, IUserInfo } from "@/models/user";
 import emailVerificationCodeModel, { IEmailVerificationCode } from "@/models/emailVerificationCode";
 
 import { logger } from "@/lib/log4js";
@@ -33,6 +33,7 @@ export interface IChangeUsrControllers {
   originPassword: IUserInfo["password"];
   password: IUserInfo["password"];
   avatar: IUserInfo["avatar"];
+  sex: IUserInfo["sex"];
 }
 
 export interface IGetVerCodeReqParams {
@@ -209,7 +210,8 @@ export const changeUsrControllers = async (ctx: TDefaultRouter<IChangeUsrControl
     nick,
     password,
     originPassword,
-    avatar
+    avatar,
+    sex
   } = ctx.request.body || {};
   const userInfo = await checkLogin(ctx, next);
   if (!userInfo) return sendResponse.error(ctx, "", EReqStatus.noLogin);
@@ -228,10 +230,14 @@ export const changeUsrControllers = async (ctx: TDefaultRouter<IChangeUsrControl
     });
     if (!testPassword || regNum < 2) return sendResponse.error(ctx, "密码需满足6-24位，且包含大写英文，小写英文，数字，特殊符号起码两种组成，请检查！");
   }
-  if (nick) {
+  if (nick && xss(nick) !== userInfo.nick) {
     if (userInfo.hasChangeNick) return sendResponse.error(ctx, "您已经修改过昵称！");
     const testNick = nick.length > 0 && nick.length <= 10;
     if (!testNick) return sendResponse.error(ctx, "您的用户昵称长度超出10个字符，请检查！");
+  }
+  if (sex) {
+    if (!Object.keys(ESex).map((item)=>parseInt(item)).filter((item)=>!isNaN(item)).includes(parseInt(sex)))
+      return sendResponse.error(ctx, "您的性别填写错误，请检查！");
   }
   if (avatar) {
     try {
@@ -253,7 +259,8 @@ export const changeUsrControllers = async (ctx: TDefaultRouter<IChangeUsrControl
       nick: xss(nick) || userInfo.nick,
       password: md5(password) || userInfo.password,
       avatar: avatar || userInfo.avatar,
-      hasChangeNick: userInfo.hasChangeNick || Boolean(nick)
+      hasChangeNick: userInfo.hasChangeNick || (Boolean(nick) && xss(nick) !== userInfo.nick),
+      sex: sex || userInfo.sex
     }
   });
   return sendResponse.success(ctx);
