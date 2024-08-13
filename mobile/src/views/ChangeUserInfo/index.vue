@@ -19,7 +19,7 @@
         label="用户昵称"
         placeholder="修改您的昵称（10字符内）"
         label-align="top"
-        clearable
+        :clearable="!usrInfo.hasChangeNick"
         :disabled="usrInfo.hasChangeNick"
         clear-trigger="always"
       >
@@ -152,7 +152,7 @@ export default defineComponent({
       submitLoading.value = true;
       const res = await changeUsrInfo({
         nick: nick.value,
-        avatar: avatar.value[0].url,
+        avatar: avatar.value[0]?.url,
         password: password.value,
         originPassword: originPassword.value,
         sex: sex.value

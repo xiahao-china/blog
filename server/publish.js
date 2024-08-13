@@ -37,10 +37,9 @@ const FILE_PATH = {
 const COMMON_STR_LIST = {
   server: [
     `rm -rf ${FILE_PATH.uploadPath}/server`,
-    `tar -zxvf ${FILE_PATH.uploadPath}/${FILE_PATH.localFileName}.tar.gz`,
-    `cd ${FILE_PATH.uploadPath}/server`,
-    `pnpm i`,
-    `pm2 restart ./server.bundle.js`,
+    `tar -zxvf ${FILE_PATH.uploadPath}/${FILE_PATH.localFileName}.tar.gz -C ${FILE_PATH.uploadPath}`,
+    `cd ${FILE_PATH.uploadPath}/server && pnpm i`,
+    `pm2 restart ${FILE_PATH.uploadPath}/server/server.bundle.js`,
     `rm -rf ${FILE_PATH.uploadPath}/${FILE_PATH.localFileName}.tar.gz`
   ],
   ng: [

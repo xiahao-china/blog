@@ -12,7 +12,7 @@ export interface IMulterUploadSingleFileRes {
   size: number;
 }
 
-export const FILE_STORAGE_PATH = path.join(__dirname, process.env.NODE_ENV === 'development' ? "../../../tools/mongodb/uploadFiles" : '');
+export const FILE_STORAGE_PATH = path.join(__dirname, process.env.NODE_ENV === 'development' ? "../../../tools/mongodb/uploadFiles" : '../../dbToolShell/uploadFiles');
 
 //调用multer的diskStorage方法,diskStorage（硬盘）存储引擎
 const storage = multer.diskStorage({
