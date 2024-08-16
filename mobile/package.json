@@ -26,6 +26,7 @@
     "@toast-ui/editor": "^3.2.2",
     "@types/lodash": "^4.14.200",
     "@types/node": "^20.10.5",
+    "@types/quill": "^2.0.14",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
     "@typescript-eslint/parser": "^4.18.0",
     "@vant/auto-import-resolver": "^1.0.2",
@@ -48,20 +49,21 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^7.0.0",
+    "iconv-lite": "^0.6.3",
     "less": "^3.0.4",
     "less-loader": "^5.0.0",
     "lodash": "^4.17.21",
+    "node-ssh": "^13.2.0",
     "postcss-pxtorem": "5.1.1",
     "prettier": "^2.2.1",
     "qs": "^6.11.2",
+    "quill": "^2.0.2",
     "ssh2-sftp-client": "^9.1.0",
     "typescript": "~4.1.5",
     "unplugin-vue-components": "^0.25.2",
     "vant": "^4.7.2",
     "vconsole-webpack-plugin": "^1.8.0",
     "webpack-bundle-analyzer": "^4.9.1",
-    "wx-jssdk-ts": "^1.1.1",
-    "node-ssh": "^13.2.0",
-    "iconv-lite": "^0.6.3"
+    "wx-jssdk-ts": "^1.1.1"
   }
 }

@@ -69,6 +69,15 @@ export const routes: Array<RouteRecordRaw & IObject> = [
       import(/* webpackChunkName: "ChangeUserInfo" */ "src/views/ChangeUserInfo/index.vue"),
   },
   {
+    path: "/CreateAndEditArticle",
+    name: "CreateAndEditArticle",
+    meta: {
+      pageName: "写文章",
+    },
+    component: () =>
+      import(/* webpackChunkName: "CreateAndEditArticle" */ "src/views/CreateAndEditArticle/index.vue"),
+  },
+  {
     path: "/:pathMatch(.*)*",
     redirect: "/HomePage",
   },

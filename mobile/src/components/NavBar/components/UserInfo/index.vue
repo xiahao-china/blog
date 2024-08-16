@@ -61,6 +61,7 @@ import { showToast } from "vant";
 
 import { IUserInfo } from "@/api/usr/const";
 import { logOutReq } from "@/api/usr";
+import { isMobile } from "@/util";
 
 
 export default defineComponent({
@@ -87,7 +88,8 @@ export default defineComponent({
     };
 
     const toCreateArticle = () => {
-      router.push("/CreateAndEditArticleByPc");
+      router.push(isMobile ? "/CreateAndEditArticle" : "/CreateAndEditArticleByPc");
+      emit("close-dropdown");
     };
 
     const toEditUserInfo = () => {
