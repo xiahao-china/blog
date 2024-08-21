@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@toast-ui/editor": "^3.2.2",
-    "@types/lodash": "^4.14.200",
+    "@types/lodash": "^4.17.7",
     "@types/node": "^20.10.5",
     "@types/quill": "^2.0.14",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
@@ -59,7 +59,7 @@
     "qs": "^6.11.2",
     "quill": "^2.0.2",
     "ssh2-sftp-client": "^9.1.0",
-    "typescript": "~4.5.5",
+    "typescript": "~5.5.4",
     "unplugin-vue-components": "^0.25.2",
     "vant": "^4.7.2",
     "vconsole-webpack-plugin": "^1.8.0",
