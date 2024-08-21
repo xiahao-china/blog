@@ -16,6 +16,7 @@ declare module 'vue' {
     SvgaImage: typeof import('./src/components/SvgaImage/index.vue')['default']
     UserInfo: typeof import('./src/components/NavBar/components/UserInfo/index.vue')['default']
     VanButton: typeof import('vant/es')['Button']
+    VanCol: typeof import('vant/es')['Col']
     VanCollapse: typeof import('vant/es')['Collapse']
     VanCollapseItem: typeof import('vant/es')['CollapseItem']
     VanDropdownItem: typeof import('vant/es')['DropdownItem']
@@ -27,6 +28,7 @@ declare module 'vue' {
     VanPopover: typeof import('vant/es')['Popover']
     VanPopup: typeof import('vant/es')['Popup']
     VanRollingText: typeof import('vant/es')['RollingText']
+    VanRow: typeof import('vant/es')['Row']
     VanStepper: typeof import('vant/es')['Stepper']
     VanUploader: typeof import('vant/es')['Uploader']
   }

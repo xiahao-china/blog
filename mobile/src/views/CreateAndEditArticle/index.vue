@@ -8,10 +8,10 @@
       />
       <div class="tip">将自动保存到草稿，最后保存: 17:09</div>
     </div>
-    <div class="markdown-container" ref="mdContainerRef"></div>
+    <div class="markdown-container" ref="mdContainerRef" @click="onStartEdit"></div>
 
-    <div class="flot-tool">
-      <div class="options-item edit">
+    <div class="flot-tool" v-show="!editorToolbarDisplay">
+      <div class="options-item edit" @click="onStartEdit">
         <span class="options-icon iconfont icon-icf_wirte" />
         <div class="options-text">编辑</div>
       </div>
@@ -24,6 +24,12 @@
         <div class="options-text">{{ nowBlogInfo ? "保存" : "发布" }}</div>
       </div>
     </div>
+    <EditorToolBar
+      ref="editorToolBarRef"
+      :editor-toolbar-display="editorToolbarDisplay"
+      @end-edit="onEndEdit"
+      @chose-img="onChoseImg"
+    />
   </div>
 </template>
 
@@ -33,14 +39,18 @@ import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { showToast } from "vant";
 import Quill from "quill";
-import "quill/dist/quill.core.css";
+import Delta from "quill-delta";
 import { createAndEditArticle, getArticleDetail } from "@/api/article";
 import { IGetArticleDetailResItem } from "@/api/article/const";
 import { uploadFile } from "@/api/file";
+import { TOOLBAR_OPTIONS } from "@/views/CreateAndEditArticle/const";
+import EditorToolBar from "@/views/CreateAndEditArticle/components/EditorToolBar/index.vue";
 
 export default defineComponent({
   name: "CreateAndEditArticle",
-  components: {},
+  components: {
+    EditorToolBar
+  },
   setup: () => {
     const store = useStore();
     const route = useRoute();
@@ -51,7 +61,11 @@ export default defineComponent({
     });
 
     const mdContainerRef = ref<HTMLDivElement>();
-    const editor = ref<Quill>();
+    const editorToolBarRef = ref<{ getFixToolbarRef: () => HTMLDivElement }>();
+
+
+    let editor: Quill;
+    const editorToolbarDisplay = ref(true);
 
     const title = ref("");
     const nowBlogInfo = ref<IGetArticleDetailResItem>();
@@ -59,25 +73,43 @@ export default defineComponent({
     const usrInfo = computed(() => store.state.usrInfo);
 
     const initEdit = (str: string) => {
-      if (!mdContainerRef.value) return;
+      const FixToolbarRootEl = editorToolBarRef.value?.getFixToolbarRef();
+      if (!mdContainerRef.value || !FixToolbarRootEl) return;
       const quill = new Quill(mdContainerRef.value, {
         placeholder: "请输入正文",
+        modules: {
+          toolbar: {
+            container: FixToolbarRootEl,
+            handlers: TOOLBAR_OPTIONS
+          }
+        },
+        theme: "snow"
       });
+      const editorObj = quill;
+      editorObj.setContents(new Delta([{
+        insert: str
+      }]));
+      editor = editorObj;
+    };
 
-      // const editorObj = quill;
-      // editorObj.eventEmitter.removeEventHandler("addImageBlobHook");
-      // editorObj.eventEmitter.listen(
-      //   "addImageBlobHook",
-      //   async (blob, callback) => {
-      //     const formData = new FormData();
-      //     formData.append("file", blob);
-      //     const res = await uploadFile(formData);
-      //     if (res.code === 200)
-      //       callback(`${location.origin}${res.data.filePath}`);
-      //     else showToast(res.message || "上传失败，请稍后再试！");
-      //   }
-      // );
-      // editor.value = editorObj;
+    const onStartEdit = () => {
+      editorToolbarDisplay.value = true;
+      editor?.focus();
+    };
+
+    const onEndEdit = () => {
+      editorToolbarDisplay.value = false;
+    };
+
+    const onChoseImg = async (file: File) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await uploadFile(formData);
+      if (res.code === 200) {
+        const range = editor.getSelection();
+        //将上传好的图片，插入到富文本的range.index（当前光标处）
+        editor.insertEmbed(range?.index || 0, "image", `${location.origin}${res.data.filePath}`);
+      } else showToast(res.message || "上传失败，请稍后再试！");
     };
 
     const initBlog = async () => {
@@ -98,8 +130,8 @@ export default defineComponent({
         showToast("请填写文章标题");
         return;
       }
-      if (!editor.value) return;
-      const content = editor.value?.getContents() || "";
+      if (!editor) return;
+      const content = editor?.getSemanticHTML() || "";
       if (!content) {
         showToast("文章内容不能为空!");
         return;
@@ -107,15 +139,14 @@ export default defineComponent({
       const res = await createAndEditArticle({
         id: nowBlogInfo.value?.id,
         title: title.value,
-        content: content.toString()
+        content: content.toString(),
+        isHTML: true
       });
       if (res.code === 200) {
         showToast("发布成功");
         setTimeout(() => {
           router.push({
-            query: {
-              id: res.data.id.toString()
-            },
+            query: { id: res.data.id.toString() },
             path: "/ArticleDetail"
           });
         }, 500);
@@ -142,15 +173,23 @@ export default defineComponent({
     return {
       staticImgs,
       mdContainerRef,
+      editorToolBarRef,
       createOrEditArticle,
       usrInfo,
       title,
-      nowBlogInfo
+      nowBlogInfo,
+      editorToolbarDisplay,
+      onStartEdit,
+      onEndEdit,
+      onChoseImg
     };
   }
 });
 </script>
 
 <style lang="less">
+@import "quill/dist/quill.core.css";
+@import "quill/dist/quill.snow.css";
 @import "index.less";
+
 </style>

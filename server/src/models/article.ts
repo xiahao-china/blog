@@ -13,6 +13,7 @@ export interface IArticle {
   collectNum: number; // 收藏量
   likeNum: number; // 点赞量
   reviewId: number[];
+  isHTML: boolean;
 }
 
 export const getDefaultArticle = ()=>{
@@ -29,6 +30,7 @@ export const getDefaultArticle = ()=>{
     collectNum: 0,
     likeNum: 0,
     reviewId: [],
+    isHTML: false,
   }
 }
 
@@ -43,6 +45,7 @@ const articleSchema = new Schema({
   collectNum: Number,
   browseNum: Number,
   likeNum: Number,
+  isHTML: Boolean,
   reviewId: Array,
 });
 

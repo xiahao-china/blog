@@ -1,0 +1,41 @@
+@import "/src/assets/globalStyle/commonStyle.less";
+.editor-tool-bar{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 8px 16px;
+  box-shadow: rgba(0, 0, 0, 0.08) 0px -2px 8px 0px;
+  border: none;
+  position: fixed;
+  bottom: 0;
+  .toolbar-list-row{
+    width: 100%;
+  }
+  .tool-bar-item-title{
+    color: @weak-text-gray;
+    font-size: 12px;
+  }
+  .end-edit{
+    display: inline-flex;
+    font-size: 14px;
+    font-weight: 600;
+    color: @main-color;
+    transform: translateY(-2px);
+  }
+  .ql-picker-options{
+    top: auto !important;
+    bottom: 100% !important;
+  }
+  .chose-img{
+    position: relative;
+    .chose-img-input{
+      opacity: 0;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+    }
+  }
+}
+

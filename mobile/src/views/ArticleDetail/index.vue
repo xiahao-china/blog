@@ -63,6 +63,7 @@ import {
   EArticleActionType,
   IArticleActionItem
 } from "@/views/ArticleDetail/const";
+import { isMobile } from "@/util";
 
 
 export default defineComponent({
@@ -143,7 +144,7 @@ export default defineComponent({
           query: {
             articleId: articleInfo.value.id
           },
-          path: "/CreateAndEditArticleByPc"
+          path: isMobile ? "/CreateAndEditArticle" : "/CreateAndEditArticleByPc"
         });
       }
     };

@@ -22,6 +22,7 @@ export interface ICreateAndEditArticleReqParams {
   id: string;
   title: string;
   content: string;
+  isHTML?: boolean;
 }
 
 export interface IGetArticleDetailReqParams {

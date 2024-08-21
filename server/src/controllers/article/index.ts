@@ -12,6 +12,7 @@ export interface ICreateArticleControllersReqParams {
   id: string;
   title: string;
   content: string;
+  isHTML?: boolean;
 }
 
 export interface ISearchArticleControllersReqParams extends IPageReqBase {
@@ -25,7 +26,8 @@ export const createAndEditArticleControllers = async (ctx: TDefaultRouter<ICreat
   const {
     id,
     title,
-    content
+    content,
+    isHTML
   } = ctx.request.body || {};
   if (!title && !content) return sendResponse.error(ctx, "文章标题或内容不能为空!");
   try {
@@ -35,7 +37,8 @@ export const createAndEditArticleControllers = async (ctx: TDefaultRouter<ICreat
       await articleModel.collection.updateOne({ id }, {
         $set: {
           title: xss(title),
-          content: xss(content)
+          content: xss(content),
+          isHTML: isHTML || false,
         }
       });
       return sendResponse.success(ctx, { id: nowArticle.id });
@@ -47,7 +50,8 @@ export const createAndEditArticleControllers = async (ctx: TDefaultRouter<ICreat
       id: `${new Date().getTime()}${articleNum + 1}`,
       createrUid: userInfo.uid,
       title: xss(title),
-      content: xss(content)
+      content: xss(content),
+      isHTML: isHTML || false,
     };
 
     await articleModel.collection.insertMany([newArticle]);
