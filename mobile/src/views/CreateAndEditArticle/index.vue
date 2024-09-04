@@ -40,6 +40,8 @@ import { useRoute, useRouter } from "vue-router";
 import { showToast } from "vant";
 import Quill from "quill";
 import Delta from "quill-delta";
+import { HtmlToDelta } from 'quill-delta-from-html';
+
 import { createAndEditArticle, getArticleDetail } from "@/api/article";
 import { IGetArticleDetailResItem } from "@/api/article/const";
 import { uploadFile } from "@/api/file";
@@ -65,7 +67,7 @@ export default defineComponent({
 
 
     let editor: Quill;
-    const editorToolbarDisplay = ref(true);
+    const editorToolbarDisplay = ref(false);
 
     const title = ref("");
     const nowBlogInfo = ref<IGetArticleDetailResItem>();
@@ -86,9 +88,10 @@ export default defineComponent({
         theme: "snow"
       });
       const editorObj = quill;
-      editorObj.setContents(new Delta([{
-        insert: str
-      }]));
+      if (str){
+        const handleDeltaAry = new HtmlToDelta().convert(str);
+        editorObj.setContents(handleDeltaAry);
+      }
       editor = editorObj;
     };
 

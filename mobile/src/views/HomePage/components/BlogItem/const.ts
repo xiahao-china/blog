@@ -23,9 +23,10 @@ export const extractCoverKeyInfo = (str: string):ICoverKeyInfo =>{
     const encodingAry = new TextEncoder().encode(str[0]);
     const calVal = Math.ceil(encodingAry.reduce((pre,cur)=> pre + cur, 0) / encodingAry.length);
     const mapIndex = calVal % LINEAR_GRADIENT_MAP.length;
-
+    let matchEnKeyWord = str.match(/([A-z]|-)+/)?.[0] || '';
+    if (!matchEnKeyWord) matchEnKeyWord = str.slice(0,4);
     return {
         linearGradient: LINEAR_GRADIENT_MAP[mapIndex],
-        keyWord: str.match(/([A-z]|-)+/)?.[0] || ''
+        keyWord: matchEnKeyWord
     }
 }

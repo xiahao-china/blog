@@ -58,6 +58,7 @@
     "prettier": "^2.4.1",
     "qs": "^6.11.2",
     "quill": "^2.0.2",
+    "quill-delta-from-html": "^1.0.4",
     "ssh2-sftp-client": "^9.1.0",
     "typescript": "~5.5.4",
     "unplugin-vue-components": "^0.25.2",
