@@ -29,7 +29,7 @@
         </div>
       </div>
       <div class="options" v-if="isCreater">
-        <van-popover placement="top" :actions="ARTICLE_ACTION_LIST" @select="onActionSelect">
+        <van-popover class="options-popover" placement="top" :actions="ARTICLE_ACTION_LIST" @select="onActionSelect">
           <template #reference>
             <van-button class="btn">管理文章</van-button>
           </template>
@@ -50,10 +50,12 @@ import { showDialog, showToast } from "vant";
 import dayjs from "dayjs";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-import Editor from "@toast-ui/editor";
-import "@toast-ui/editor/dist/i18n/zh-cn";
-import "@toast-ui/editor/dist/toastui-editor.css";
+import Quill from "quill";
+import Delta from "quill-delta";
+import { HtmlToDelta } from "quill-delta-from-html";
+import {toDelta} from "@slite/quill-delta-markdown";
 
+import { isMobile } from "@/util";
 import Loading from "@/components/Loading/index.vue";
 import { IGetArticleDetailResItem } from "@/api/article/const";
 import { collectArticle, deleteArticle, getArticleDetail, likeArticle } from "@/api/article";
@@ -62,9 +64,7 @@ import {
   defaultArticleDetail,
   EArticleActionType,
   IArticleActionItem
-} from "@/views/ArticleDetail/const";
-import { isMobile } from "@/util";
-
+} from "./const";
 
 export default defineComponent({
   name: "ArticleDetail",
@@ -90,12 +90,30 @@ export default defineComponent({
         createTimeStr: dayjs(res.data.createTime).format("YYYY-MM-DD HH:mm")
       };
       if (contentRef.value) {
-        viewer.value = Editor.factory({
-          el: contentRef.value,
-          initialValue: res.data.content,
-          height: "",
-          viewer: true
+        const quill = new Quill(contentRef.value, {
+          modules: {
+            toolbar: {
+              container: 'body'
+            }
+          },
+          theme: 'snow',
+          readOnly: true
         });
+        let handleDeltaAry: Delta | undefined;
+        if (res.data.isHTML) {
+          handleDeltaAry = new HtmlToDelta().convert(res.data.content);
+        } else {
+          // viewer.value = Editor.factory({
+          //   el: contentRef.value,
+          //   initialValue: res.data.content,
+          //   height: "",
+          //   viewer: true
+          // });
+          handleDeltaAry = toDelta(res.data.content);
+        }
+        console.log('handleDeltaAry',handleDeltaAry);
+        handleDeltaAry && quill.setContents(handleDeltaAry);
+
       }
     };
 
@@ -172,5 +190,7 @@ export default defineComponent({
 </script>
 
 <style lang="less">
+@import "quill/dist/quill.core.css";
+@import "quill/dist/quill.snow.css";
 @import "index.less";
 </style>

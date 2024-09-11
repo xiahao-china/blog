@@ -68,6 +68,7 @@
   .content{
     width: 100%;
     height: 100%;
+    border: none;
     overflow: hidden;
     margin-top: 20px;
     margin-bottom: 40px;
@@ -75,6 +76,9 @@
     line-height: 25px;
     h1:first-child,h2:first-child,h3:first-child,h4:first-child,h5:first-child{
       margin-top: 0;
+    }
+    .ql-editor{
+      padding: 0;
     }
   }
 }
@@ -100,7 +104,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 0 13px;
+    padding: 0 20px 0 13px;
 
     .options-item{
       flex-direction: row;
@@ -175,11 +179,19 @@
     border-left: 1px solid #e4e6eb;
     position: relative;
     .btn{
+      display: inline-flex;
       font-size: 14px;
       font-weight: 400;
       color: @main-color;
       border: none;
+      width: 100%;
+      align-items: center;
+      white-space: nowrap;
     }
   }
 }
-
+.options-popover{
+  .van-popover__action{
+    padding-left: 0;
+  }
+}

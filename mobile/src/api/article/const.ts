@@ -6,8 +6,8 @@ export interface IArticle {
   content: string;
   cover: string;
   createrUid: string;
-  nick: string;
   createrAvatar: string;
+  createrNick: string;
   createTime: number;
   lastUpdateTime: number;
   browseNum: number; // 浏览量
@@ -15,6 +15,7 @@ export interface IArticle {
   likeNum: number; // 点赞量
   reviewNum: number; // 评论数
   reviewId: number[];
+  isHTML: boolean;
   tag?: string[]; // 标签
 }
 

@@ -27,4 +27,5 @@ export const ARTICLE_RES_KEY_LIST: (keyof IArticle)[] = [
   "collectNum",
   "likeNum",
   "reviewId",
+  "isHTML"
 ];

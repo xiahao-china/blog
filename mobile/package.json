@@ -23,6 +23,7 @@
     "weixin-js-sdk": "^1.6.5"
   },
   "devDependencies": {
+    "@slite/quill-delta-markdown": "^0.0.8",
     "@toast-ui/editor": "^3.2.2",
     "@types/lodash": "^4.17.7",
     "@types/node": "^20.10.5",
@@ -58,6 +59,7 @@
     "prettier": "^2.4.1",
     "qs": "^6.11.2",
     "quill": "^2.0.2",
+    "quill-delta": "^5.1.0",
     "quill-delta-from-html": "^1.0.4",
     "ssh2-sftp-client": "^9.1.0",
     "typescript": "~5.5.4",

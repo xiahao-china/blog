@@ -47,6 +47,7 @@ import { IGetArticleDetailResItem } from "@/api/article/const";
 import { uploadFile } from "@/api/file";
 import { TOOLBAR_OPTIONS } from "@/views/CreateAndEditArticle/const";
 import EditorToolBar from "@/views/CreateAndEditArticle/components/EditorToolBar/index.vue";
+import { toDelta } from "@slite/quill-delta-markdown";
 
 export default defineComponent({
   name: "CreateAndEditArticle",
@@ -74,7 +75,7 @@ export default defineComponent({
 
     const usrInfo = computed(() => store.state.usrInfo);
 
-    const initEdit = (str: string) => {
+    const initEdit = (str: string, isMd?: boolean) => {
       const FixToolbarRootEl = editorToolBarRef.value?.getFixToolbarRef();
       if (!mdContainerRef.value || !FixToolbarRootEl) return;
       const quill = new Quill(mdContainerRef.value, {
@@ -89,8 +90,13 @@ export default defineComponent({
       });
       const editorObj = quill;
       if (str){
-        const handleDeltaAry = new HtmlToDelta().convert(str);
-        editorObj.setContents(handleDeltaAry);
+        if (isMd){
+          const handleDeltaAry = toDelta(str);
+          editorObj.setContents(handleDeltaAry);
+        }else {
+          const handleDeltaAry = new HtmlToDelta().convert(str);
+          editorObj.setContents(handleDeltaAry);
+        }
       }
       editor = editorObj;
     };
@@ -118,15 +124,17 @@ export default defineComponent({
     const initBlog = async () => {
       const query = route.query;
       let initContent = "";
+      let isMd = false;
       if (query.articleId) {
         const blogInfo = await getArticleDetail({
           id: query.articleId?.toString()
         });
+        isMd = !blogInfo.data.isHTML;
         title.value = blogInfo.data.title;
         nowBlogInfo.value = blogInfo.data;
         initContent = blogInfo.data.content;
       }
-      initEdit(initContent);
+      initEdit(initContent, isMd);
     };
     const createOrEditArticle = async () => {
       if (!title.value) {
