@@ -53,7 +53,6 @@ import { useStore } from "vuex";
 import Quill from "quill";
 import Delta from "quill-delta";
 import { HtmlToDelta } from "quill-delta-from-html";
-import {toDelta} from "@slite/quill-delta-markdown";
 
 import { isMobile } from "@/util";
 import Loading from "@/components/Loading/index.vue";
@@ -75,7 +74,6 @@ export default defineComponent({
     const router = useRouter();
     const bottomOptionsRef = ref(null);
     const contentRef = ref<HTMLDivElement>();
-    const viewer = ref<any>();
     const articleInfo = ref<IGetArticleDetailResItem & { createTimeStr: string }>(defaultArticleDetail);
 
 
@@ -100,20 +98,16 @@ export default defineComponent({
           readOnly: true
         });
         let handleDeltaAry: Delta | undefined;
-        if (res.data.isHTML) {
-          handleDeltaAry = new HtmlToDelta().convert(res.data.content);
-        } else {
-          // viewer.value = Editor.factory({
-          //   el: contentRef.value,
-          //   initialValue: res.data.content,
-          //   height: "",
-          //   viewer: true
-          // });
-          handleDeltaAry = toDelta(res.data.content);
+        try {
+          if (res.data.isHTML) {
+            handleDeltaAry = new HtmlToDelta().convert(res.data.content);
+          } else {
+            handleDeltaAry = JSON.parse(res.data.content);
+          }
+        }catch (err){
+          console.log(err);
         }
-        console.log('handleDeltaAry',handleDeltaAry);
         handleDeltaAry && quill.setContents(handleDeltaAry);
-
       }
     };
 
@@ -189,7 +183,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 @import "quill/dist/quill.core.css";
 @import "quill/dist/quill.snow.css";
 @import "index.less";

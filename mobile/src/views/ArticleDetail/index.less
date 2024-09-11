@@ -72,12 +72,7 @@
     overflow: hidden;
     margin-top: 20px;
     margin-bottom: 40px;
-    font-size: 14px;
-    line-height: 25px;
-    h1:first-child,h2:first-child,h3:first-child,h4:first-child,h5:first-child{
-      margin-top: 0;
-    }
-    .ql-editor{
+    /deep/.ql-editor{
       padding: 0;
     }
   }
@@ -191,7 +186,7 @@
   }
 }
 .options-popover{
-  .van-popover__action{
+  /deep/.van-popover__action{
     padding-left: 0;
   }
 }

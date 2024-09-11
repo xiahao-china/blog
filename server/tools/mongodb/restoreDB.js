@@ -58,7 +58,7 @@ const main = async () => {
   await downloadFile(`${config.dbBackupToolPath}/dataBase.tar.gz`, path.join(__dirname, './dataBase.tar.gz'));
   execSync(`mkdir ${path.join(__dirname, './dataBase')}`);
   execSync(`tar -zxvf ${path.join(__dirname, './dataBase.tar.gz')} -C ${path.join(__dirname, './')}`);
-  execSync(`mongorestore -h 127.0.0.1:27017 ${path.join(__dirname, './dataBase')}`)
+  execSync(`mongorestore -h 127.0.0.1:27017 ${path.join(__dirname, './dataBase')} --drop`)
 }
 
 main();

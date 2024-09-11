@@ -75,7 +75,7 @@ export default defineComponent({
 
     const usrInfo = computed(() => store.state.usrInfo);
 
-    const initEdit = (str: string, isMd?: boolean) => {
+    const initEdit = (str: string, isHTML?: boolean) => {
       const FixToolbarRootEl = editorToolBarRef.value?.getFixToolbarRef();
       if (!mdContainerRef.value || !FixToolbarRootEl) return;
       const quill = new Quill(mdContainerRef.value, {
@@ -90,12 +90,16 @@ export default defineComponent({
       });
       const editorObj = quill;
       if (str){
-        if (isMd){
-          const handleDeltaAry = toDelta(str);
-          editorObj.setContents(handleDeltaAry);
-        }else {
+        if (isHTML){
           const handleDeltaAry = new HtmlToDelta().convert(str);
           editorObj.setContents(handleDeltaAry);
+        }else {
+          try {
+            const handleDeltaAry = JSON.parse(str);
+            editorObj.setContents(handleDeltaAry);
+          }catch (err){
+            console.log(err);
+          }
         }
       }
       editor = editorObj;
@@ -124,17 +128,17 @@ export default defineComponent({
     const initBlog = async () => {
       const query = route.query;
       let initContent = "";
-      let isMd = false;
+      let isHTML = false;
       if (query.articleId) {
         const blogInfo = await getArticleDetail({
           id: query.articleId?.toString()
         });
-        isMd = !blogInfo.data.isHTML;
+        isHTML = blogInfo.data.isHTML;
         title.value = blogInfo.data.title;
         nowBlogInfo.value = blogInfo.data;
         initContent = blogInfo.data.content;
       }
-      initEdit(initContent, isMd);
+      initEdit(initContent, isHTML);
     };
     const createOrEditArticle = async () => {
       if (!title.value) {
@@ -142,7 +146,7 @@ export default defineComponent({
         return;
       }
       if (!editor) return;
-      const content = editor?.getSemanticHTML() || "";
+      const content = editor?.getContents() || "";
       if (!content) {
         showToast("文章内容不能为空!");
         return;
@@ -150,8 +154,8 @@ export default defineComponent({
       const res = await createAndEditArticle({
         id: nowBlogInfo.value?.id,
         title: title.value,
-        content: content.toString(),
-        isHTML: true
+        content: JSON.stringify(content),
+        isHTML: false
       });
       if (res.code === 200) {
         showToast("发布成功");
