@@ -1,5 +1,5 @@
 import {sign, verify} from 'jsonwebtoken';
-import {TDefaultRouter} from "@/routes/const";
+import {TDefaultRouter} from "@/routes/api/const";
 import {IUserInfo} from "@/models/user";
 
 export const SECRET_KEY = "xia-hao-blog";

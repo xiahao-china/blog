@@ -1,4 +1,4 @@
-import { EReqStatus, sendResponse, TDefaultRouter, TNext } from "@/routes/const";
+import { EReqStatus, sendResponse, TDefaultRouter, TNext } from "@/routes/api/const";
 import { checkLogin } from "@/controllers/user";
 import { IMulterUploadSingleFileRes } from "@/controllers/file/const";
 import staticServe from 'koa-static';

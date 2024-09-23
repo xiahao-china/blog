@@ -1,7 +1,7 @@
 import xss from "xss";
 import articleModel, { getDefaultArticle, IArticle } from "@/models/article";
 
-import { EReqStatus, IPageReqBase, sendResponse, TDefaultRouter, TNext } from "@/routes/const";
+import { EReqStatus, IPageReqBase, sendResponse, TDefaultRouter, TNext } from "@/routes/api/const";
 import { checkLogin } from "@/controllers/user";
 import userModel, { IUserInfo } from "@/models/user";
 import { filterObjItemByKey, uniqueArray } from "@/utils/common";

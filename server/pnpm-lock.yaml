@@ -19,8 +19,10 @@ specifiers:
   '@types/md5': ^2.3.5
   '@types/mongoose': ^5.11.97
   '@types/nodemailer': ^6.4.15
+  '@types/ws': ^8.5.12
   '@typescript-eslint/eslint-plugin': ^4.18.0
   '@typescript-eslint/parser': ^4.18.0
+  babel-eslint: ^10.1.0
   babel-loader: ^8.3.0
   clean-webpack-plugin: ^4.0.0
   cross-env: ^7.0.3
@@ -53,6 +55,7 @@ specifiers:
   webpack-cli: '3'
   webpack-merge: ^5.10.0
   webpack-node-externals: ^3.0.0
+  ws: ^8.18.0
   xss: ^1.0.15
 
 devDependencies:
@@ -74,8 +77,10 @@ devDependencies:
   '@types/md5': 2.3.5
   '@types/mongoose': 5.11.97
   '@types/nodemailer': 6.4.15
+  '@types/ws': 8.5.12
   '@typescript-eslint/eslint-plugin': 4.33.0_wolpsm6pozhjtwyxvdmc7z3gsu
   '@typescript-eslint/parser': 4.33.0_i3wxy74pqrb4hoc2h5k7jx4yjm
+  babel-eslint: 10.1.0_eslint@6.8.0
   babel-loader: 8.3.0_sjx3iuljy2vb7xt7qajl53qvba
   clean-webpack-plugin: 4.0.0_webpack@4.47.0
   cross-env: 7.0.3
@@ -108,6 +113,7 @@ devDependencies:
   webpack-cli: 3.3.12_webpack@4.47.0
   webpack-merge: 5.10.0
   webpack-node-externals: 3.0.0
+  ws: 8.18.0
   xss: 1.0.15
 
 packages:
@@ -1829,6 +1835,12 @@ packages:
       '@types/webidl-conversions': 7.0.3
     dev: true
 
+  /@types/ws/8.5.12:
+    resolution: {integrity: sha512-3tPRkv1EtkDpzlgyKyI8pGsGZAGPEaXeu0DOj5DI25Ja91bdAYddYHbADRYVrZMRbfW+1l5YwXVDKohDJNQxkQ==}
+    dependencies:
+      '@types/node': 20.12.13
+    dev: true
+
   /@typescript-eslint/eslint-plugin/4.33.0_wolpsm6pozhjtwyxvdmc7z3gsu:
     resolution: {integrity: sha512-aINiAxGVdOl1eJyVjaWn/YcVAq4Gi/Yo35qHGCnqbWVz61g39D0h23veY/MA0rFFGfxK7TySg2uwDeNv+JgVpg==}
     engines: {node: ^10.12.0 || >=12.0.0}
@@ -2316,6 +2328,24 @@ packages:
     engines: {node: '>= 0.4'}
     dependencies:
       possible-typed-array-names: 1.0.0
+    dev: true
+
+  /babel-eslint/10.1.0_eslint@6.8.0:
+    resolution: {integrity: sha512-ifWaTHQ0ce+448CYop8AdrQiBsGrnC+bMgfyKFdi6EsPLTAWG+QfyDeM6OH+FmWnKvEq5NnBMLvlBUPKQZoDSg==}
+    engines: {node: '>=6'}
+    deprecated: babel-eslint is now @babel/eslint-parser. This package will no longer receive updates.
+    peerDependencies:
+      eslint: '>= 4.12.1'
+    dependencies:
+      '@babel/code-frame': 7.24.7
+      '@babel/parser': 7.25.0
+      '@babel/traverse': 7.25.2
+      '@babel/types': 7.25.2
+      eslint: 6.8.0
+      eslint-visitor-keys: 1.3.0
+      resolve: 1.22.8
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /babel-loader/8.3.0_sjx3iuljy2vb7xt7qajl53qvba:
@@ -7715,6 +7745,19 @@ packages:
     engines: {node: '>=4'}
     dependencies:
       mkdirp: 0.5.6
+    dev: true
+
+  /ws/8.18.0:
+    resolution: {integrity: sha512-8VbfWfHLbbwu3+N6OKsOMpBdT4kXPDDB9cJk2bJ6mh9ucxdlnNvH1e+roYkKmN9Nxw2yjz7VzeO9oOz2zJ04Pw==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
     dev: true
 
   /xml2js/0.5.0:

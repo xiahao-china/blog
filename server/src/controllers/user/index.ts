@@ -3,7 +3,7 @@ import userModel, { ESex, getDefaultUserInfo, IUserInfo } from "@/models/user";
 import emailVerificationCodeModel, { IEmailVerificationCode } from "@/models/emailVerificationCode";
 
 import { logger } from "@/lib/log4js";
-import { EReqStatus, sendResponse, TDefaultRouter, TNext } from "@/routes/const";
+import { EReqStatus, sendResponse, TDefaultRouter, TNext } from "@/routes/api/const";
 import { signToken } from "@/utils/token";
 import { isMail, isPhone } from "@/utils/reg";
 import {
