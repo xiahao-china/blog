@@ -28,7 +28,7 @@ export const extractCoverKeyInfo = (str: string): ICoverKeyInfo => {
   const mapIndex = calVal % LINEAR_GRADIENT_MAP.length;
   let matchEnKeyWord = str.match(/([A-z]|-)+/)?.[0] || "";
   if (!matchEnKeyWord)
-    matchEnKeyWord = str.match(/([\u4e00-\u9fa5]|-)+/)?.[0] || "";
+    matchEnKeyWord = str.match(/([\u4e00-\u9fa5])+/)?.[0] || "";
   if (!matchEnKeyWord) matchEnKeyWord = str.slice(0, 4);
   return {
     linearGradient: LINEAR_GRADIENT_MAP[mapIndex],
