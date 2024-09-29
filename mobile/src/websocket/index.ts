@@ -68,13 +68,12 @@ class WEB_SOCKET {
     };
 
     this.client.onclose = () => {
+      this.tryTime++;
       this.reconnect();
       console.log("close: websocket连接关闭");
     };
 
     this.client.onerror = () => {
-      this.tryTime++;
-      this.reconnect();
       console.log("error: websocket连接失败");
     };
   }
