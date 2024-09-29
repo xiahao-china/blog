@@ -54,7 +54,7 @@ import Quill from "quill";
 import Delta from "quill-delta";
 import { HtmlToDelta } from "quill-delta-from-html";
 
-import { isMobile } from "@/util";
+import {isMiniScreen, isMobile} from "@/util";
 import Loading from "@/components/Loading/index.vue";
 import { IGetArticleDetailResItem } from "@/api/article/const";
 import { collectArticle, deleteArticle, getArticleDetail, likeArticle } from "@/api/article";
@@ -156,7 +156,7 @@ export default defineComponent({
           query: {
             articleId: articleInfo.value.id
           },
-          path: isMobile ? "/CreateAndEditArticle" : "/CreateAndEditArticleByPc"
+          path: isMobile || isMiniScreen ? "/CreateAndEditArticle" : "/CreateAndEditArticleByPc"
         });
       }
     };

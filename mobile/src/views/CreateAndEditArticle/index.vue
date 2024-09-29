@@ -39,15 +39,14 @@ import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { showToast } from "vant";
 import Quill from "quill";
-import Delta from "quill-delta";
 import { HtmlToDelta } from 'quill-delta-from-html';
 
 import { createAndEditArticle, getArticleDetail } from "@/api/article";
 import { IGetArticleDetailResItem } from "@/api/article/const";
 import { uploadFile } from "@/api/file";
-import { TOOLBAR_OPTIONS } from "@/views/CreateAndEditArticle/const";
-import EditorToolBar from "@/views/CreateAndEditArticle/components/EditorToolBar/index.vue";
-import { toDelta } from "@slite/quill-delta-markdown";
+
+import { TOOLBAR_OPTIONS } from "./const";
+import EditorToolBar from "./components/EditorToolBar/index.vue";
 
 export default defineComponent({
   name: "CreateAndEditArticle",

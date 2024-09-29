@@ -1,6 +1,4 @@
-import {checkIsMobile, isMobile} from "@/util/reg";
-import app from "@/App.vue";
-
+import {checkIsMobile} from "@/util/reg";
 export interface IObject {
   [key: string]: any;
 }
