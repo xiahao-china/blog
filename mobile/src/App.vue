@@ -37,20 +37,12 @@ export default defineComponent({
 
     watch(
       () => route.path,
-      () => {
-        checkPcUiTransform((val) => {
-          needTransform.value = val;
-        });
-      },
+      () => checkPcUiTransform((val) => (needTransform.value = val)),
       { immediate: true }
     );
 
     onMounted(() => {
-      window.addEventListener("resize", () => {
-        checkPcUiTransform((val) => {
-          needTransform.value = val;
-        });
-      });
+      window.addEventListener("resize", () => checkPcUiTransform((val) => (needTransform.value = val)));
       websocket.initClient();
     });
 

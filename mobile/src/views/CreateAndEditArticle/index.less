@@ -8,6 +8,15 @@
   flex-direction: column;
   padding: 16px 16px 120px;
   align-items: center;
+  &.is-pc{
+    height: 100vh;
+    padding-bottom: 16px;
+    .markdown-container {
+      overflow-y: auto;
+    }
+
+  }
+
   .create-title{
     margin-top: 24px;
     display: inline-flex;
@@ -39,7 +48,6 @@
     flex: 1;
     margin-top: 16px;
     border: none;
-
     .ql-editor{
       padding: 0 ;
       height: 100%;
@@ -96,3 +104,14 @@
 
 }
 
+body.ql-toolbar.ql-snow{
+  padding: 0 !important;
+  border: none !important;
+}
+
+@media (min-width: 750px) {
+  .create-and-edit-article{
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}

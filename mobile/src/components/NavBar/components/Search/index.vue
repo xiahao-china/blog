@@ -155,7 +155,7 @@ export default defineComponent({
     }
 
     const toCreateArticle = () => {
-      router.push("/CreateAndEditArticleByPc");
+      router.push("/CreateAndEditArticle");
     };
     const searchKeyDownHandle = () => {
       if ((event as IObject).key === "Enter") toSearch();

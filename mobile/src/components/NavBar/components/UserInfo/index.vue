@@ -88,7 +88,7 @@ export default defineComponent({
     };
 
     const toCreateArticle = () => {
-      router.push(isMobile || isMiniScreen ? "/CreateAndEditArticle" : "/CreateAndEditArticleByPc");
+      router.push("/CreateAndEditArticle");
       emit("close-dropdown");
     };
 

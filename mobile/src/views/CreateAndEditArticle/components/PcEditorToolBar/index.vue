@@ -1,33 +1,27 @@
 <template>
-  <div class="editor-tool-bar fix-toolbar" v-show="editorToolbarDisplay" ref="fixToolbarRef">
+  <div class="editor-tool-bar normal-toolbar" v-show="editorToolbarDisplay" ref="fixToolbarRef">
     <van-row class="toolbar-list-row" justify="center" align="center">
-      <van-col span="2">
+      <van-col span="1">
         <div class="tool-bar-item-title">字体:</div>
       </van-col>
-      <van-col span="8">
+      <van-col span="4">
         <button class="ql-bold" />
         <button class="ql-italic" />
         <button class="ql-underline" />
         <button class="ql-strike" />
       </van-col>
-      <van-col span="2" offset="2">
+      <van-col span="1" offset="1">
         <div class="tool-bar-item-title">格式:</div>
       </van-col>
-      <van-col span="8">
+      <van-col span="4">
         <button class="ql-list" value="bullet" />
         <button class="ql-list" value="ordered" />
         <button class="ql-list" value="check" />
       </van-col>
-      <van-col span="1" offset="1" @click="onEndEdit">
-        <span class="end-edit iconfont icon-done" />
-      </van-col>
-    </van-row>
-
-    <van-row class="toolbar-list-row" justify="center" align="center">
-      <van-col span="2">
+      <van-col span="1">
         <div class="tool-bar-item-title">插入:</div>
       </van-col>
-      <van-col span="8">
+      <van-col span="4">
         <button class="ql-link" />
         <button class="chose-img iconfont icon-xuanzetupian">
           <input
@@ -42,20 +36,20 @@
         <button class="ql-video" />
         <button class="ql-formula" />
       </van-col>
-      <van-col span="4" offset="2">
+      <van-col span="2" offset="1">
         <div class="tool-bar-item-title">内容格式:</div>
       </van-col>
-      <van-col span="8">
+      <van-col span="5">
         <button class="ql-code-block" />
         <button class="ql-blockquote" />
       </van-col>
-    </van-row>
 
+    </van-row>
     <van-row class="toolbar-list-row" justify="center" align="center">
-      <van-col span="2">
+      <van-col span="1">
         <div class="tool-bar-item-title">标题:</div>
       </van-col>
-      <van-col span="8">
+      <van-col span="4">
         <select class="ql-header">
           <option value="1">一级标题</option>
           <option value="2">二级标题</option>
@@ -66,10 +60,10 @@
           <option selected>默认</option>
         </select>
       </van-col>
-      <van-col span="2" offset="2">
+      <van-col span="2" offset="1">
         <div class="tool-bar-item-title">字号:</div>
       </van-col>
-      <van-col span="10">
+      <van-col span="16">
         <select class="ql-size">
           <option value="large">大号字体</option>
           <option value="middle">中号字体</option>
@@ -87,7 +81,7 @@ import { computed, defineComponent, defineExpose, ref } from "vue";
 import { Col, Row } from "vant";
 
 export default defineComponent({
-  name: "EditorToolBar",
+  name: "PcEditorToolBar",
   components: {
     VanCol: Col,
     VanRow: Row

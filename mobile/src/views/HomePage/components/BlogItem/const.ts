@@ -26,7 +26,8 @@ export const extractCoverKeyInfo = (str: string): ICoverKeyInfo => {
     encodingAry.reduce((pre, cur) => pre + cur, 0) / encodingAry.length
   );
   const mapIndex = calVal % LINEAR_GRADIENT_MAP.length;
-  let matchEnKeyWord = str.match(/([A-z]|-)+/)?.[0] || "";
+  let matchEnKeyWord = (str.match(/([A-z]|-|\d)+/)?.[0] || "")||'';
+  matchEnKeyWord === '-' ? matchEnKeyWord = '' : void(0);
   if (!matchEnKeyWord)
     matchEnKeyWord = str.match(/([\u4e00-\u9fa5])+/)?.[0] || "";
   if (!matchEnKeyWord) matchEnKeyWord = str.slice(0, 4);

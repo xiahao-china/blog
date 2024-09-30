@@ -38,17 +38,6 @@ export const routes: Array<RouteRecordRaw & IObject> = [
       ),
   },
   {
-    path: "/CreateAndEditArticleByPc",
-    name: "CreateAndEditArticleByPc",
-    meta: {
-      pageName: "写文章",
-    },
-    component: () =>
-      import(
-        /* webpackChunkName: "CreateAndEditArticleByPc" */ "src/views/CreateAndEditArticleByPc/index.vue"
-      ),
-  },
-  {
     path: "/Gadget",
     name: "Gadget",
     needNavBar: true,

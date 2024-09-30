@@ -1,4 +1,5 @@
-import {checkIsMobile} from "@/util/reg";
+import { checkIsMobile } from "@/util/reg";
+
 export interface IObject {
   [key: string]: any;
 }
@@ -32,7 +33,7 @@ export const getCookie = (name: string) => {
   let arr: string[] | null = [];
   const reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
   // eslint-disable-next-line no-cond-assign
-  if (arr = document.cookie.match(reg)) return unescape(arr[2]);
+  if ((arr = document.cookie.match(reg))) return unescape(arr[2]);
   else return null;
 };
 
@@ -57,8 +58,8 @@ export const offsetOnKeyBoard = (needOffset: boolean) => {
 
 // 对比点分隔格式版本号前者是否大于等于后者
 export const contrastPointSeparatedVersions = (v1: string, v2: string) => {
-  const parts1 = v1.split('.').map(Number);
-  const parts2 = v2.split('.').map(Number);
+  const parts1 = v1.split(".").map(Number);
+  const parts2 = v2.split(".").map(Number);
 
   for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
     const num1 = parts1[i] || 0;
@@ -70,26 +71,30 @@ export const contrastPointSeparatedVersions = (v1: string, v2: string) => {
 };
 
 export const getMethodUrlLink = (params: IObject, needEncodeURI?: boolean) => {
-  const turnData = Object.keys(params)
-    .map((item) => {
-      const needTurn = ['object'].includes(typeof params[item]);
-      return `${item}=${
-        needTurn ? JSON.stringify(params[item]) : needEncodeURI ? encodeURIComponent(params[item]) : params[item]
-      }`
-    });
-  if (!turnData.length) return '';
-  return `?${turnData.join('&')}`;
-}
+  const turnData = Object.keys(params).map((item) => {
+    const needTurn = ["object"].includes(typeof params[item]);
+    return `${item}=${
+      needTurn
+        ? JSON.stringify(params[item])
+        : needEncodeURI
+        ? encodeURIComponent(params[item])
+        : params[item]
+    }`;
+  });
+  if (!turnData.length) return "";
+  return `?${turnData.join("&")}`;
+};
 
 // 校验pc端进行部分页面的ui转换，使其可用
-export const checkPcUiTransform = (callback: (needTransform: boolean) => void)=>{
-  const excludePath = '/CreateAndEditArticleByPc';
-  const htmlEl = document.getElementsByTagName('html')[0];
+export const checkPcUiTransform = (
+  callback: (needTransform: boolean) => void
+) => {
+  const htmlEl = document.getElementsByTagName("html")[0];
   if (!htmlEl) callback(false);
-  if (!window.location.hash.includes(excludePath) && !checkIsMobile()) {
-    htmlEl.setAttribute('style', 'font-size: 37.5px');
+  if (!checkIsMobile()) {
+    htmlEl.setAttribute("style", "font-size: 37.5px");
     callback(true);
-  }else {
+  } else {
     callback(false);
   }
-}
+};

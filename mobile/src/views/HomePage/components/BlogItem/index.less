@@ -1,13 +1,21 @@
 @import "/src/assets/globalStyle/commonStyle.less";
 
 .blog-item{
+  cursor: pointer;
   width: 334px;
+  margin-top: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   overflow: hidden;
   border-radius: 14px;
   border: 1px solid @weak-gray;
+  transition: all 0.2s ease ;
+
+  &:hover{
+    transform: translateY(-10px);
+    box-shadow: 0 1px 10px @weak-text-gray;
+  }
 
   *{
     display: inline-flex;
@@ -96,8 +104,4 @@
     }
   }
 
-}
-
-.blog-item + .blog-item{
-  margin-top: 16px;
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="create-and-edit-article">
+  <div class="create-and-edit-article" :class="isMobile ? '' : 'is-pc'">
     <div class="create-title">
       <input
         v-model="title"
@@ -8,13 +8,22 @@
       />
       <div class="tip">将自动保存到草稿，最后保存: 17:09</div>
     </div>
-    <div
-      class="markdown-container"
-      ref="mdContainerRef"
-      @click="onStartEdit"
-    ></div>
-
-    <div class="flot-tool" v-show="!editorToolbarDisplay">
+    <EditorToolBar
+      v-if="isMobile"
+      ref="editorToolBarRef"
+      :editor-toolbar-display="editorToolbarDisplay"
+      @end-edit="onEndEdit"
+      @chose-img="onChoseImg"
+    />
+    <PcEditorToolBar
+      v-else
+      ref="editorToolBarRef"
+      :editor-toolbar-display="true"
+      @end-edit="onEndEdit"
+      @chose-img="onChoseImg"
+    />
+    <div class="markdown-container" ref="mdContainerRef" @click="onStartEdit" />
+    <div class="flot-tool" v-show="!editorToolbarDisplay || !isMobile">
       <div class="options-item edit" @click="onStartEdit">
         <span class="options-icon iconfont icon-icf_wirte" />
         <div class="options-text">编辑</div>
@@ -28,12 +37,6 @@
         <div class="options-text">{{ nowBlogInfo ? "保存" : "发布" }}</div>
       </div>
     </div>
-    <EditorToolBar
-      ref="editorToolBarRef"
-      :editor-toolbar-display="editorToolbarDisplay"
-      @end-edit="onEndEdit"
-      @chose-img="onChoseImg"
-    />
   </div>
 </template>
 
@@ -44,16 +47,20 @@ import { useRoute, useRouter } from "vue-router";
 import { showToast } from "vant";
 import Quill from "quill";
 import { HtmlToDelta } from "quill-delta-from-html";
-import { IObject } from "@/util";
+
+import { IObject, isMobile } from "@/util";
 import { createAndEditArticle, getArticleDetail } from "@/api/article";
 import { IGetArticleDetailResItem } from "@/api/article/const";
 import { uploadFile } from "@/api/file";
+
 import EditorToolBar from "./components/EditorToolBar/index.vue";
 import { base64ToFile, TOOLBAR_OPTIONS } from "./const";
+import PcEditorToolBar from "@/views/CreateAndEditArticle/components/PcEditorToolBar/index.vue";
 
 export default defineComponent({
   name: "CreateAndEditArticle",
   components: {
+    PcEditorToolBar,
     EditorToolBar,
   },
   setup: () => {
@@ -209,6 +216,7 @@ export default defineComponent({
       onStartEdit,
       onEndEdit,
       onChoseImg,
+      isMobile,
     };
   },
 });

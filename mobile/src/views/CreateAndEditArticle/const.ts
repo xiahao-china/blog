@@ -7,7 +7,7 @@ export const TOOLBAR_OPTIONS = [
   // [{'list': ['ordered','bullet','check']}],
   [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
   [{ script: "sub" }, { script: "super" }], // superscript/subscript
-  // [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+  // [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent反
   // [{ 'direction': 'rtl' }],                         // text direction
 
   [{ size: ["small", false, "large", "huge"] }], // custom dropdown

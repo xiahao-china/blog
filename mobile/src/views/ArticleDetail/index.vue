@@ -13,32 +13,34 @@
       <div class="content" ref="contentRef" />
     </div>
     <Loading v-else />
-    <div class="bottom-options" ref="bottomOptionsRef">
-      <div class="options-list">
-        <div class="options-item to-like" :class="articleInfo.hasLike ? 'active' : ''" @click="toLikeOrCancel">
-          <span class="iconfont icon-like" />
-          <div class="text">{{ articleInfo.likeNum || "点赞" }}</div>
+    <div class="bottom-options-shell">
+      <div class="bottom-options" ref="bottomOptionsRef">
+        <div class="options-list">
+          <div class="options-item to-like" :class="articleInfo.hasLike ? 'active' : ''" @click="toLikeOrCancel">
+            <span class="iconfont icon-like" />
+            <div class="text">{{ articleInfo.likeNum || "点赞" }}</div>
+          </div>
+          <div class="options-item to-review">
+            <span class="iconfont icon-comment" />
+            <div class="text">{{ articleInfo.reviewNum || "评论" }}</div>
+          </div>
+          <div class="options-item to-collect" :class="articleInfo.hasCollect ? 'active' : ''" @click="toCollectOrCancel">
+            <span class="iconfont icon-uutcollect" />
+            <div class="text">{{ articleInfo.hasCollect ? "已收藏" : "收藏" }}</div>
+          </div>
         </div>
-        <div class="options-item to-review">
-          <span class="iconfont icon-comment" />
-          <div class="text">{{ articleInfo.reviewNum || "评论" }}</div>
+        <div class="options" v-if="isCreater">
+          <van-popover class="options-popover" placement="top" :actions="ARTICLE_ACTION_LIST" @select="onActionSelect">
+            <template #reference>
+              <van-button class="btn">管理文章</van-button>
+            </template>
+          </van-popover>
+          <!--        <div class="btn" @click="toDelete">删除</div>-->
         </div>
-        <div class="options-item to-collect" :class="articleInfo.hasCollect ? 'active' : ''" @click="toCollectOrCancel">
-          <span class="iconfont icon-uutcollect" />
-          <div class="text">{{ articleInfo.hasCollect ? "已收藏" : "收藏" }}</div>
+        <div class="article-creater" v-else>
+          <img class="avatar" :src="articleInfo.createrAvatar" />
+          <div class="follow" v-if="articleInfo.createrUid">{{ articleInfo.hasFollow ? "已关注" : "关注" }}</div>
         </div>
-      </div>
-      <div class="options" v-if="isCreater">
-        <van-popover class="options-popover" placement="top" :actions="ARTICLE_ACTION_LIST" @select="onActionSelect">
-          <template #reference>
-            <van-button class="btn">管理文章</van-button>
-          </template>
-        </van-popover>
-        <!--        <div class="btn" @click="toDelete">删除</div>-->
-      </div>
-      <div class="article-creater" v-else>
-        <img class="avatar" :src="articleInfo.createrAvatar" />
-        <div class="follow" v-if="articleInfo.createrUid">{{ articleInfo.hasFollow ? "已关注" : "关注" }}</div>
       </div>
     </div>
   </div>
@@ -156,7 +158,7 @@ export default defineComponent({
           query: {
             articleId: articleInfo.value.id
           },
-          path: isMobile || isMiniScreen ? "/CreateAndEditArticle" : "/CreateAndEditArticleByPc"
+          path: "/CreateAndEditArticle"
         });
       }
     };
