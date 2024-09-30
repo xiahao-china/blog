@@ -8,7 +8,11 @@
       />
       <div class="tip">将自动保存到草稿，最后保存: 17:09</div>
     </div>
-    <div class="markdown-container" ref="mdContainerRef" @click="onStartEdit"></div>
+    <div
+      class="markdown-container"
+      ref="mdContainerRef"
+      @click="onStartEdit"
+    ></div>
 
     <div class="flot-tool" v-show="!editorToolbarDisplay">
       <div class="options-item edit" @click="onStartEdit">
@@ -39,19 +43,18 @@ import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { showToast } from "vant";
 import Quill from "quill";
-import { HtmlToDelta } from 'quill-delta-from-html';
-
+import { HtmlToDelta } from "quill-delta-from-html";
+import { IObject } from "@/util";
 import { createAndEditArticle, getArticleDetail } from "@/api/article";
 import { IGetArticleDetailResItem } from "@/api/article/const";
 import { uploadFile } from "@/api/file";
-
-import { TOOLBAR_OPTIONS } from "./const";
 import EditorToolBar from "./components/EditorToolBar/index.vue";
+import { base64ToFile, TOOLBAR_OPTIONS } from "./const";
 
 export default defineComponent({
   name: "CreateAndEditArticle",
   components: {
-    EditorToolBar
+    EditorToolBar,
   },
   setup: () => {
     const store = useStore();
@@ -59,12 +62,11 @@ export default defineComponent({
     const router = useRouter();
 
     const staticImgs = ref({
-      defaultHeadImg: require("@/assets/staticImg/common/defaultHeadImg.png")
+      defaultHeadImg: require("@/assets/staticImg/common/defaultHeadImg.png"),
     });
 
     const mdContainerRef = ref<HTMLDivElement>();
     const editorToolBarRef = ref<{ getFixToolbarRef: () => HTMLDivElement }>();
-
 
     let editor: Quill;
     const editorToolbarDisplay = ref(false);
@@ -82,26 +84,41 @@ export default defineComponent({
         modules: {
           toolbar: {
             container: FixToolbarRootEl,
-            handlers: TOOLBAR_OPTIONS
-          }
+            handlers: TOOLBAR_OPTIONS,
+          },
         },
-        theme: "snow"
+        theme: "snow",
       });
       const editorObj = quill;
-      if (str){
-        if (isHTML){
+      if (str) {
+        if (isHTML) {
           const handleDeltaAry = new HtmlToDelta().convert(str);
           editorObj.setContents(handleDeltaAry);
-        }else {
+        } else {
           try {
             const handleDeltaAry = JSON.parse(str);
             editorObj.setContents(handleDeltaAry);
-          }catch (err){
+          } catch (err) {
             console.log(err);
           }
         }
       }
       editor = editorObj;
+      quill.on("text-change", async (info, oldDelta) => {
+        const insertInfo = info.ops[1]?.insert as IObject;
+        if (insertInfo && insertInfo["image"]) {
+          const isBase64 = /^data:image\/[A-z]+;base64/.test(
+            insertInfo["image"].split(",")[0]
+          );
+          if (!isBase64) return;
+          const file = base64ToFile(insertInfo["image"]);
+          quill.setContents(oldDelta);
+          const imgUrl = await onChoseImg(file);
+          if (imgUrl) {
+            insertInfo["image"] = imgUrl;
+          }
+        }
+      });
     };
 
     const onStartEdit = () => {
@@ -113,15 +130,18 @@ export default defineComponent({
       editorToolbarDisplay.value = false;
     };
 
-    const onChoseImg = async (file: File) => {
+    const onChoseImg = async (file: File, insert = true) => {
       const formData = new FormData();
       formData.append("file", file);
       const res = await uploadFile(formData);
       if (res.code === 200) {
         const range = editor.getSelection();
+        const resUrl = `${location.origin}${res.data.filePath}`;
         //将上传好的图片，插入到富文本的range.index（当前光标处）
-        editor.insertEmbed(range?.index || 0, "image", `${location.origin}${res.data.filePath}`);
+        if (insert) editor.insertEmbed(range?.index || 0, "image", resUrl);
+        return resUrl;
       } else showToast(res.message || "上传失败，请稍后再试！");
+      return "";
     };
 
     const initBlog = async () => {
@@ -130,7 +150,7 @@ export default defineComponent({
       let isHTML = false;
       if (query.articleId) {
         const blogInfo = await getArticleDetail({
-          id: query.articleId?.toString()
+          id: query.articleId?.toString(),
         });
         isHTML = blogInfo.data.isHTML;
         title.value = blogInfo.data.title;
@@ -140,28 +160,22 @@ export default defineComponent({
       initEdit(initContent, isHTML);
     };
     const createOrEditArticle = async () => {
-      if (!title.value) {
-        showToast("请填写文章标题");
-        return;
-      }
+      if (!title.value) return showToast("请填写文章标题");
       if (!editor) return;
       const content = editor?.getContents() || "";
-      if (!content) {
-        showToast("文章内容不能为空!");
-        return;
-      }
+      if (!content) return showToast("文章内容不能为空!");
       const res = await createAndEditArticle({
         id: nowBlogInfo.value?.id,
         title: title.value,
         content: JSON.stringify(content),
-        isHTML: false
+        isHTML: false,
       });
       if (res.code === 200) {
         showToast("发布成功");
         setTimeout(() => {
           router.push({
             query: { id: res.data.id.toString() },
-            path: "/ArticleDetail"
+            path: "/ArticleDetail",
           });
         }, 500);
         return;
@@ -172,13 +186,12 @@ export default defineComponent({
     onMounted(() => {
       if (!usrInfo.value.uid) {
         showToast("请登录后再写作吧~");
-        console.log("route.hash", route.hash);
         router.push({
           query: {
             backPageHash: route.hash,
-            backPageQuery: JSON.stringify(route.query)
+            backPageQuery: JSON.stringify(route.query),
           },
-          path: "/Login"
+          path: "/Login",
         });
       }
       initBlog();
@@ -195,9 +208,9 @@ export default defineComponent({
       editorToolbarDisplay,
       onStartEdit,
       onEndEdit,
-      onChoseImg
+      onChoseImg,
     };
-  }
+  },
 });
 </script>
 
@@ -205,5 +218,4 @@ export default defineComponent({
 @import "quill/dist/quill.core.css";
 @import "quill/dist/quill.snow.css";
 @import "index.less";
-
 </style>
