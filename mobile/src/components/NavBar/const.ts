@@ -32,7 +32,7 @@ export const recordScroll = (
     const nowprogress = Math.ceil(
         docEl.scrollTop * 100 / (docEl.scrollHeight - window.innerHeight)
     ) ;
-    callback(Boolean(docEl.scrollTop), nowprogress, () =>
+    callback(Boolean(docEl.scrollTop), nowprogress > 100 ? 100 : nowprogress, () =>
         document.removeEventListener("scroll", throttleCallback)
     );
   }
