@@ -121,6 +121,7 @@ export const articleListControllers = async (ctx: TDefaultRouter<IPageReqBase>, 
   try {
     const total = await articleModel.collection.count();
     const articleList:IArticle[] = await articleModel.collection.find({})
+      .sort({ createTime: -1 })
       .skip((pageNumber - 1) * pageSize) // 跳过前面的记录
       .limit(pageSize) // 限制每页的记录数
       .toArray();
