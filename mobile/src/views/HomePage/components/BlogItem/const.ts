@@ -26,11 +26,27 @@ export const extractCoverKeyInfo = (str: string): ICoverKeyInfo => {
     encodingAry.reduce((pre, cur) => pre + cur, 0) / encodingAry.length
   );
   const mapIndex = calVal % LINEAR_GRADIENT_MAP.length;
-  let matchEnKeyWord = (str.match(/([A-z]|-|\d)+/)?.[0] || "")||'';
-  matchEnKeyWord === '-' ? matchEnKeyWord = '' : void(0);
-  if (!matchEnKeyWord)
-    matchEnKeyWord = str.match(/([\u4e00-\u9fa5])+/)?.[0] || "";
-  if (!matchEnKeyWord) matchEnKeyWord = str.slice(0, 4);
+  const preHandleStr = str.replaceAll(" ", "").replaceAll('—','-');
+  const firstIsEnglish = /[A-z]+/.test(preHandleStr[0]);
+  const noZhCn = !/[\u4e00-\u9fa5]/.test(preHandleStr);
+  let matchEnKeyWord = "";
+  if (noZhCn) matchEnKeyWord = preHandleStr.match(/([A-z]|\d|-)+/)?.[0] || "" || "";
+  else {
+    // 判断是否有'-'情况
+    matchEnKeyWord =
+      preHandleStr.match(/([\u4e00-\u9fa5]|[A-z]|\d)+(-)/)?.[0] || "" || "";
+    // 处理 abc啊啊啊 或者 啊啊啊abc 情况
+    if (!matchEnKeyWord) {
+      matchEnKeyWord = firstIsEnglish
+        ? preHandleStr.match(/[A-z]+/)?.[0] || ""
+        : preHandleStr.match(/[\u4e00-\u9fa5]+/)?.[0] || "";
+    }
+    matchEnKeyWord = matchEnKeyWord.replaceAll("-", "");
+  }
+  matchEnKeyWord === "-" ? (matchEnKeyWord = "") : void 0;
+  if (!matchEnKeyWord) {
+    matchEnKeyWord = preHandleStr.slice(0, firstIsEnglish ? 8 : 4);
+  }
   return {
     linearGradient: LINEAR_GRADIENT_MAP[mapIndex],
     keyWord: matchEnKeyWord,
