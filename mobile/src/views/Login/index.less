@@ -80,7 +80,7 @@
   }
 
   .login-card{
-    padding: 0 4px;
+    padding: 0 4px 12px;
     margin-top: 68px;
     width: 100%;
     flex-direction: column;
@@ -147,11 +147,17 @@
     }
 
     .change-login-method-shell{
+      align-items: center;
       justify-content: flex-end;
 
       .change-login-method{
         font-size: 12px;
         color: @table-weak-text-gray;
+      }
+      .icon-qiehuan{
+        margin-right: 4px;
+        color: @table-weak-text-gray;
+        font-size: 12px;
       }
     }
 
@@ -200,10 +206,29 @@
         margin-top: 16px;
         flex-direction: row;
         align-items: center;
+        .login-fast-icon-item{
+          position: relative;
+          width: 32px;
+          height: 32px;
+          .develop-tag{
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            transform: translateX(50%) translateY(50%);
+            font-size: 8px;
+            background: @weak-text-gray2;
+            border-radius: 12px;
+            white-space: nowrap;
+            color: white;
+            font-weight: 500;
+            padding: 2px 4px;
+          }
+        }
         .login-fast-icon-img{
           width: 32px;
+          filter: grayscale(1);
         }
-        .login-fast-icon-img + .login-fast-icon-img{
+        .login-fast-icon-item + .login-fast-icon-item{
           margin-left: 16px;
         }
       }

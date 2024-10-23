@@ -15,6 +15,7 @@
       />
       <GetVerificationCode v-else :login-input-info="loginInfo" @update="(val) => (loginInfo = val)" />
       <div class="change-login-method-shell">
+        <span class="iconfont icon-qiehuan"/>
         <div class="change-login-method" @click="changeLoginMethod">
           使用{{ loginInfo.method === ELoginMethod.password ? "验证码" : "密码" }}
         </div>
@@ -24,8 +25,14 @@
       <div class="fast-login">
         <div class="title">快速登录</div>
         <div class="login-fast-icon">
-          <img class="login-fast-icon-img qq-icon" :src="staticImgs.qqIcon" />
-          <img class="login-fast-icon-img wx-icon" :src="staticImgs.wxIcon" />
+          <div class="login-fast-icon-item">
+            <img class="login-fast-icon-img qq-icon" :src="staticImgs.qqIcon" />
+            <div class="develop-tag">开发中</div>
+          </div>
+          <div class="login-fast-icon-item">
+            <img class="login-fast-icon-img wx-icon" :src="staticImgs.wxIcon" />
+            <div class="develop-tag">开发中</div>
+          </div>
         </div>
       </div>
     </div>
