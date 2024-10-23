@@ -6,8 +6,12 @@
         <div class="author">{{ articleInfo.createrNick || "---" }}</div>
         <div class="main-info">
           <div class="date">{{ articleInfo.createTimeStr }}</div>
-          <div class="browseNum"><span class="iconfont icon-eye" />{{ articleInfo.browseNum }}</div>
-          <div class="likeNum"><span class="iconfont icon-like" />{{ articleInfo.likeNum }}</div>
+          <div class="browseNum">
+            <span class="iconfont icon-eye" />{{ articleInfo.browseNum }}
+          </div>
+          <div class="likeNum">
+            <span class="iconfont icon-like" />{{ articleInfo.likeNum }}
+          </div>
         </div>
       </div>
       <div class="content" ref="contentRef" />
@@ -16,7 +20,11 @@
     <div class="bottom-options-shell">
       <div class="bottom-options" ref="bottomOptionsRef">
         <div class="options-list">
-          <div class="options-item to-like" :class="articleInfo.hasLike ? 'active' : ''" @click="toLikeOrCancel">
+          <div
+            class="options-item to-like"
+            :class="articleInfo.hasLike ? 'active' : ''"
+            @click="toLikeOrCancel"
+          >
             <span class="iconfont icon-like" />
             <div class="text">{{ articleInfo.likeNum || "点赞" }}</div>
           </div>
@@ -24,13 +32,24 @@
             <span class="iconfont icon-comment" />
             <div class="text">{{ articleInfo.reviewNum || "评论" }}</div>
           </div>
-          <div class="options-item to-collect" :class="articleInfo.hasCollect ? 'active' : ''" @click="toCollectOrCancel">
+          <div
+            class="options-item to-collect"
+            :class="articleInfo.hasCollect ? 'active' : ''"
+            @click="toCollectOrCancel"
+          >
             <span class="iconfont icon-uutcollect" />
-            <div class="text">{{ articleInfo.hasCollect ? "已收藏" : "收藏" }}</div>
+            <div class="text">
+              {{ articleInfo.hasCollect ? "已收藏" : "收藏" }}
+            </div>
           </div>
         </div>
         <div class="options" v-if="isCreater">
-          <van-popover class="options-popover" placement="top" :actions="ARTICLE_ACTION_LIST" @select="onActionSelect">
+          <van-popover
+            class="options-popover"
+            placement="top"
+            :actions="ARTICLE_ACTION_LIST"
+            @select="onActionSelect"
+          >
             <template #reference>
               <van-button class="btn">管理文章</van-button>
             </template>
@@ -39,7 +58,9 @@
         </div>
         <div class="article-creater" v-else>
           <img class="avatar" :src="articleInfo.createrAvatar" />
-          <div class="follow" v-if="articleInfo.createrUid">{{ articleInfo.hasFollow ? "已关注" : "关注" }}</div>
+          <div class="follow" v-if="articleInfo.createrUid">
+            {{ articleInfo.hasFollow ? "已关注" : "关注" }}
+          </div>
         </div>
       </div>
     </div>
@@ -56,15 +77,19 @@ import Quill from "quill";
 import Delta from "quill-delta";
 import { HtmlToDelta } from "quill-delta-from-html";
 
-import {isMiniScreen, isMobile} from "@/util";
 import Loading from "@/components/Loading/index.vue";
 import { IGetArticleDetailResItem } from "@/api/article/const";
-import { collectArticle, deleteArticle, getArticleDetail, likeArticle } from "@/api/article";
+import {
+  collectArticle,
+  deleteArticle,
+  getArticleDetail,
+  likeArticle,
+} from "@/api/article";
 import {
   ARTICLE_ACTION_LIST,
   defaultArticleDetail,
   EArticleActionType,
-  IArticleActionItem
+  IArticleActionItem,
 } from "./const";
 
 export default defineComponent({
@@ -76,8 +101,9 @@ export default defineComponent({
     const router = useRouter();
     const bottomOptionsRef = ref(null);
     const contentRef = ref<HTMLDivElement>();
-    const articleInfo = ref<IGetArticleDetailResItem & { createTimeStr: string }>(defaultArticleDetail);
-
+    const articleInfo = ref<
+      IGetArticleDetailResItem & { createTimeStr: string }
+    >(defaultArticleDetail);
 
     const initBlogDetail = async (articleId: string) => {
       const res = await getArticleDetail({ id: articleId });
@@ -87,17 +113,15 @@ export default defineComponent({
       }
       articleInfo.value = {
         ...res.data,
-        createTimeStr: dayjs(res.data.createTime).format("YYYY-MM-DD HH:mm")
+        createTimeStr: dayjs(res.data.createTime).format("YYYY-MM-DD HH:mm"),
       };
       if (contentRef.value) {
         const quill = new Quill(contentRef.value, {
           modules: {
-            toolbar: {
-              container: 'body'
-            }
+            toolbar: false,
           },
-          theme: 'snow',
-          readOnly: true
+          theme: "snow",
+          readOnly: true,
         });
         let handleDeltaAry: Delta | undefined;
         try {
@@ -106,13 +130,12 @@ export default defineComponent({
           } else {
             handleDeltaAry = JSON.parse(res.data.content);
           }
-        }catch (err){
+        } catch (err) {
           console.log(err);
         }
         handleDeltaAry && quill.setContents(handleDeltaAry);
       }
     };
-
 
     const toLikeOrCancel = async () => {
       const res = await likeArticle({ id: articleInfo.value.id });
@@ -139,26 +162,34 @@ export default defineComponent({
       showDialog({
         title: "删除文章",
         message: "您确定要删除该文章吗，删除后无法恢复哦!",
-        showCancelButton: true
-      }).then(async () => {
-        const res = await deleteArticle({ id: articleInfo.value.id });
-        showToast("删除成功，即将回到首页");
-        setTimeout(() => {
-          router.push("/HomePage");
-        }, 800);
-      });
+        showCancelButton: true,
+      })
+        .then(async () => {
+          const res = await deleteArticle({ id: articleInfo.value.id });
+          if (res.code === 200) {
+            showToast("删除成功，即将回到首页");
+            setTimeout(() => {
+              router.push("/HomePage");
+            }, 800);
+          }
+        })
+        .catch(() => void(0));
     };
 
-    const isCreater = computed(() => articleInfo.value.createrUid && articleInfo.value.createrUid === store.state.usrInfo.uid);
+    const isCreater = computed(
+      () =>
+        articleInfo.value.createrUid &&
+        articleInfo.value.createrUid === store.state.usrInfo.uid
+    );
 
     const onActionSelect = (item: IArticleActionItem) => {
       if (item.id === EArticleActionType.delete) toDelete();
       if (item.id === EArticleActionType.edit && articleInfo.value.id) {
         router.push({
           query: {
-            articleId: articleInfo.value.id
+            articleId: articleInfo.value.id,
           },
-          path: "/CreateAndEditArticle"
+          path: "/CreateAndEditArticle",
         });
       }
     };
@@ -179,9 +210,9 @@ export default defineComponent({
       toDelete,
       contentRef,
       ARTICLE_ACTION_LIST,
-      onActionSelect
+      onActionSelect,
     };
-  }
+  },
 });
 </script>
 
