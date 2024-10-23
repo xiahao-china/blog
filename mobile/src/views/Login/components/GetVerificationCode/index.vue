@@ -103,7 +103,7 @@ export default defineComponent({
       }
       showToast('获取验证码成功，快去看看吧~');
       let interVal = VERIFICATION_CODE_ACQUISITION_INTERVAL;
-      timeId = setInterval(() => {
+      const intervalFn = () => {
         interVal--;
         if (interVal <= 1) {
           interVal = 0;
@@ -111,7 +111,9 @@ export default defineComponent({
           timeId = 0;
         }
         canGetVerificationCodeBtnCountdown.value = interVal;
-      }, 1000);
+      }
+      intervalFn();
+      timeId = setInterval(intervalFn, 1000);
     };
 
     const onUpdateInfo = () => {
