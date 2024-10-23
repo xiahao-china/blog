@@ -6,7 +6,11 @@
         class="create-title-input"
         placeholder="输入文章标题..."
       />
-      <div class="tip">将自动保存到草稿，最后保存: 17:09</div>
+      <div class="tip">
+        内容将自动保存到草稿{{
+          lastSaveDraftArticle ? `，最后保存: ${lastSaveDraftArticle}` : ""
+        }}
+      </div>
     </div>
     <EditorToolBar
       v-if="isMobile"
@@ -32,34 +36,51 @@
         <span class="options-icon iconfont icon-options-horizontal" />
         <div class="options-text">操作</div>
       </div>
-      <div class="options-item publish" @click="createOrEditArticle">
+      <div class="options-item publish" @click="onPrePublish">
         <span class="options-icon iconfont icon-fabu" />
         <div class="options-text">{{ nowBlogInfo ? "保存" : "发布" }}</div>
       </div>
     </div>
+    <ExtraInfoSetting
+      v-model:show="showExtraInfoSetting"
+      :cover="extraArticleInfo?.cover"
+      :is-private="extraArticleInfo?.isPrivate"
+      @done="extraInfoSettingDone"
+    />
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, nextTick, onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { showToast } from "vant";
 import Quill from "quill";
-import { HtmlToDelta } from "quill-delta-from-html";
 
-import { IObject, isMobile } from "@/util";
-import { createAndEditArticle, getArticleDetail } from "@/api/article";
+import { isMobile } from "@/util";
+import {
+  createAndEditArticle,
+  delDraftArticle,
+  getArticleDetail,
+  getDraftArticle,
+  saveDraftArticle,
+} from "@/api/article";
 import { IGetArticleDetailResItem } from "@/api/article/const";
-import { uploadFile } from "@/api/file";
 
 import EditorToolBar from "./components/EditorToolBar/index.vue";
-import { base64ToFile, TOOLBAR_OPTIONS } from "./const";
-import PcEditorToolBar from "@/views/CreateAndEditArticle/components/PcEditorToolBar/index.vue";
+import PcEditorToolBar from "./components/PcEditorToolBar/index.vue";
+
+import { IExtraArticleInfo, initEdit, onChoseImgUpload } from "./const";
+import dayjs from "dayjs";
+import ExtraInfoSetting from "@/views/CreateAndEditArticle/components/ExtraInfoSetting/index.vue";
+
+let timeoutId: number | undefined;
+let editor: Quill | undefined;
 
 export default defineComponent({
   name: "CreateAndEditArticle",
   components: {
+    ExtraInfoSetting,
     PcEditorToolBar,
     EditorToolBar,
   },
@@ -74,59 +95,16 @@ export default defineComponent({
 
     const mdContainerRef = ref<HTMLDivElement>();
     const editorToolBarRef = ref<{ getFixToolbarRef: () => HTMLDivElement }>();
+    const lastSaveDraftArticle = ref("");
 
-    let editor: Quill;
+    const showExtraInfoSetting = ref(false);
     const editorToolbarDisplay = ref(false);
 
     const title = ref("");
     const nowBlogInfo = ref<IGetArticleDetailResItem>();
+    const extraArticleInfo = ref<IExtraArticleInfo>();
 
     const usrInfo = computed(() => store.state.usrInfo);
-
-    const initEdit = (str: string, isHTML?: boolean) => {
-      const FixToolbarRootEl = editorToolBarRef.value?.getFixToolbarRef();
-      if (!mdContainerRef.value || !FixToolbarRootEl) return;
-      const quill = new Quill(mdContainerRef.value, {
-        placeholder: "请输入正文",
-        modules: {
-          toolbar: {
-            container: FixToolbarRootEl,
-            handlers: TOOLBAR_OPTIONS,
-          },
-        },
-        theme: "snow",
-      });
-      const editorObj = quill;
-      if (str) {
-        if (isHTML) {
-          const handleDeltaAry = new HtmlToDelta().convert(str);
-          editorObj.setContents(handleDeltaAry);
-        } else {
-          try {
-            const handleDeltaAry = JSON.parse(str);
-            editorObj.setContents(handleDeltaAry);
-          } catch (err) {
-            console.log(err);
-          }
-        }
-      }
-      editor = editorObj;
-      quill.on("text-change", async (info, oldDelta) => {
-        const insertInfo = info.ops[1]?.insert as IObject;
-        if (insertInfo && insertInfo["image"]) {
-          const isBase64 = /^data:image\/[A-z]+;base64/.test(
-            insertInfo["image"].split(",")[0]
-          );
-          if (!isBase64) return;
-          const file = base64ToFile(insertInfo["image"]);
-          quill.setContents(oldDelta);
-          const imgUrl = await onChoseImg(file);
-          if (imgUrl) {
-            insertInfo["image"] = imgUrl;
-          }
-        }
-      });
-    };
 
     const onStartEdit = () => {
       editorToolbarDisplay.value = true;
@@ -135,20 +113,6 @@ export default defineComponent({
 
     const onEndEdit = () => {
       editorToolbarDisplay.value = false;
-    };
-
-    const onChoseImg = async (file: File, insert = true) => {
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await uploadFile(formData);
-      if (res.code === 200) {
-        const range = editor.getSelection();
-        const resUrl = `${location.origin}${res.data.filePath}`;
-        //将上传好的图片，插入到富文本的range.index（当前光标处）
-        if (insert) editor.insertEmbed(range?.index || 0, "image", resUrl);
-        return resUrl;
-      } else showToast(res.message || "上传失败，请稍后再试！");
-      return "";
     };
 
     const initBlog = async () => {
@@ -162,23 +126,48 @@ export default defineComponent({
         isHTML = blogInfo.data.isHTML;
         title.value = blogInfo.data.title;
         nowBlogInfo.value = blogInfo.data;
+        extraArticleInfo.value = {
+          isPrivate: blogInfo.data.isPrivate || false,
+          cover: blogInfo.data.cover || '',
+        }
+        initContent = blogInfo.data.content;
+      } else {
+        const blogInfo = await getDraftArticle();
+        title.value = blogInfo.data.title;
         initContent = blogInfo.data.content;
       }
-      initEdit(initContent, isHTML);
+      editor = initEdit({
+        str: initContent,
+        isHTML,
+        containerEl: mdContainerRef.value,
+        toolBarEl: editorToolBarRef.value,
+      });
     };
-    const createOrEditArticle = async () => {
+
+    const onPrePublish = ()=>{
       if (!title.value) return showToast("请填写文章标题");
       if (!editor) return;
       const content = editor?.getContents() || "";
       if (!content) return showToast("文章内容不能为空!");
+      showExtraInfoSetting.value = true;
+    }
+
+    const createOrEditArticle = async () => {
+      // if (!title.value) return showToast("请填写文章标题");
+      // if (!editor) return;
+      const content = editor?.getContents() || "";
+      // if (!content) return showToast("文章内容不能为空!");
       const res = await createAndEditArticle({
         id: nowBlogInfo.value?.id,
         title: title.value,
         content: JSON.stringify(content),
         isHTML: false,
+        isPrivate: extraArticleInfo.value?.isPrivate,
+        cover: extraArticleInfo.value?.cover
       });
       if (res.code === 200) {
         showToast("发布成功");
+        await delDraftArticle();
         setTimeout(() => {
           router.push({
             query: { id: res.data.id.toString() },
@@ -190,7 +179,37 @@ export default defineComponent({
       showToast(res.message || "啊哦~服务器似乎出了点问题~");
     };
 
-    onMounted(() => {
+    const initAutoSave = () => {
+      if (timeoutId) {
+        clearInterval(timeoutId);
+        timeoutId = undefined;
+      }
+      timeoutId = setInterval(async () => {
+        console.log("开始保存");
+        const content = editor?.getContents() || "";
+        const res = await saveDraftArticle({
+          title: title.value,
+          content: JSON.stringify(content),
+        });
+        if (res.code === 200)
+          lastSaveDraftArticle.value = dayjs().format("MM-DD HH:mm");
+      }, 300000);
+    };
+
+    const onChoseImg = (file: File, insert = true) => {
+      if (!editor) return;
+      onChoseImgUpload(file, insert, editor);
+    };
+
+    const extraInfoSettingDone = (params: {cover: string; isPrivate: false;})=>{
+      extraArticleInfo.value = {
+        isPrivate: params.isPrivate || false,
+        cover: params.cover || '',
+      }
+      nextTick(createOrEditArticle);
+    }
+
+    onMounted(async () => {
       if (!usrInfo.value.uid) {
         showToast("请登录后再写作吧~");
         router.push({
@@ -201,7 +220,8 @@ export default defineComponent({
           path: "/Login",
         });
       }
-      initBlog();
+      await initBlog();
+      initAutoSave();
     });
 
     return {
@@ -217,6 +237,11 @@ export default defineComponent({
       onEndEdit,
       onChoseImg,
       isMobile,
+      lastSaveDraftArticle,
+      showExtraInfoSetting,
+      extraInfoSettingDone,
+      onPrePublish,
+      extraArticleInfo
     };
   },
 });

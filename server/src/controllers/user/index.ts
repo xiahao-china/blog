@@ -1,4 +1,6 @@
 import md5 from "md5";
+import fs from 'fs';
+import xss from "xss";
 import userModel, { ESex, getDefaultUserInfo, IUserInfo } from "@/models/user";
 import emailVerificationCodeModel, { IEmailVerificationCode } from "@/models/emailVerificationCode";
 
@@ -18,7 +20,8 @@ import { sendMail, sendPhoneVerificationCode } from "@/utils/verificationCode";
 import { APP_NAME, padWithZeros, WHITELIST_HOST } from "@/utils/common";
 import phoneVerificationCode, { IPhoneVerificationCodeSchema } from "@/models/phoneVerificationCode";
 import { IObject } from "@/utils/const";
-import xss from "xss";
+import verificationCodeTemplate from "@/static/verificationCodeTemplate";
+
 
 export interface ILoginControllersReqParams {
   password: string;
@@ -144,7 +147,8 @@ export const getVerCode = async (ctx: TDefaultRouter<IGetVerCodeReqParams>, next
       await sendMail({
         senAimEmail: email,
         subject: `${APP_NAME}-邮箱验证码`,
-        text: `您的验证码为：${verificationCode}(10分钟有效)`
+        text: '',
+        html: verificationCodeTemplate.toString().replace('<---var-mailVerCode--->', verificationCode)
       });
       await emailVerificationCodeModel.deleteOne({ email });
       const timeMs = new Date().getTime();

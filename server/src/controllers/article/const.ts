@@ -15,6 +15,28 @@ export const VERIFICATION_CODE_ACQUISITION_INTERVAL = 1 * 60 * 1000;
 // 验证码过期时长
 export const VERIFICATION_CODE_VALIDITY_TIME = 10 * 60 * 1000;
 
+export const getArticleListControllersFilterObj = (uid: string)=>{
+  return uid ? {
+    $or: [
+      {
+        isPrivate: { $nin: [true] },
+      },
+      {
+        $and: [
+          {
+            isPrivate: { $in: [true] },
+          },
+          {
+            createrUid: { $in: [uid] },
+          }
+        ]
+      }
+    ],
+  } : {
+    isPrivate: { $nin: [true] },
+  };
+}
+
 export const ARTICLE_RES_KEY_LIST: (keyof IArticle)[] = [
   "id",
   "title",
@@ -27,5 +49,6 @@ export const ARTICLE_RES_KEY_LIST: (keyof IArticle)[] = [
   "collectNum",
   "likeNum",
   "reviewId",
-  "isHTML"
+  "isHTML",
+  "isPrivate"
 ];

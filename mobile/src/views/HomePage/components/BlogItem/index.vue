@@ -1,7 +1,7 @@
 <template>
   <div class="blog-item" @click="toDetail">
     <div class="cover">
-      <img class="cover-img" v-if="article.cover"/>
+      <img class="cover-img" v-if="article.cover" :src="article.cover"/>
       <div class="auto-create-cover" :style="{background: coverKeyInfo.linearGradient}" v-else>
         {{coverKeyInfo.keyWord}}
       </div>

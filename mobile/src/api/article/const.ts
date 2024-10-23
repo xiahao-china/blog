@@ -1,5 +1,3 @@
-import {getArticleDetail} from "@/api/article/index";
-
 export interface IArticle {
   id: string;
   title: string;
@@ -17,13 +15,26 @@ export interface IArticle {
   reviewId: number[];
   isHTML: boolean;
   tag?: string[]; // 标签
+  isPrivate?: boolean;
+}
+
+export interface IDraftArticle {
+  creatorUid: string;
+
+  title: string;
+  content: string;
+  createTime: number;
+  lastUpdateTime: number;
+  isHTML: boolean;
 }
 
 export interface ICreateAndEditArticleReqParams {
   id: string;
   title: string;
   content: string;
+  cover?: string;
   isHTML?: boolean;
+  isPrivate?: boolean;
 }
 
 export interface IGetArticleDetailReqParams {
@@ -61,4 +72,10 @@ export interface IArticleListRes{
 
 export interface INormalArticleReqParams {
   id: string;
+}
+
+
+export interface ISaveDraftArticleReqParams {
+  title?: string;
+  content?: string;
 }

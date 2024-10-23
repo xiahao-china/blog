@@ -48,7 +48,7 @@ export const WHITELIST_HOST = [
   'http://jike.ink',
   'https://jike.ink',
   'http://t.jike.ink',
-  'http://123.60.24.107',
+  'http://192.168.50.228',
   'https://123.60.24.107'
 ]
 

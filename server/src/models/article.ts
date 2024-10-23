@@ -14,6 +14,8 @@ export interface IArticle {
   likeNum: number; // 点赞量
   reviewId: number[];
   isHTML: boolean;
+
+  isPrivate: boolean; // 是否私有
 }
 
 export const getDefaultArticle = ()=>{
@@ -31,6 +33,7 @@ export const getDefaultArticle = ()=>{
     likeNum: 0,
     reviewId: [],
     isHTML: false,
+    isPrivate: false,
   }
 }
 
@@ -47,6 +50,7 @@ const articleSchema = new Schema({
   likeNum: Number,
   isHTML: Boolean,
   reviewId: Array,
+  isPrivate: Boolean,
 });
 
 //   要把 schema 转换为一个 Model， 使用 mongoose.model(modelName, schema) 函数：
