@@ -35,7 +35,13 @@
 
 <script lang="ts">
 import {defineComponent, PropType, ref, watch} from "vue";
-import {checkInput, getDefaultLoginInputInfo, ILoginInputInfo, withdrawAccount} from "@/views/Login/const";
+import {
+  checkInput,
+  ELoginMethod,
+  getDefaultLoginInputInfo,
+  ILoginInputInfo,
+  withdrawAccount
+} from "@/views/Login/const";
 
 const DEFAULT_LOGIN_INPUT_INFO = getDefaultLoginInputInfo();
 
@@ -59,7 +65,9 @@ export default defineComponent({
     const password = ref("");
 
     const onUpdateInfo = () => {
+      console.log('checkInput(account.value),',checkInput(account.value))
       emit("update", {
+        method: ELoginMethod.password,
         ...checkInput(account.value),
         password: password.value,
       } as ILoginInputInfo);

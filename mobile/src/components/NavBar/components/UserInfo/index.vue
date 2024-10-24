@@ -70,7 +70,7 @@ export default defineComponent({
   emits: ["close-dropdown"],
   setup: (props, { emit }) => {
     const staticImgs = ref({
-      logoIcon: require("@/assets/staticImg/common/logo.png"),
+      logoIcon: require("@/assets/staticImg/common/logo-new.png"),
       searchIcon: require("@/assets/staticImg/common/search.png"),
       defaultHeadImg: require("@/assets/staticImg/common/defaultHeadImg.png")
     });

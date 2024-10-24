@@ -36,11 +36,6 @@
         </div>
       </div>
     </div>
-    <div class="bottom-bg-card">
-      <div class="bg-1" />
-      <div class="bg-2" />
-      <div class="bg-3" />
-    </div>
   </div>
 </template>
 
@@ -69,7 +64,7 @@ export default defineComponent({
     const router = useRouter();
     const route = useRoute();
     const staticImgs = ref({
-      logoIcon: require("@/assets/staticImg/common/logo.png"),
+      logoIcon: require("@/assets/staticImg/common/logo-new.png"),
       qqIcon: require("@/assets/staticImg/login/qqIcon.png"),
       wxIcon: require("@/assets/staticImg/login/wxIcon.png"),
     });

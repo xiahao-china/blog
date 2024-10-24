@@ -24,7 +24,7 @@
         bottom: 0;
         width: 0%;
         height: 1px;
-        background: #7e6ce8;
+        background: @main-color;
         transition: width ease 0.2s;
       }
       .login-input{
@@ -45,16 +45,22 @@
         }
       }
       .get-verification-code-btn{
-        background: white;
+        background: transparent;
         position: absolute;
         bottom: 6px;
         right: 0;
         font-size: 12px;
-        border: 1px solid #7e6ce8;
         border-radius: 3px;
-        color: #7e6ce8;
         height: 30px;
         padding: 6px 12px;
+        border: 1px solid @table-weak-text-gray;
+        color: @table-weak-text-gray;
+
+        &.active{
+          border: 1px solid @main-color;
+          color: @main-color;
+
+        }
       }
 
     }
