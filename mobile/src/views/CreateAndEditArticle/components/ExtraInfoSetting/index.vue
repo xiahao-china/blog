@@ -2,7 +2,8 @@
   <van-popup
     teleport="body"
     class="extra-info-setting-popup"
-    position="bottom"
+    :class="isMobile ? '' : 'extra-info-setting-popup-center'"
+    :position="isMobile ? 'bottom' : 'center'"
     closeable
     :show="show"
     round
@@ -44,6 +45,7 @@
 import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { Popup, showToast } from "vant";
 import { uploadFile } from "@/api/file";
+import { isMiniScreen, isMobile } from "@/util";
 
 export default defineComponent({
   name: "ExtraInfoSetting",
@@ -111,6 +113,7 @@ export default defineComponent({
 
     return {
       staticImgs,
+      isMobile,
       showStatusChange,
       editDone,
       nowCover,
