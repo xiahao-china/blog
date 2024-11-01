@@ -16,6 +16,13 @@ module.exports = {
     sourceType: 'module'
   },
   rules: {
-    'prettier/prettier': 'warn'
+    // 'prettier/prettier': 'warn'
+    'prettier/prettier': [
+      'error',
+      {
+        singleQuote: true,
+        parser: 'typescript'
+      }
+    ]
   }
 }
