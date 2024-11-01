@@ -4,7 +4,7 @@ module.exports = {
     es6: true,
     node: true
   },
-  parser: 'babel-eslint',
+  parser: '@babel/eslint-parser',
   plugins: ['prettier'],
   extends: ['eslint:recommended', 'prettier', 'prettier/prettier'],
   globals: {
@@ -16,7 +16,7 @@ module.exports = {
     sourceType: 'module'
   },
   rules: {
-    'prettier/prettier': 'warn'
+    'prettier/prettier': 'warn',
     // 'prettier/prettier': [
     //   'error',
     //   {
