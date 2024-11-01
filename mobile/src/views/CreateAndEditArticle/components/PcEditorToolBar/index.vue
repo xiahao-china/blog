@@ -1,5 +1,5 @@
 <template>
-  <div class="editor-tool-bar normal-toolbar" v-show="editorToolbarDisplay" ref="fixToolbarRef">
+  <div class="pc-editor-tool-bar normal-toolbar" v-show="editorToolbarDisplay" ref="fixToolbarRef">
     <van-row class="toolbar-list-row" justify="center" align="center">
       <van-col span="1">
         <div class="tool-bar-item-title">字体:</div>
