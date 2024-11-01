@@ -1,5 +1,4 @@
 import md5 from "md5";
-import fs from 'fs';
 import xss from "xss";
 import userModel, { ESex, getDefaultUserInfo, IUserInfo } from "@/models/user";
 import emailVerificationCodeModel, { IEmailVerificationCode } from "@/models/emailVerificationCode";
@@ -11,13 +10,13 @@ import { isMail, isPhone } from "@/utils/reg";
 import {
   createVerificationCode,
   generateRandomUsername,
-  LOGIN_RES_KEY_LIST,
+  LOGIN_RES_KEY_LIST, SEARCH_USER_RES_KEY_LIST,
   USER_TOKEN_EXPIRED_INTERVAL_MS,
   VERIFICATION_CODE_ACQUISITION_INTERVAL,
   VERIFICATION_CODE_VALIDITY_TIME
 } from "@/controllers/user/const";
 import { sendMail, sendPhoneVerificationCode } from "@/utils/verificationCode";
-import { APP_NAME, padWithZeros, WHITELIST_HOST } from "@/utils/common";
+import { APP_NAME, filterObjItemByKey, padWithZeros, uniqueArray, WHITELIST_HOST } from "@/utils/common";
 import phoneVerificationCode, { IPhoneVerificationCodeSchema } from "@/models/phoneVerificationCode";
 import { IObject } from "@/utils/const";
 import verificationCodeTemplate from "@/static/verificationCodeTemplate";
@@ -44,6 +43,11 @@ export interface IGetVerCodeReqParams {
   email: string;
 }
 
+export interface ISearchUserControllers {
+  phone: number;
+  email: string;
+}
+
 
 export const loginControllers = async (ctx: TDefaultRouter<ILoginControllersReqParams>, next: TNext) => {
   let {
@@ -57,10 +61,10 @@ export const loginControllers = async (ctx: TDefaultRouter<ILoginControllersReqP
   if (!phone && !email) return sendResponse.error(ctx, "手机号或邮箱不能为空");
   if (!phoneVerCode && !emailVerCode && !password) return sendResponse.error(ctx, "验证码或密码不能为空");
 
-  let userInfo: IUserInfo | undefined;
-  let verCodeCheckSuccess = false;
+  let userInfo: IUserInfo | undefined
+  let verCodeCheckSuccess = false
 
-  const accountKey = (["phone", "email"] as (keyof ILoginControllersReqParams)[]).find((item) => ctx.request.body[item]);
+  const accountKey = (['phone', 'email'] as (keyof ILoginControllersReqParams)[]).find((item) => ctx.request.body[item])
   try {
     if (accountKey && ctx.request.body[accountKey]) {
       const filterObj = { [accountKey]: ctx.request.body[accountKey] };
@@ -269,3 +273,22 @@ export const changeUsrControllers = async (ctx: TDefaultRouter<IChangeUsrControl
   });
   return sendResponse.success(ctx);
 };
+
+export const searchUserControllers = async (ctx: TDefaultRouter<ISearchUserControllers>, next: TNext) => {
+  const { phone, email } = ctx.request.query || {};
+  const userInfo = await checkLogin(ctx, next);
+  if (!phone && !email) return sendResponse.error(ctx, '传参不能为空');
+  if (!userInfo) return sendResponse.error(ctx, "", EReqStatus.noLogin);
+  try {
+    const filterObj:IObject = {};
+    phone && (filterObj.phone = phone);
+    email && (filterObj.email = email);
+    const findUserInfo: IUserInfo = await userModel.collection.findOne(filterObj);
+    const handleUserInfo = filterObjItemByKey(findUserInfo,SEARCH_USER_RES_KEY_LIST);
+    return sendResponse.success(ctx, handleUserInfo);
+  } catch (err) {
+    console.log('err:', err)
+    return sendResponse.error(ctx, JSON.stringify(err))
+  }
+}
+

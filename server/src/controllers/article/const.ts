@@ -50,5 +50,6 @@ export const ARTICLE_RES_KEY_LIST: (keyof IArticle)[] = [
   "likeNum",
   "reviewId",
   "isHTML",
-  "isPrivate"
+  "isPrivate",
+  'collaborateUid'
 ];

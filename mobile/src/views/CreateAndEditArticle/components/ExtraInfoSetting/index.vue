@@ -13,6 +13,18 @@
     <div class="extra-info-setting">
       <div class="extra-options">
         <div class="extra-option-item">
+          <div class="label">添加协作者</div>
+          <div class="option-input">
+            <ChoseCollaborator v-model:value="nowCollaborateUserInfo"/>
+          </div>
+        </div>
+        <div class="extra-option-item">
+          <div class="label">设为私有</div>
+          <div class="option-input">
+            <van-switch v-model="nowIsPrivateStatus" />
+          </div>
+        </div>
+        <div class="extra-option-item">
           <div class="label">
             文章封面
             <span class="tip">(建议宽高比2:1)</span>
@@ -29,12 +41,6 @@
             />
           </div>
         </div>
-        <div class="extra-option-item">
-          <div class="label">设为私有</div>
-          <div class="option-input">
-            <van-switch v-model="nowIsPrivateStatus" />
-          </div>
-        </div>
       </div>
       <div class="publish-btn" @click="editDone">确认并发布</div>
     </div>
@@ -42,15 +48,20 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, PropType, ref, watch } from "vue";
 import { Popup, showToast } from "vant";
+
 import { uploadFile } from "@/api/file";
 import { isMiniScreen, isMobile } from "@/util";
+
+import ChoseCollaborator from "../ChoseCollaborator/index.vue";
+import { IBaseUserInfo } from "@/api/usr/const";
 
 export default defineComponent({
   name: "ExtraInfoSetting",
   components: {
     VanPopup: Popup,
+    ChoseCollaborator
   },
   props: {
     show: {
@@ -65,6 +76,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    collaborateUserInfo: {
+      default: () => [],
+      type: Array as PropType<IBaseUserInfo[]>,
+    }
   },
   setup: (props, { emit }) => {
     const staticImgs = ref({
@@ -74,6 +89,7 @@ export default defineComponent({
       props.cover ? [{ url: props.cover, isImage: true }] : []
     );
     const nowIsPrivateStatus = ref(props.isPrivate);
+    const nowCollaborateUserInfo = ref(props.collaborateUserInfo);
     const currentFile = ref<File>();
     const uploadLoading = ref(false);
 
@@ -96,6 +112,7 @@ export default defineComponent({
       emit("done", {
         cover: coverUrl,
         isPrivate: nowIsPrivateStatus.value,
+        collaborateUserInfo: nowCollaborateUserInfo,
       });
       showStatusChange(false);
     };
@@ -119,6 +136,7 @@ export default defineComponent({
       nowCover,
       nowIsPrivateStatus,
       currentFile,
+      nowCollaborateUserInfo,
     };
   },
 });

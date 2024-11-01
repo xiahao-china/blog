@@ -3,6 +3,7 @@ import { showToast } from "vant";
 import { HtmlToDelta } from "quill-delta-from-html/quill-delta-from-html";
 import { IObject } from "@/util";
 import { uploadFile } from "@/api/file";
+import { IBaseUserInfo } from "@/api/usr/const";
 
 export const TOOLBAR_OPTIONS = [
   ["bold", "italic", "underline", "strike"], // 基础字体样式
@@ -37,6 +38,7 @@ export interface IInitEditParams {
 export interface IExtraArticleInfo {
   cover: string;
   isPrivate?: boolean;
+  collaborateUserInfo: IBaseUserInfo[];
 }
 
 // 将Base64编码转换为File对象

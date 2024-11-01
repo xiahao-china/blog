@@ -41,4 +41,5 @@ export const defaultArticleDetail = {
   hasFollow: false,
   hasCollect: false,
   isHTML: true,
+  collaborateUserInfo: [],
 };

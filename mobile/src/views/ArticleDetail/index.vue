@@ -43,7 +43,7 @@
             </div>
           </div>
         </div>
-        <div class="options" v-if="isCreater">
+        <div class="options" v-if="isCollaborateOrCreater">
           <van-popover
             class="options-popover"
             placement="top"
@@ -173,13 +173,15 @@ export default defineComponent({
             }, 800);
           }
         })
-        .catch(() => void(0));
+        .catch(() => void 0);
     };
 
-    const isCreater = computed(
+    const isCollaborateOrCreater = computed(
       () =>
-        articleInfo.value.createrUid &&
-        articleInfo.value.createrUid === store.state.usrInfo.uid
+        (articleInfo.value.createrUid &&
+          articleInfo.value.createrUid === store.state.usrInfo.uid) ||
+        (articleInfo.value.collaborateUid &&
+          articleInfo.value.collaborateUid.includes(store.state.usrInfo.uid))
     );
 
     const onActionSelect = (item: IArticleActionItem) => {
@@ -206,7 +208,7 @@ export default defineComponent({
       bottomOptionsRef,
       toLikeOrCancel,
       toCollectOrCancel,
-      isCreater,
+      isCollaborateOrCreater,
       toDelete,
       contentRef,
       ARTICLE_ACTION_LIST,

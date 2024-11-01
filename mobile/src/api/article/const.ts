@@ -1,3 +1,5 @@
+import { IBaseUserInfo, IUserInfo } from "@/api/usr/const";
+
 export interface IArticle {
   id: string;
   title: string;
@@ -16,6 +18,7 @@ export interface IArticle {
   isHTML: boolean;
   tag?: string[]; // 标签
   isPrivate?: boolean;
+  collaborateUid?: string[];
 }
 
 export interface IDraftArticle {
@@ -35,6 +38,7 @@ export interface ICreateAndEditArticleReqParams {
   cover?: string;
   isHTML?: boolean;
   isPrivate?: boolean;
+  collaborateUid?: string[];
 }
 
 export interface IGetArticleDetailReqParams {
@@ -45,6 +49,7 @@ export interface IGetArticleDetailResItem extends IArticle{
   hasLike: boolean;
   hasCollect: boolean;
   hasFollow: boolean;
+  collaborateUserInfo: IBaseUserInfo[];
 }
 
 export interface ISearchArticleReqParams {

@@ -15,6 +15,7 @@ specifiers:
   '@types/koa-router': ^7.4.8
   '@types/koa-static': ^4.0.4
   '@types/koa__multer': ^2.0.7
+  '@types/lodash': ^4.17.13
   '@types/log4js': ^2.3.5
   '@types/md5': ^2.3.5
   '@types/mongoose': ^5.11.97
@@ -35,6 +36,7 @@ specifiers:
   koa: ^2.15.3
   koa-router: ^12.0.1
   koa-static: ^5.0.0
+  lodash: ^4.17.21
   log4js: ^6.9.1
   md5: ^2.3.0
   mongoose: ^8.4.0
@@ -73,6 +75,7 @@ devDependencies:
   '@types/koa-router': 7.4.8
   '@types/koa-static': 4.0.4
   '@types/koa__multer': 2.0.7
+  '@types/lodash': 4.17.13
   '@types/log4js': 2.3.5
   '@types/md5': 2.3.5
   '@types/mongoose': 5.11.97
@@ -93,6 +96,7 @@ devDependencies:
   koa: 2.15.3
   koa-router: 12.0.1
   koa-static: 5.0.0
+  lodash: 4.17.21
   log4js: 6.9.1
   md5: 2.3.0
   mongoose: 8.4.0
@@ -1751,6 +1755,10 @@ packages:
     resolution: {integrity: sha512-O7hiAEpdgW1nly93jQ8TVL2nPC7Bg1HHRf1/LGNQb7ygGBjNgZWpliCm7tswNW3MjcgYbTtz0+Sca5wHne+RyA==}
     dependencies:
       '@types/koa': 2.15.0
+    dev: true
+
+  /@types/lodash/4.17.13:
+    resolution: {integrity: sha512-lfx+dftrEZcdBPczf9d0Qv0x+j/rfNCMuC6OcfXmO8gkfeNAY88PgKUbvG56whcN23gc27yenwF6oJZXGFpYxg==}
     dev: true
 
   /@types/log4js/2.3.5:

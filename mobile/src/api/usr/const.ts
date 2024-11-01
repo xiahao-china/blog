@@ -1,15 +1,20 @@
+import { searchUser } from "@/api/usr/index";
+
 export enum ESex {
   unknow = 1,
   male,
   female
 }
 
-export interface IUserInfo {
+export interface IBaseUserInfo {
   uid: string;
-  username: string;
   avatar: string;
   nick: string;
   sex: ESex;
+}
+
+export interface IUserInfo extends IBaseUserInfo{
+  username: string;
   mail: string;
   hasChangeNick: boolean;
   lastLoginTime: number;
@@ -37,6 +42,11 @@ export interface IChangeUsrInfo {
   password: string;
   avatar: string;
   sex: ESex;
+}
+
+export interface ISearchUser {
+  phone?: string;
+  email?: string;
 }
 
 export const SEX_MAP = {

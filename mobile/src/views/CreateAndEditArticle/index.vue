@@ -42,9 +42,11 @@
       </div>
     </div>
     <ExtraInfoSetting
+      v-if="showExtraInfoSetting"
       v-model:show="showExtraInfoSetting"
       :cover="extraArticleInfo?.cover"
       :is-private="extraArticleInfo?.isPrivate"
+      :collaborate-user-info="extraArticleInfo?.collaborateUserInfo"
       @done="extraInfoSettingDone"
     />
   </div>
@@ -56,6 +58,7 @@ import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { showToast } from "vant";
 import Quill from "quill";
+import dayjs from "dayjs";
 
 import { isMobile } from "@/util";
 import {
@@ -69,10 +72,9 @@ import { IGetArticleDetailResItem } from "@/api/article/const";
 
 import EditorToolBar from "./components/EditorToolBar/index.vue";
 import PcEditorToolBar from "./components/PcEditorToolBar/index.vue";
+import ExtraInfoSetting from "./components/ExtraInfoSetting/index.vue";
 
 import { IExtraArticleInfo, initEdit, onChoseImgUpload } from "./const";
-import dayjs from "dayjs";
-import ExtraInfoSetting from "@/views/CreateAndEditArticle/components/ExtraInfoSetting/index.vue";
 
 let timeoutId: number | undefined;
 let editor: Quill | undefined;
@@ -128,8 +130,9 @@ export default defineComponent({
         nowBlogInfo.value = blogInfo.data;
         extraArticleInfo.value = {
           isPrivate: blogInfo.data.isPrivate || false,
-          cover: blogInfo.data.cover || '',
-        }
+          cover: blogInfo.data.cover || "",
+          collaborateUserInfo: blogInfo.data.collaborateUserInfo || [],
+        };
         initContent = blogInfo.data.content;
       } else {
         const blogInfo = await getDraftArticle();
@@ -144,13 +147,13 @@ export default defineComponent({
       });
     };
 
-    const onPrePublish = ()=>{
+    const onPrePublish = () => {
       if (!title.value) return showToast("请填写文章标题");
       if (!editor) return;
       const content = editor?.getContents() || "";
       if (!content) return showToast("文章内容不能为空!");
       showExtraInfoSetting.value = true;
-    }
+    };
 
     const createOrEditArticle = async () => {
       // if (!title.value) return showToast("请填写文章标题");
@@ -163,7 +166,8 @@ export default defineComponent({
         content: JSON.stringify(content),
         isHTML: false,
         isPrivate: extraArticleInfo.value?.isPrivate,
-        cover: extraArticleInfo.value?.cover
+        cover: extraArticleInfo.value?.cover,
+        collaborateUid: (extraArticleInfo.value?.collaborateUserInfo || []).map((item)=>item.uid),
       });
       if (res.code === 200) {
         showToast("发布成功");
@@ -193,7 +197,7 @@ export default defineComponent({
         });
         if (res.code === 200)
           lastSaveDraftArticle.value = dayjs().format("MM-DD HH:mm");
-      }, 300000);
+      }, 60000);
     };
 
     const onChoseImg = (file: File, insert = true) => {
@@ -201,13 +205,14 @@ export default defineComponent({
       onChoseImgUpload(file, insert, editor);
     };
 
-    const extraInfoSettingDone = (params: {cover: string; isPrivate: false;})=>{
+    const extraInfoSettingDone = (params: IExtraArticleInfo) => {
       extraArticleInfo.value = {
         isPrivate: params.isPrivate || false,
-        cover: params.cover || '',
-      }
+        cover: params.cover || "",
+        collaborateUserInfo: params.collaborateUserInfo,
+      };
       nextTick(createOrEditArticle);
-    }
+    };
 
     onMounted(async () => {
       if (!usrInfo.value.uid) {
@@ -221,7 +226,10 @@ export default defineComponent({
         });
       }
       await initBlog();
-      initAutoSave();
+      const query = route.query;
+      if (!query.articleId){
+        initAutoSave();
+      }
     });
 
     return {
@@ -241,7 +249,7 @@ export default defineComponent({
       showExtraInfoSetting,
       extraInfoSettingDone,
       onPrePublish,
-      extraArticleInfo
+      extraArticleInfo,
     };
   },
 });
