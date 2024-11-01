@@ -27,7 +27,14 @@ export const getArticleListControllersFilterObj = (uid: string)=>{
             isPrivate: { $in: [true] },
           },
           {
-            createrUid: { $in: [uid] },
+            $or: [
+              {
+                createrUid: { $in: [uid] },
+              },
+              {
+                collaborateUid: { $in: [uid] },
+              },
+            ]
           }
         ]
       }
