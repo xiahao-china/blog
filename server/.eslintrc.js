@@ -4,9 +4,9 @@ module.exports = {
     es6: true,
     node: true
   },
-  parser: '@babel/eslint-parser',
-  plugins: ['prettier'],
-  extends: ['eslint:recommended', 'prettier', 'prettier/prettier'],
+  parser: '@typescript-eslint/parser',
+  plugins: ['@typescript-eslint/eslint-plugin', 'prettier'],
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly'
@@ -16,7 +16,8 @@ module.exports = {
     sourceType: 'module'
   },
   rules: {
-    'prettier/prettier': 'warn',
+    'no-useless-escape': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
     // 'prettier/prettier': [
     //   'error',
     //   {
