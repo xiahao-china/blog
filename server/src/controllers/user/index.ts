@@ -204,11 +204,18 @@ export const checkLoginControllers = async (ctx: TDefaultRouter<IObject>, next: 
   return sendResponse.success(ctx, userInfo);
 };
 
-export const logOutControllers = async (ctx: TDefaultRouter<{}>, next: TNext) => {
+export const logOutControllers = async (ctx: TDefaultRouter<IObject>, next: TNext) => {
   ctx.cookies.set("uid", "");
   ctx.cookies.set("token", "");
   return sendResponse.success(ctx);
 };
+
+export const getIpInfoControllers = async (ctx: TDefaultRouter<IObject>, next: TNext) => {
+  return sendResponse.success(ctx, {
+    'x-real-ip': ctx.request.header['x-real-ip'],
+    'x-forwarded-for': ctx.request.header['x-forwarded-for'],
+  });
+}
 
 // nick 限制10字以下
 // password 限制大写小写英文数字起码两种 长度6-24字符
