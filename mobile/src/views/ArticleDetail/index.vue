@@ -68,14 +68,15 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from "vue";
-import { showDialog, showToast } from "vant";
+import { computed, defineComponent, onMounted, onUnmounted, ref } from "vue";
+import { showDialog, showImagePreview, showToast } from "vant";
 import dayjs from "dayjs";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import Quill from "quill";
 import Delta from "quill-delta";
 import { HtmlToDelta } from "quill-delta-from-html";
+import 'vant/es/image-preview/style';
 
 import Loading from "@/components/Loading/index.vue";
 import { IGetArticleDetailResItem } from "@/api/article/const";
@@ -90,6 +91,7 @@ import {
   defaultArticleDetail,
   EArticleActionType,
   IArticleActionItem,
+  listImgClick,
 } from "./const";
 
 export default defineComponent({
@@ -99,6 +101,7 @@ export default defineComponent({
     const route = useRoute();
     const store = useStore();
     const router = useRouter();
+    let imgClickFn: (e: Event) => void;
     const bottomOptionsRef = ref(null);
     const contentRef = ref<HTMLDivElement>();
     const articleInfo = ref<
@@ -198,8 +201,17 @@ export default defineComponent({
 
     onMounted(() => {
       const query = route.query;
+      if (contentRef.value) {
+        imgClickFn = listImgClick(contentRef.value, (src) => {
+          showImagePreview([src]);
+        });
+      }
       if (!query.id) return;
       initBlogDetail(query.id.toString());
+    });
+
+    onUnmounted(() => {
+      imgClickFn && contentRef.value?.removeEventListener("click", imgClickFn);
     });
 
     return {
@@ -222,4 +234,5 @@ export default defineComponent({
 @import "quill/dist/quill.core.css";
 @import "quill/dist/quill.snow.css";
 @import "index.less";
+
 </style>
