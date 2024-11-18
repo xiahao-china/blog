@@ -28,3 +28,4 @@ pnpm-debug.log*
 *.sw?
 
 /tools/mongodb/dataBase/
+/tools/mongodb/uploadFiles/

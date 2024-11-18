@@ -14,7 +14,7 @@
     "push": "pnpm run build && node publish.js --AIM=pro",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dbclone": "cd ./tools/mongodb;sh backup.sh",
-    "update:db": "node ./tools/mongodb/restoreDB.js",
+    "restore:db": "node ./tools/mongodb/restoreDB.js",
     "update:ng": "node publish.js --AIM=ng"
   },
   "engines": {

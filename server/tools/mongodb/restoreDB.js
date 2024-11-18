@@ -48,16 +48,26 @@ const downloadFile = async (path, localPath) => {
 const main = async () => {
   const hasFile = fs.existsSync(path.join(__dirname, './dataBase'));
   const hasTar = fs.existsSync(path.join(__dirname, './dataBase.tar.gz'));
+  const hasUploadFiles = fs.existsSync(path.join(__dirname, './uploadFiles'));
+  const hasUploadFilesTar = fs.existsSync(path.join(__dirname, './uploadFiles.tar.gz'));
   if (hasFile) execSync(isWindows ? `rd /s /q ${path.join(__dirname, './dataBase')}` : `rm -rf ${path.join(__dirname, './dataBase')}`);
   if (hasTar) execSync(isWindows ? `del ${path.join(__dirname, './dataBase.tar.gz')}` : `rm -rf ${path.join(__dirname, './dataBase.tar.gz')}`);
+  if (hasUploadFiles) execSync(isWindows ? `rd /s /q ${path.join(__dirname, './uploadFiles')}` : `rm -rf ${path.join(__dirname, './uploadFiles')}`);
+  if (hasUploadFilesTar) execSync(isWindows ? `del ${path.join(__dirname, './uploadFiles.tar.gz')}` : `rm -rf ${path.join(__dirname, './uploadFiles.tar.gz')}`);
   await deployByCommonArray([
     `${config.serverRootPath}/linux-pre-env-file/mongodb/bin/mongodump -h 127.0.0.1 -o ${config.dbBackupToolPath}/dataBase`,
     `cd ${config.dbBackupToolPath} && rm -rf ./${config.dbBackupDataPathName}.tar.gz`,
     `cd ${config.dbBackupToolPath} && tar -zcvf ${config.dbBackupDataPathName}.tar.gz ./${config.dbBackupDataPathName}`,
+    `cd ${config.dbBackupToolPath} && rm -rf ./${config.dbBackupFilesPathName}.tar.gz`,
+    `cd ${config.dbBackupToolPath} && tar -zcvf ${config.dbBackupFilesPathName}.tar.gz ./${config.dbBackupFilesPathName}`,
   ]);
-  await downloadFile(`${config.dbBackupToolPath}/dataBase.tar.gz`, path.join(__dirname, './dataBase.tar.gz'));
+  await downloadFile(`${config.dbBackupToolPath}/${config.dbBackupDataPathName}.tar.gz`, path.join(__dirname, `./${config.dbBackupDataPathName}.tar.gz`));
+  await downloadFile(`${config.dbBackupToolPath}/${config.dbBackupFilesPathName}.tar.gz`, path.join(__dirname, `./${config.dbBackupFilesPathName}.tar.gz`));
+
   execSync(`mkdir ${path.join(__dirname, './dataBase')}`);
+  execSync(`mkdir ${path.join(__dirname, './uploadFiles')}`);
   execSync(`tar -zxvf ${path.join(__dirname, './dataBase.tar.gz')} -C ${path.join(__dirname, './')}`);
+  execSync(`tar -zxvf ${path.join(__dirname, './uploadFiles.tar.gz')} -C ${path.join(__dirname, './')}`);
   execSync(`mongorestore -h 127.0.0.1:27017 ${path.join(__dirname, './dataBase')} --drop`)
 }
 
