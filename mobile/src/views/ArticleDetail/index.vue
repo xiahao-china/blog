@@ -203,7 +203,10 @@ export default defineComponent({
       const query = route.query;
       if (contentRef.value) {
         imgClickFn = listImgClick(contentRef.value, (src) => {
-          showImagePreview([src]);
+          showImagePreview({
+            images: [src],
+            doubleScale: false,
+          });
         });
       }
       if (!query.id) return;
