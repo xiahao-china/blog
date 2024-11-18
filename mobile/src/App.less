@@ -11,7 +11,39 @@
 .app{
   width: 100%;
   min-height: 100vh;
+  .page-foot{
+    margin-top: 12px;
+    padding: 8px 0;
+    border-top: 1px solid @weak-gray;
+    font-size: 12px;
+    font-weight: 400;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .page-foot-text{
+      color: @table-weak-text-gray;
+      cursor: pointer;
+    }
+    .page-foot-text,
+    .page-foot-text{
+      margin-top: 4px;
+    }
+  }
 }
 body{
   background: @main-bg-color;
+}
+
+@media (min-width: 750px) {
+  .app{
+    .page-foot{
+      flex-direction: row;
+      justify-content: center;
+      .page-foot-text,
+      .page-foot-text{
+        margin-top: 0;
+        margin-left: 12px;
+      }
+    }
+  }
 }

@@ -2,6 +2,10 @@
   <div class="app" :class="needTransform ? 'pc-transform' : ''">
     <NavBar v-show="currentNeedNavBar" />
     <router-view />
+    <div class="page-foot">
+      <div class="page-foot-text">©2023 - 2024 By 即刻分享</div>
+      <a class="page-foot-text" href="http://beian.miit.gov.cn" target="_blank">粤ICP备2024293661号</a>
+    </div>
   </div>
 </template>
 
