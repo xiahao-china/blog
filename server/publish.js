@@ -139,6 +139,8 @@ const main = async () => {
   }
   console.log(`将为${isDev ? '测试' : '正式'}环境进行部署`)
   await uploadFile(`${FILE_PATH.local}.tar.gz`, `${FILE_PATH.uploadPath}/${FILE_PATH.localFileName}.tar.gz`);
+  console.log('将进行依赖安装，请耐心等待...');
+  console.log('Warning: sharp首次在linux环境需要安装C++的libvips图形处理库，时间较久需要十几分钟!')
   deployByCommonArray(COMMON_STR_LIST.server);
 }
 
