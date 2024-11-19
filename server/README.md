@@ -29,3 +29,9 @@ net start MongoDB
 // 删除注入服务 (cmd管理员权限)
 mongod --remove --serviceName MongoDB
 ```
+
+# 其他问题
+```
+// 重新构建sharp
+pnpm rebuild --verbose sharp
+```

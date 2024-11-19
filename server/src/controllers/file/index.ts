@@ -24,9 +24,10 @@ export const uploadFilePreCheck = async (ctx: TDefaultRouter<IObject>, next: TNe
 export const compressedFile = async (ctx: TDefaultRouter<IObject>, next: TNext) => {
   const fileInfo = ctx.request.file;
   await new Promise((resolve,reject) => {
+    const ext = fileInfo.filename.split(".").pop(); //截取后缀
     sharp(`${FILE_STORAGE_PATH.replaceAll('\\','/')}/${fileInfo.filename}`)
       .resize(null, null, { withoutEnlargement: true })
-      .toFormat(fileInfo.mimetype as keyof FormatEnum, { quality: 75 })
+      .toFormat(ext as keyof FormatEnum, { quality: 75 })
       .toFile(
         `${FILE_STORAGE_PATH}/compressed-${fileInfo.filename}`,
         async (err, info) => {
