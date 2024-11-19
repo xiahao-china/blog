@@ -9,6 +9,7 @@ import { filterObjItemByKey, uniqueArray, WHITELIST_HOST } from '@/utils/common'
 import { ARTICLE_RES_KEY_LIST, getArticleListControllersFilterObj } from '@/controllers/article/const'
 import { SEARCH_USER_RES_KEY_LIST } from "@/controllers/user/const";
 import { isEqual } from "lodash";
+import { IObject } from "@/utils/const";
 
 export interface ICreateArticleControllersReqParams {
   id: string
@@ -301,7 +302,7 @@ export const saveDraftArticleControllers = async (ctx: TDefaultRouter<ISaveDraft
   }
 }
 
-export const delDraftArticleControllers = async (ctx: TDefaultRouter<{}>, next: TNext) => {
+export const delDraftArticleControllers = async (ctx: TDefaultRouter<IObject>, next: TNext) => {
   const userInfo = await checkLogin(ctx, next)
   if (!userInfo) return sendResponse.error(ctx, '', EReqStatus.noLogin)
   try {
@@ -318,7 +319,7 @@ export const delDraftArticleControllers = async (ctx: TDefaultRouter<{}>, next: 
   }
 }
 
-export const getDraftArticleControllers = async (ctx: TDefaultRouter<{}>, next: TNext) => {
+export const getDraftArticleControllers = async (ctx: TDefaultRouter<IObject>, next: TNext) => {
   const userInfo = await checkLogin(ctx, next)
   if (!userInfo) return sendResponse.error(ctx, '', EReqStatus.noLogin)
   try {
