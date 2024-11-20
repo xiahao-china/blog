@@ -1,5 +1,6 @@
 import Quill from "quill";
 import { showToast } from "vant";
+import hljs from "highlight.js";
 import { HtmlToDelta } from "quill-delta-from-html/quill-delta-from-html";
 import { IObject } from "@/util";
 import { uploadFile } from "@/api/file";
@@ -77,6 +78,9 @@ export const initEdit = (params: IInitEditParams) => {
   const quill = new Quill(containerEl, {
     placeholder: "请输入正文",
     modules: {
+      syntax: {
+        hljs,
+      },
       toolbar: {
         container: FixToolbarRootEl,
         handlers: TOOLBAR_OPTIONS,

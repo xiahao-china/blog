@@ -236,6 +236,7 @@ export default defineComponent({
 <style lang="less" scoped>
 @import "quill/dist/quill.core.css";
 @import "quill/dist/quill.snow.css";
+@import "highlight.js/styles/atom-one-dark.css";
 @import "index.less";
 
 </style>
