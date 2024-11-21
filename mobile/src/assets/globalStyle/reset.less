@@ -171,3 +171,14 @@ img {
 ::-webkit-scrollbar {
   width: 4px;
 }
+
+.globalDark{
+  filter:invert(1) hue-rotate(180deg);
+  transition: all ease 0.2s;
+  img{
+    filter: invert(1) hue-rotate(180deg);
+  }
+  .routeIcon{
+    filter: invert(0);
+  }
+}

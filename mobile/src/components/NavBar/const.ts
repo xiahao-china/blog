@@ -5,6 +5,8 @@ export interface ISearchRecordItem {
 
 export const BLOG_SEARCH_RECORD = "BLOG_SEARCH_RECORD";
 
+export const DARK_SWITCH_VALUE_LOCAL_STORAGE_KEY = "DARK_SWITCH";
+
 export const getSearchRecord = () => {
   let recordList: ISearchRecordItem[] = [];
   try {
@@ -30,11 +32,20 @@ export const recordScroll = (
   const throttleCallback = () => {
     const docEl = document.documentElement;
     const nowprogress = Math.ceil(
-        docEl.scrollTop * 100 / (docEl.scrollHeight - window.innerHeight)
-    ) ;
-    callback(Boolean(docEl.scrollTop), nowprogress > 100 ? 100 : nowprogress, () =>
-        document.removeEventListener("scroll", throttleCallback)
+      (docEl.scrollTop * 100) / (docEl.scrollHeight - window.innerHeight)
     );
-  }
+    callback(
+      Boolean(docEl.scrollTop),
+      nowprogress > 100 ? 100 : nowprogress,
+      () => document.removeEventListener("scroll", throttleCallback)
+    );
+  };
   document.addEventListener("scroll", throttleCallback);
+};
+
+export const revertPageColor = (val: boolean) => {
+  const rootHtmlTag = document.querySelector("html");
+  if (!rootHtmlTag) return;
+  if (val) rootHtmlTag.className = "globalDark";
+  else rootHtmlTag.className = "";
 };

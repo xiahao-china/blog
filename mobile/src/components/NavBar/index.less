@@ -83,7 +83,15 @@
     color: @main-text-color2;
   }
 
+  .dark-icon{
+    margin-left: 14px;
+    font-size: 23px;
+    font-weight: 600;
+    color: @main-text-color2;
+  }
+
   .progress{
+    position: relative;
     width: 24px;
     height: 24px;
     background: @main-text-color2;
@@ -99,8 +107,19 @@
       height: 4px;
       background: @table-weak-text-gray;
     }
+    .text{
+      position: relative;
+      z-index: 9;
+    }
+    .dark-icon{
+      position: absolute;
+      font-size: 12px;
+      right: -6px;
+      top: -6px;
+      font-weight: 600;
+      color: @main-text-color;
+    }
   }
-
 
 }
 
@@ -225,3 +244,5 @@
     margin-left: 76px;
   }
 }
+
+
