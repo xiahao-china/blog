@@ -71,6 +71,7 @@
 import { computed, defineComponent, onMounted, onUnmounted, ref } from "vue";
 import { showDialog, showImagePreview, showToast } from "vant";
 import dayjs from "dayjs";
+import hljs from "highlight.js";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import Quill from "quill";
@@ -121,6 +122,9 @@ export default defineComponent({
       if (contentRef.value) {
         const quill = new Quill(contentRef.value, {
           modules: {
+            syntax: {
+              hljs,
+            },
             toolbar: false,
           },
           theme: "snow",
