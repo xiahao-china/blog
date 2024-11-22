@@ -29,6 +29,7 @@ class Request {
   private customConfig: IRequestConfig = {};
 
   constructor() {
+    console.log('location.origin',location.origin);
     this.instance = axios.create({
       withCredentials: true,
       timeout: 30000,
