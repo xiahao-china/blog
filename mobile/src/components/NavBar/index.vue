@@ -1,6 +1,12 @@
 <template>
   <div class="nav-bar-shell">
-    <div class="nav-bar" :class="{ 'has-scroll': hasScroll }">
+    <div
+      class="nav-bar"
+      :class="{
+        'has-scroll': hasScroll,
+        'nav-bar-hidden': !showHead && navBarCanFold,
+      }"
+    >
       <div class="logo">
         <img class="logo-img" :src="staticImgs.logoIcon" @click="toHome" />
       </div>
@@ -21,18 +27,22 @@
         class="search-icon iconfont icon-search"
         @click="showSearchPopup = true"
       />
-<!--      <span-->
-<!--        class="chat-icon iconfont icon-chat1196057easyiconnet1"-->
-<!--        @click="showSearchPopup = true"-->
-<!--      />-->
-      <span class="iconfont dark-icon" @click="changeDarkSwitchValue" :class="darkSwitch ? 'icon-Sun' : 'icon-dark'"/>
+      <!--      <span-->
+      <!--        class="chat-icon iconfont icon-chat1196057easyiconnet1"-->
+      <!--        @click="showSearchPopup = true"-->
+      <!--      />-->
+      <span
+        class="iconfont dark-icon"
+        @click="changeDarkSwitchValue"
+        :class="darkSwitch ? 'icon-Sun' : 'icon-dark'"
+      />
       <div
         class="progress"
         :class="{
           'progress-none': !progress,
           'in-dark': darkSwitch,
         }"
-
+        @click="scrollToTop"
       >
         {{ progress ? progress : "" }}
       </div>
@@ -45,7 +55,14 @@
 import { useStore } from "vuex";
 import { showNotify } from "vant";
 import { useRoute, useRouter } from "vue-router";
-import { computed, defineComponent, onMounted, ref, watch } from "vue";
+import {
+  computed,
+  defineComponent,
+  onMounted,
+  onUnmounted,
+  ref,
+  watch,
+} from "vue";
 import { IUserInfo } from "@/api/usr/const";
 import NavBarLogin from "./components/Login/index.vue";
 
@@ -54,7 +71,7 @@ import {
   DROPDOWN_SELECT_OPTIONS,
   getSearchRecord,
   recordScroll,
-  revertPageColor,
+  revertPageColor, scrollToTop
 } from "./const";
 
 import "vant/es/notify/style";
@@ -77,11 +94,14 @@ export default defineComponent({
     const searchInput = ref<HTMLInputElement>();
     const userInfo = computed(() => store.state.usrInfo as IUserInfo);
 
+    let slideEventDestoryFn: () => void | undefined;
+
     const showSearchPopup = ref(false);
     const searchHistoryRecord = ref(getSearchRecord());
     const nowSelect = ref("");
     const hasScroll = ref(false);
     const progress = ref(0);
+    const showHead = ref(true);
     const darkSwitch = ref(
       localStorage.getItem(DARK_SWITCH_VALUE_LOCAL_STORAGE_KEY) === "true"
     );
@@ -105,6 +125,10 @@ export default defineComponent({
 
     const toHome = () => router.push("/HomePage");
 
+    const navBarCanFold = computed(() => {
+      return ["ArticleDetail"].includes(router.currentRoute.value.name as string);
+    });
+
     watch(
       () => route.path,
       () => {
@@ -117,11 +141,18 @@ export default defineComponent({
     );
 
     onMounted(() => {
-      recordScroll((scroll: boolean, nowprogress: number) => {
-        if (hasScroll.value !== scroll) hasScroll.value = scroll;
-        progress.value = nowprogress;
-      });
+      slideEventDestoryFn = recordScroll(
+        (scroll: boolean, nowprogress: number, showHeader) => {
+          if (hasScroll.value !== scroll) hasScroll.value = scroll;
+          progress.value = nowprogress;
+          showHead.value = showHeader;
+        }
+      );
       revertPageColor(darkSwitch.value);
+    });
+
+    onUnmounted(() => {
+      slideEventDestoryFn && slideEventDestoryFn();
     });
 
     return {
@@ -138,6 +169,9 @@ export default defineComponent({
       progress,
       changeDarkSwitchValue,
       darkSwitch,
+      showHead,
+      navBarCanFold,
+      scrollToTop
     };
   },
 });

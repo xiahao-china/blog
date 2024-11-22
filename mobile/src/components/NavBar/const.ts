@@ -27,20 +27,42 @@ export const DROPDOWN_SELECT_OPTIONS = [
 ];
 
 export const recordScroll = (
-  callback: (val: boolean, progress: number, clear: () => void) => void
+  callback: (val: boolean, progress: number, showHead: boolean) => void,
 ) => {
+  const maxDistance = 200;
+  const borderLimit = 50;
+  // 记录滚动方向与方向变更的起始位置
+  let isScrollDown = true;
+  let startScrollTop = 0;
+  let currentShowHead = true;
+  let preScrollTop = 0;
   const throttleCallback = () => {
     const docEl = document.documentElement;
+    const nowScrollDown = docEl.scrollTop > preScrollTop;
+    if (docEl.scrollTop <= borderLimit){
+      currentShowHead = true;
+    } else if (
+      isScrollDown === nowScrollDown &&
+        Math.abs(startScrollTop - docEl.scrollTop) > maxDistance
+    ) {
+      currentShowHead = !isScrollDown;
+    }
+    if (isScrollDown !== nowScrollDown){
+      isScrollDown = nowScrollDown;
+      startScrollTop = docEl.scrollTop;
+    }
+    preScrollTop = docEl.scrollTop;
     const nowprogress = Math.ceil(
       (docEl.scrollTop * 100) / (docEl.scrollHeight - window.innerHeight)
     );
     callback(
       Boolean(docEl.scrollTop),
       nowprogress > 100 ? 100 : nowprogress,
-      () => document.removeEventListener("scroll", throttleCallback)
+      currentShowHead
     );
   };
   document.addEventListener("scroll", throttleCallback);
+  return () => document.removeEventListener("scroll", throttleCallback);
 };
 
 export const revertPageColor = (val: boolean) => {
@@ -48,4 +70,14 @@ export const revertPageColor = (val: boolean) => {
   if (!rootHtmlTag) return;
   if (val) rootHtmlTag.className = "globalDark";
   else rootHtmlTag.className = "";
+};
+
+export const scrollToTop = () => {
+  // 距离顶部的距离
+  const drag = 10;
+  const gap = document.documentElement.scrollTop;
+  if (gap > 0) {
+    document.documentElement.scrollTop = gap - gap / drag;
+    window.requestAnimationFrame(scrollToTop);
+  }
 };

@@ -6,7 +6,7 @@
 }
 
 .nav-bar {
-  transition: background-color ease 0.2s;
+  transition: all ease 0.3s;
   position: fixed;
   display: flex;
   flex-direction: row;
@@ -23,6 +23,10 @@
   &.has-scroll{
     background-color: white;
     box-shadow: 0 1px 4px @weak-gray;
+  }
+
+  &.nav-bar-hidden{
+    transform: translateY(-100%);
   }
 
   * {

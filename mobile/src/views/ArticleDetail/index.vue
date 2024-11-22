@@ -17,7 +17,12 @@
       <div class="content" ref="contentRef" />
     </div>
     <Loading v-else />
-    <div class="bottom-options-shell">
+    <div
+      class="bottom-options-shell"
+      :class="{
+        'bottom-options-hidden': !showFoot,
+      }"
+    >
       <div class="bottom-options" ref="bottomOptionsRef">
         <div class="options-list">
           <div
@@ -80,6 +85,7 @@ import { HtmlToDelta } from "quill-delta-from-html";
 import 'vant/es/image-preview/style';
 
 import Loading from "@/components/Loading/index.vue";
+import { recordScroll } from "@/components/NavBar/const";
 import { IGetArticleDetailResItem } from "@/api/article/const";
 import {
   collectArticle,
@@ -108,6 +114,9 @@ export default defineComponent({
     const articleInfo = ref<
       IGetArticleDetailResItem & { createTimeStr: string }
     >(defaultArticleDetail);
+
+    const showFoot = ref(true);
+    let slideEventDestoryFn: () => void | undefined;
 
     const initBlogDetail = async (articleId: string) => {
       const res = await getArticleDetail({ id: articleId });
@@ -205,6 +214,12 @@ export default defineComponent({
 
     onMounted(() => {
       const query = route.query;
+
+      slideEventDestoryFn = recordScroll(
+        (scroll: boolean, nowprogress: number, showHeader) => {
+          showFoot.value = showHeader;
+        }
+      );
       if (contentRef.value) {
         imgClickFn = listImgClick(contentRef.value, (src) => {
           showImagePreview({
@@ -218,6 +233,7 @@ export default defineComponent({
     });
 
     onUnmounted(() => {
+      slideEventDestoryFn && slideEventDestoryFn();
       imgClickFn && contentRef.value?.removeEventListener("click", imgClickFn);
     });
 
@@ -232,6 +248,7 @@ export default defineComponent({
       contentRef,
       ARTICLE_ACTION_LIST,
       onActionSelect,
+      showFoot
     };
   },
 });
