@@ -6,7 +6,11 @@ import userModel, { IUserInfo } from '@/models/user'
 import { EReqStatus, IPageReqBase, sendResponse, TDefaultRouter, TNext } from '@/routes/api/const'
 import { checkLogin } from '@/controllers/user'
 import { filterObjItemByKey, uniqueArray, WHITELIST_HOST } from '@/utils/common'
-import { ARTICLE_RES_KEY_LIST, getArticleListControllersFilterObj } from '@/controllers/article/const'
+import {
+  ARTICLE_BASE_RES_KEY_LIST,
+  ARTICLE_RES_KEY_LIST,
+  getArticleListControllersFilterObj
+} from "@/controllers/article/const";
 import { SEARCH_USER_RES_KEY_LIST } from "@/controllers/user/const";
 import { isEqual } from "lodash";
 import { IObject } from "@/utils/const";
@@ -169,12 +173,12 @@ export const articleListControllers = async (ctx: TDefaultRouter<IPageReqBase>, 
       .limit(pageSize) // 限制每页的记录数
       .toArray()
     const uidList = uniqueArray(articleList.map((item) => item.createrUid)) || []
-    let userInfoList: IUserInfo[] = await Promise.all(
+    const userInfoList: IUserInfo[] = await Promise.all(
       uidList.map(async (item) => await userModel.collection.findOne({ uid: item }))
     )
     const userInfoMap: { [key: string]: IUserInfo } = {}
     userInfoList.filter((item) => item).forEach((item) => (userInfoMap[item.uid] = item))
-    const resList = filterObjItemByKey(articleList, ARTICLE_RES_KEY_LIST) as (IArticle & { nick: string })[]
+    const resList = filterObjItemByKey(articleList, ARTICLE_BASE_RES_KEY_LIST) as (IArticle & { nick: string })[]
     resList.forEach((item, index) => {
       resList[index].nick = userInfoMap[item.createrUid]?.nick
     })

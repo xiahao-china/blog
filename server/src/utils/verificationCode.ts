@@ -1,11 +1,10 @@
 import {createTransport} from 'nodemailer';
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 import Core from "@alicloud/pop-core";
-import {APP_NAME} from "@/utils/common";
+import { APP_NAME } from "@/utils/common";
 import {IObject} from "@/utils/const";
 
-// @ts-ignore
-import globalConfig from '../../config.js';
+const globalConfig = process.env.serverConfig as unknown as IObject;
 
 export interface ISendMailParams {
   senAimEmail: string;
@@ -43,7 +42,7 @@ const ALI_CLOUD_PHONE_VERIFICATION_CODE_SERVER_CONFIG = {
 export const sendMail = async (params: ISendMailParams) => {
   const transPort = createTransport(TRANSPORT_USER_CONFIG);
   const fromText = `"${APP_NAME}"<${(TRANSPORT_USER_CONFIG.auth as IObject).user}@qq.com>`;
-  let res = await transPort.sendMail({
+  const res = await transPort.sendMail({
     to: params.senAimEmail, // 发送给谁
     // from: `${TRANSPORT_USER_CONFIG.auth.user}@qq.com`, // 发送人;这种写法也可以
     from: "471087639@qq.com", // 发送人

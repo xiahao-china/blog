@@ -44,11 +44,10 @@ export const getArticleListControllersFilterObj = (uid: string)=>{
   };
 }
 
-export const ARTICLE_RES_KEY_LIST: (keyof IArticle)[] = [
+export const ARTICLE_BASE_RES_KEY_LIST: (keyof IArticle)[] = [
   "id",
   "title",
   "cover",
-  "content",
   "createrUid",
   "createTime",
   "lastUpdateTime",
@@ -59,4 +58,9 @@ export const ARTICLE_RES_KEY_LIST: (keyof IArticle)[] = [
   "isHTML",
   "isPrivate",
   'collaborateUid'
+];
+
+export const ARTICLE_RES_KEY_LIST: (keyof IArticle)[] = [
+  "content",
+  ...ARTICLE_BASE_RES_KEY_LIST,
 ];

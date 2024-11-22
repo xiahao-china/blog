@@ -2,6 +2,7 @@ const path = require('path')
 const webpack = require('webpack')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const nodeExternals = require('webpack-node-externals')
+const serverConfig = require('../../serverConfig.js');
 
 const webpackConfig = {
   target: 'node', // koa项目仅在node环境下运行，因此设置称'node'
@@ -46,7 +47,14 @@ const webpackConfig = {
       'process.env.NODE_ENV':
         process.env.NODE_ENV === 'production'
           ? JSON.stringify('production')
-          : JSON.stringify('development')
+          : JSON.stringify('development'),
+      'process.env.serverConfig': JSON.stringify({
+        ngRootPath: serverConfig.ngRootPath,
+        ngFilesName: serverConfig.ngFilesName,
+        mailAuthPass: serverConfig.mailAuthPass,
+        aliAccessKeyId: serverConfig.aliAccessKeyId,
+        aliAccessKeySecret: serverConfig.aliAccessKeySecret,
+      }),
     })
   ],
   externals: [nodeExternals()], // 排除对node_modules里的依赖进行打包

@@ -41,6 +41,13 @@ module.exports = {
   // 填入测试环境tick和uid
   mockUid: '',
   mockTicket: '',
+  
+  // qq邮箱秘钥
+  mailAuthPass: "",
+  // 阿里短信服务id
+  aliAccessKeyId: "",
+  // 阿里短信服务秘钥
+  aliAccessKeySecret: ""
 }
 
 ```

@@ -31,7 +31,11 @@ const isWindows = os.type() === 'Windows_NT';
 const FILE_PATH = {
   localFileName: `server${isDev ? '-test' : ''}`,
   local: `./server${isDev ? '-test' : ''}`,
-  uploadPath: config.serverRootPath
+  uploadPath: config.serverRootPath,
+
+  ngRootPath: config.ngRootPath,
+  ngFilesName: config.ngFilesName,
+  ngFilesPath: './tools/nginx',
 }
 
 const COMMON_STR_LIST = {
@@ -43,7 +47,10 @@ const COMMON_STR_LIST = {
     `rm -rf ${FILE_PATH.uploadPath}/${FILE_PATH.localFileName}.tar.gz`
   ],
   ng: [
-    `${config.ngRootPath}/sbin/nginx -s reload`,
+    `rm -rf ${FILE_PATH.ngRootPath}/conf/${FILE_PATH.ngFilesName}`,
+    `tar -zxvf ${FILE_PATH.ngRootPath}/conf/${FILE_PATH.ngFilesName}.tar.gz -C ${FILE_PATH.ngRootPath}/conf/`,
+    `rm -rf ${FILE_PATH.ngRootPath}/conf/${FILE_PATH.ngFilesName}.tar.gz`,
+    `${FILE_PATH.ngRootPath}/sbin/nginx -s reload`,
   ],
 }
 
@@ -74,6 +81,26 @@ const zipServerFile = () => {
   return true;
 }
 
+// 打包并压缩Ng文件
+const zipNgFile = () => {
+  const filePath = `${FILE_PATH.ngFilesPath}/${FILE_PATH.ngFilesName}`;
+  const delTarGzFn = () => {
+    execSync(isWindows ? `del ${filePath.replaceAll('/','\\')}.tar.gz` : `rm -rf ${filePath}.tar.gz`);
+  }
+  try {
+    const hasFile = fs.existsSync(filePath);
+    const hasTar = fs.existsSync(`${filePath}.tar.gz`);
+    if (hasTar) delTarGzFn();
+    if (!hasFile) execSync(`mkdir ${filePath}`);
+    execSync(`tar -zcvf ${filePath}.tar.gz -C ${FILE_PATH.ngFilesPath} ${FILE_PATH.ngFilesName}`);
+  } catch (err) {
+    console.log(iconv.decode(err.stdout, 'GBK'));
+    return false;
+  }
+
+  return delTarGzFn;
+}
+
 // 上传打包产物
 
 const uploadFile = async (localPath, remotePath) => {
@@ -87,11 +114,11 @@ const uploadFile = async (localPath, remotePath) => {
     await uploadFolder(localPath, remotePath);
     console.log('文件上传完成');
     rl.close()
-    sftp.end()
+    await sftp.end()
   } catch (err) {
     console.error('SFTP服务失败:', err)
     rl.close()
-    sftp.end()
+    await sftp.end()
   }
 }
 
@@ -124,8 +151,14 @@ const deployByCommonArray = (commonStrList) => {
 const main = async () => {
   // ng配置更新
   if (isNg){
+    const ngFilePath = `${FILE_PATH.ngFilesPath}/${FILE_PATH.ngFilesName}`;
+    console.log('将压缩Ng附属文件，以上传~');
+    const delCallBack = zipNgFile();
+    await uploadFile(`${ngFilePath}.tar.gz`, `${FILE_PATH.ngRootPath}/conf/${FILE_PATH.ngFilesName}.tar.gz`);
+    console.log("ng附属文件上传完成");
+    delCallBack();
     console.log("开始上传更新nginx.conf文件...");
-    await uploadFile(`./tools/nginx/nginx.conf`, `${config.ngRootPath}/conf/nginx.conf`);
+    await uploadFile(`./tools/nginx/nginx.conf`, `${FILE_PATH.ngRootPath}/conf/nginx.conf`);
     console.log("nginx.conf文件上传完成");
     deployByCommonArray(COMMON_STR_LIST.ng);
     console.log("nginx重启完毕!");

@@ -31,7 +31,8 @@ class Request {
   constructor() {
     this.instance = axios.create({
       withCredentials: true,
-      timeout: 30000
+      timeout: 30000,
+      baseURL: location.origin,
     } as CreateAxiosDefaults);
     this.initInstance();
   }

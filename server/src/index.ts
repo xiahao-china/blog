@@ -4,8 +4,11 @@ import {bodyParser} from "@koa/bodyparser";
 import { connectMongoDB } from "@/lib/mongodb";
 import { WEB_SOCKET_SERVER } from "@/lib/webSocket";
 
+
 import wsRoutes from "./routes/webSocket";
 import apiRouter from "./routes/api/index";
+import { sslCheckTask } from "./task/sslCheck";
+import { ScheduledTasks } from "./task";
 
 
 const app = new Koa();
@@ -30,5 +33,8 @@ app.listen(31226);
 
 const wss = new WEB_SOCKET_SERVER(31228);
 wss.initRouter(wsRoutes);
+
+const scheduledTasksInstance = new ScheduledTasks;
+scheduledTasksInstance.addTask(sslCheckTask);
 
 export default app;
