@@ -55,6 +55,7 @@ import {
   ILoginInputInfo,
   setPreLoginAccount,
 } from "./const";
+import { isMobile } from "@/util";
 
 export default defineComponent({
   name: "Login",
@@ -109,6 +110,7 @@ export default defineComponent({
         email: mail,
         phoneVerCode: phone ? verificationCode : "",
         emailVerCode: mail ? verificationCode : "",
+        isPc: !isMobile,
       });
       if (res.code === 200) {
         showToast({ type: "success", message: "登录成功！" });

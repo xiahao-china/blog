@@ -28,6 +28,7 @@ export interface ILoginControllersReqParams {
   email: string;
   phoneVerCode: number;
   emailVerCode: number;
+  isPc: boolean;
 }
 
 export interface IChangeUsrControllers {
@@ -55,7 +56,8 @@ export const loginControllers = async (ctx: TDefaultRouter<ILoginControllersReqP
     phone,
     email,
     phoneVerCode,
-    emailVerCode
+    emailVerCode,
+    isPc
   } = ctx.request.body || {};
 
   if (!phone && !email) return sendResponse.error(ctx, "手机号或邮箱不能为空");
@@ -98,11 +100,17 @@ export const loginControllers = async (ctx: TDefaultRouter<ILoginControllersReqP
     ctx.cookies.set("token", token);
     try {
       const nowMs = new Date().getTime();
-      await userModel.findOneAndUpdate({ uid: userInfo.uid }, {
-        token,
-        lastLoginTime: nowMs,
-        tokenExpiredTime: nowMs + USER_TOKEN_EXPIRED_INTERVAL_MS
-      });
+      const updateUserObj: Partial<IUserInfo> = {
+        lastLoginTime: nowMs
+      };
+      if (isPc) {
+        updateUserObj.pcToken = token;
+        updateUserObj.pcTokenExpiredTime = nowMs + USER_TOKEN_EXPIRED_INTERVAL_MS;
+      } else {
+        updateUserObj.token = token;
+        updateUserObj.tokenExpiredTime = nowMs + USER_TOKEN_EXPIRED_INTERVAL_MS;
+      }
+      await userModel.findOneAndUpdate({ uid: userInfo.uid }, updateUserObj);
     } catch (error) {
       sendResponse.error(ctx, error);
       logger.error("登录失败:" + error);
@@ -112,6 +120,7 @@ export const loginControllers = async (ctx: TDefaultRouter<ILoginControllersReqP
 
 
   if (!userInfo) {
+    if (password) return sendResponse.error(ctx, "账号不存在，请使用验证码登录！");
     const userCount = await userModel.collection.count();
     const userInfo: IUserInfo = {
       ...getDefaultUserInfo(),
@@ -188,8 +197,11 @@ export const checkLogin = async (ctx: TDefaultRouter<IObject>, next: TNext) => {
   const token = ctx.cookies.get("token");
   if (!uid || !token) return false;
   const userInfo: IUserInfo = await userModel.collection.findOne({ uid });
-  if (!userInfo || userInfo.token !== token) return false;
-  if (userInfo.tokenExpiredTime < new Date().getTime()) return false;
+  const pcTokenCheck = userInfo.pcToken === token;
+  const mobileTokenCheck = userInfo.token === token;
+  if (!userInfo || (!pcTokenCheck && !mobileTokenCheck)) return false;
+  if (pcTokenCheck && userInfo.pcTokenExpiredTime < new Date().getTime()) return false;
+  if (mobileTokenCheck && userInfo.tokenExpiredTime < new Date().getTime()) return false;
   return userInfo;
 };
 
@@ -212,10 +224,10 @@ export const logOutControllers = async (ctx: TDefaultRouter<IObject>, next: TNex
 
 export const getIpInfoControllers = async (ctx: TDefaultRouter<IObject>, next: TNext) => {
   return sendResponse.success(ctx, {
-    'x-real-ip': ctx.request.header['x-real-ip'],
-    'x-forwarded-for': ctx.request.header['x-forwarded-for'],
+    "x-real-ip": ctx.request.header["x-real-ip"],
+    "x-forwarded-for": ctx.request.header["x-forwarded-for"]
   });
-}
+};
 
 // nick 限制10字以下
 // password 限制大写小写英文数字起码两种 长度6-24字符

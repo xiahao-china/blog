@@ -3,7 +3,7 @@ import { searchUser } from "@/api/usr/index";
 export enum ESex {
   unknow = 1,
   male,
-  female
+  female,
 }
 
 export interface IBaseUserInfo {
@@ -13,7 +13,7 @@ export interface IBaseUserInfo {
   sex: ESex;
 }
 
-export interface IUserInfo extends IBaseUserInfo{
+export interface IUserInfo extends IBaseUserInfo {
   username: string;
   mail: string;
   hasChangeNick: boolean;
@@ -29,6 +29,7 @@ export interface ILoginReqParams {
   email: string;
   phoneVerCode: string;
   emailVerCode: string;
+  isPc: boolean;
 }
 
 export interface IGetVerCode {
@@ -50,7 +51,7 @@ export interface ISearchUser {
 }
 
 export const SEX_MAP = {
-  [ESex.unknow]: '未知',
-  [ESex.female]: '女性',
-  [ESex.male]: '男性',
-}
+  [ESex.unknow]: "未知",
+  [ESex.female]: "女性",
+  [ESex.male]: "男性",
+};

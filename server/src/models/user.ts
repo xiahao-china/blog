@@ -44,6 +44,8 @@ export interface IUserInfo {
   remark: string; // 备注
   token: string;
   tokenExpiredTime: number;
+  pcToken: string;
+  pcTokenExpiredTime: number;
 }
 
 export const getDefaultUserInfo = (): IUserInfo => {
@@ -67,9 +69,12 @@ export const getDefaultUserInfo = (): IUserInfo => {
     role: ERole.normal,
     hasChangeNick: false,
 
-    // token
+    // token用于移动端
     token: '',
     tokenExpiredTime: nowMs + USER_TOKEN_EXPIRED_INTERVAL_MS,
+    // pcToken用于pc端
+    pcToken: '',
+    pcTokenExpiredTime: nowMs + USER_TOKEN_EXPIRED_INTERVAL_MS,
     // 备用的字段
     remark: ''
   })
@@ -101,6 +106,9 @@ const usersSchema = new Schema({
   // token
   token: String,
   tokenExpiredTime: Number,
+  // pcToken
+  pcToken: String,
+  pcTokenExpiredTime: Number,
   // 备用的字段
   remark: String
 });

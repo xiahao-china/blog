@@ -145,7 +145,7 @@ export default defineComponent({
         showToast("您的昵称长度应小于10个字符，请检查!");
         return;
       }
-      if (password.value && /^[a-zA-Z\d,.@$!%*?&#%^\-+=<>`'"]{8,20}$/.test(password.value)){
+      if (password.value && !/^[a-zA-Z\d,.@$!%*?&#%^\-+=<>`'"]{8,20}$/.test(password.value)){
         showToast("您修改后的密码格式有误，请检查!");
         return;
       }

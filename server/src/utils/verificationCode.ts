@@ -35,7 +35,7 @@ const ALI_CLOUD_PHONE_SERVER_CONFIG: Core.Config = {
 }
 
 const ALI_CLOUD_PHONE_VERIFICATION_CODE_SERVER_CONFIG = {
-  TemplateCode: "SMS_470200056",
+  TemplateCode: "SMS_475845069",
   SignName: "即刻个人博客线上预发环境"
 }
 
