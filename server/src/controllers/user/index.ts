@@ -96,20 +96,27 @@ export const loginControllers = async (ctx: TDefaultRouter<ILoginControllersReqP
     if (!userInfo.password && !verCodeCheckSuccess) return sendResponse.error(ctx, "账号未设置密码，请通过其他方式登录后进行设置!");
     if (password && userInfo.password !== md5(password)) return sendResponse.error(ctx, "密码错误，请检查后重试!");
     const token = signToken(userInfo);
-    ctx.cookies.set("uid", userInfo.uid);
-    ctx.cookies.set("token", token);
     try {
       const nowMs = new Date().getTime();
       const updateUserObj: Partial<IUserInfo> = {
         lastLoginTime: nowMs
       };
+      const expiredTime = nowMs + USER_TOKEN_EXPIRED_INTERVAL_MS;
+
       if (isPc) {
         updateUserObj.pcToken = token;
-        updateUserObj.pcTokenExpiredTime = nowMs + USER_TOKEN_EXPIRED_INTERVAL_MS;
+        updateUserObj.pcTokenExpiredTime = expiredTime;
       } else {
         updateUserObj.token = token;
-        updateUserObj.tokenExpiredTime = nowMs + USER_TOKEN_EXPIRED_INTERVAL_MS;
+        updateUserObj.tokenExpiredTime = expiredTime;
       }
+      const cookieOptions = {
+        expires: new Date(expiredTime),
+        // signed: true,
+        overwrite: true
+      };
+      ctx.cookies.set("uid", userInfo.uid, cookieOptions);
+      ctx.cookies.set("token", token, cookieOptions);
       await userModel.findOneAndUpdate({ uid: userInfo.uid }, updateUserObj);
     } catch (error) {
       sendResponse.error(ctx, error);
