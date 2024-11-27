@@ -2,7 +2,7 @@ import ws, { Server } from 'ws'
 import { parseCookies } from "@/utils/common";
 import { checkLoginOnConnect } from "@/controllers/wsCore";
 
-export interface IWebsocketStruct<T = any> {
+export interface IWebsocketStruct<T = never> {
   router: string
   data: T
 }
@@ -32,10 +32,11 @@ export const wsMsgAnalysis = (msg: string): IWebsocketStruct | null => {
 }
 
 export class WEB_SOCKET_SERVER {
-  // @ts-ignore
   public client: Server
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   private routes: TWsRoutes
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   private linkMap: Map<
     string,
@@ -46,6 +47,7 @@ export class WEB_SOCKET_SERVER {
   >
 
   constructor(port: number) {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const that = this
     that.routes = {}
     that.linkMap = new Map()
@@ -63,6 +65,7 @@ export class WEB_SOCKET_SERVER {
   }
 
   initRouter(routes: TWsRoutes) {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const that = this
     that.routes = routes
     this.client.on('connection', async (ws, req) => {

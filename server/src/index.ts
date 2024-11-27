@@ -9,6 +9,8 @@ import wsRoutes from "./routes/webSocket";
 import apiRouter from "./routes/api/index";
 import { sslCheckTask } from "./task/sslCheck";
 import { ScheduledTasks } from "./task";
+import { MqttServer } from "@/lib/mqtt";
+import mqttRoutes from "@/routes/mqtt";
 
 
 const app = new Koa();
@@ -33,6 +35,9 @@ app.listen(31226);
 
 const wss = new WEB_SOCKET_SERVER(31228);
 wss.initRouter(wsRoutes);
+
+const mqtt = new MqttServer(1883);
+mqtt.initTopicRoutes(mqttRoutes);
 
 const scheduledTasksInstance = new ScheduledTasks;
 scheduledTasksInstance.addTask(sslCheckTask);
