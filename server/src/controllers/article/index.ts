@@ -10,7 +10,7 @@ import { filterObjItemByKey, uniqueArray, WHITELIST_HOST } from "@/utils/common"
 import {
   ARTICLE_BASE_RES_KEY_LIST,
   ARTICLE_RES_KEY_LIST,
-  getArticleListControllersFilterObj, SEARCH_MAX_NUM_EVERY_MINUTE
+  getArticleListControllersFilterObj, SEARCH_MAX_NUM_EVERY_MINUTE, searchArticleControllersFilterObj
 } from "@/controllers/article/const";
 import { SEARCH_USER_RES_KEY_LIST } from "@/controllers/user/const";
 import { isEqual } from "lodash";
@@ -131,6 +131,7 @@ export const searchArticleControllers = async (
 ) => {
   const { pageSize, pageNumber, text } = ctx.request.body || {};
   const ipAddr = ctx.request.header["x-real-ip"] || ctx.request.header["x-forwarded-for"];
+  const userInfo = await checkLogin(ctx, next);
   if (!ipAddr) return sendResponse.error(ctx, "获取ip地址失败!");
   if (!pageSize || !pageNumber) return sendResponse.error(ctx, "传参缺失，请检查pageSize与pageNumber!");
   if (!text?.trim()) return sendResponse.error(ctx, "请输入搜索内容!");
@@ -169,8 +170,8 @@ export const searchArticleControllers = async (
         }
       ]);
     }
-
-    const modelSearchRes = await articleModel.collection.find({ content: { $regex: text || "", $options: "i" } });
+    const filterObj = searchArticleControllersFilterObj((userInfo as IUserInfo)?.uid || "", text || "");
+    const modelSearchRes = await articleModel.collection.find(filterObj);
     const total = await modelSearchRes.count();
     const articleList = await modelSearchRes
       .skip((pageNumber - 1) * pageSize) // 跳过前面的记录

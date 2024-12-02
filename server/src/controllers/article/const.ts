@@ -47,6 +47,24 @@ export const getArticleListControllersFilterObj = (uid: string)=>{
   };
 }
 
+export const searchArticleControllersFilterObj = (uid: string, text: string)=>{
+  return {
+    $and: [
+      getArticleListControllersFilterObj(uid),
+      {
+        $or: [
+          {
+            content: { $regex: text || "", $options: "i" }
+          },
+          {
+            title: { $regex: text || "", $options: "i" }
+          },
+        ]
+      }
+    ]
+  }
+}
+
 export const ARTICLE_BASE_RES_KEY_LIST: (keyof IArticle)[] = [
   "id",
   "title",

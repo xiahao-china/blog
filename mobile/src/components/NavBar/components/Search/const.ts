@@ -12,6 +12,14 @@ export const throttleSearch = debounce(
     params: ISearchArticleReqParams,
     callback: (res: ISearchArticleRes & { msg: string }) => void
   ) => {
+    if (!params.text){
+      callback({
+        list: [],
+        total: 0,
+        msg: "",
+      });
+      return;
+    }
     const res = await searchArticle(params);
     if (res.code !== 200) {
       callback({

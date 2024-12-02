@@ -102,12 +102,6 @@ export default defineComponent({
     };
 
     const toSearch = () => {
-      if (searchInput.value === ""){
-        searchLoading.value = false;
-        errorMsg.value = "";
-        totalResItem.value = 0;
-        return;
-      }
       const startTime = Date.now();
       searchLoading.value = true;
       articleList.value = [];
