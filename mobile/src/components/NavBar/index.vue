@@ -23,14 +23,7 @@
           </van-dropdown-item>
         </van-dropdown-menu>
       </div>
-      <span
-        class="search-icon iconfont icon-search"
-        @click="showSearchPopup = true"
-      />
-      <!--      <span-->
-      <!--        class="chat-icon iconfont icon-chat1196057easyiconnet1"-->
-      <!--        @click="showSearchPopup = true"-->
-      <!--      />-->
+      <span class="search-icon iconfont icon-search" @click="showSearchPopup = true" />
       <span
         class="iconfont dark-icon"
         @click="changeDarkSwitchValue"
@@ -47,6 +40,7 @@
         {{ progress ? progress : "" }}
       </div>
       <NavBarLogin />
+      <Search v-show="showSearchPopup" @close="showSearchPopup=false"/>
     </div>
   </div>
 </template>
@@ -71,16 +65,18 @@ import {
   DROPDOWN_SELECT_OPTIONS,
   getSearchRecord,
   recordScroll,
-  revertPageColor, scrollToTop
+  revertPageColor,
+  scrollToTop,
 } from "./const";
 
 import "vant/es/notify/style";
-import dayjs from "dayjs"; // 手动引入函数式调用的toast样式
+import dayjs from "dayjs";
+import Search from "@/components/NavBar/components/Search/index.vue"; // 手动引入函数式调用的toast样式
 
 export default defineComponent({
   name: "NavBar",
   methods: { dayjs },
-  components: { NavBarLogin },
+  components: { Search, NavBarLogin },
   emits: ["search"],
   setup: (props, { emit }) => {
     const staticImgs = ref({
@@ -101,10 +97,8 @@ export default defineComponent({
     const nowSelect = ref("");
     const hasScroll = ref(false);
     const progress = ref(0);
-    const showHead = ref(true);
-    const darkSwitch = ref(
-      localStorage.getItem(DARK_SWITCH_VALUE_LOCAL_STORAGE_KEY) === "true"
-    );
+    const showHead = ref(true); // 是否显示导航栏
+    const darkSwitch = ref(localStorage.getItem(DARK_SWITCH_VALUE_LOCAL_STORAGE_KEY) === "true"); // 黑暗模式开关
 
     const changeDarkSwitchValue = () => {
       darkSwitch.value = !darkSwitch.value;
@@ -126,7 +120,9 @@ export default defineComponent({
     const toHome = () => router.push("/HomePage");
 
     const navBarCanFold = computed(() => {
-      return ["ArticleDetail"].includes(router.currentRoute.value.name as string);
+      return ["ArticleDetail"].includes(
+        router.currentRoute.value.name as string
+      );
     });
 
     watch(
@@ -171,7 +167,7 @@ export default defineComponent({
       darkSwitch,
       showHead,
       navBarCanFold,
-      scrollToTop
+      scrollToTop,
     };
   },
 });

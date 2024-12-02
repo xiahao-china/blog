@@ -1,25 +1,30 @@
-export interface ISearchRecordItem {
-  text: string;
-  time: number;
-}
+import { debounce } from "lodash";
+import {
+  ISearchArticleReqParams,
+  ISearchArticleRes,
+} from "@/api/article/const";
+import { searchArticle } from "@/api/article";
 
-export const BLOG_SEARCH_RECORD = "BLOG_SEARCH_RECORD";
+export const EVERY_PAGE_MAX = 10;
 
-export const getSearchRecord = () => {
-  let recordList: ISearchRecordItem[] = [];
-  try {
-    recordList = JSON.parse(localStorage.getItem(BLOG_SEARCH_RECORD) || "[]");
-  } catch (err) {
-    console.log(err);
-  }
-  return recordList;
-};
-
-export const setSearchRecord = (list: ISearchRecordItem[]) => {
-  localStorage.setItem(BLOG_SEARCH_RECORD, JSON.stringify(list));
-};
-
-export const DROPDOWN_SELECT_OPTIONS = [
-  { text: "首页", value: "HomePage" },
-  { text: "小工具", value: "Gadget" }
-];
+export const throttleSearch = debounce(
+  async (
+    params: ISearchArticleReqParams,
+    callback: (res: ISearchArticleRes & { msg: string }) => void
+  ) => {
+    const res = await searchArticle(params);
+    if (res.code !== 200) {
+      callback({
+        list: [],
+        total: 0,
+        msg: res.message || "搜索失败!",
+      });
+      return;
+    }
+    callback({
+      ...res.data,
+      msg: "",
+    });
+  },
+  800
+);

@@ -225,6 +225,7 @@ export default defineComponent({
           showImagePreview({
             images: [src],
             doubleScale: false,
+            closeable: true,
           });
         });
       }

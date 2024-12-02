@@ -15,6 +15,9 @@ export const VERIFICATION_CODE_ACQUISITION_INTERVAL = 1 * 60 * 1000;
 // 验证码过期时长
 export const VERIFICATION_CODE_VALIDITY_TIME = 10 * 60 * 1000;
 
+// 每分钟最大搜索次数
+export const SEARCH_MAX_NUM_EVERY_MINUTE = 10;
+
 export const getArticleListControllersFilterObj = (uid: string)=>{
   return uid ? {
     $or: [

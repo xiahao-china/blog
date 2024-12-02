@@ -55,7 +55,6 @@ export interface IGetArticleDetailResItem extends IArticle{
 export interface ISearchArticleReqParams {
   pageSize: number;
   pageNumber: number;
-  uid: string;
   text: string;
 }
 

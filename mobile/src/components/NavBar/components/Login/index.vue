@@ -1,22 +1,32 @@
 <template>
   <div class="nav-bar-login">
     <div class="login-btn" v-if="!userInfo.uid" @click="toLogin">登录</div>
+    <van-popup
+      class="user-info-popup"
+      position="center"
+      close-on-click-overlay
+      v-model:show="showUserPopup"
+    >
+      <div class="user-info-shell">
+        <div class="title">个人信息</div>
+        <UserInfo @close-dropdown="closeDropdown" />
+      </div>
+    </van-popup>
     <van-dropdown-menu
-      ref="userDropdownMenuRef"
       class="user-dropdown"
       teleport="body"
     >
-      <van-dropdown-item class="user-dropdown-item">
+      <van-dropdown-item ref="userDropdownMenuRef" class="user-dropdown-item">
         <template #title>
-          <div class="head-img-shell">
+          <div class="head-img-shell" @click.stop="openDropdown">
             <img
-                class="head-img"
-                v-if="userInfo.uid"
-                :src="userInfo.avatar || staticImgs.defaultHeadImg"
+              class="head-img"
+              v-if="userInfo.uid"
+              :src="userInfo.avatar || staticImgs.defaultHeadImg"
             />
           </div>
         </template>
-        <UserInfo @close-dropdown="closeDropdown"/>
+        <UserInfo @close-dropdown="closeDropdown" />
       </van-dropdown-item>
     </van-dropdown-menu>
   </div>
@@ -30,6 +40,7 @@ import { computed, defineComponent, ref } from "vue";
 import { IUserInfo } from "@/api/usr/const";
 
 import UserInfo from "../UserInfo/index.vue";
+import { isMobile } from "@/util";
 
 export default defineComponent({
   name: "NavBarLogin",
@@ -44,7 +55,8 @@ export default defineComponent({
     const route = useRoute();
     const router = useRouter();
     const userInfo = computed(() => store.state.usrInfo as IUserInfo);
-    const userDropdownMenuRef = ref<{ close: () => void }>();
+    const userDropdownMenuRef = ref<{ toggle: (val:boolean) => void }>();
+    const showUserPopup = ref(false);
 
     const toLogin = () => {
       router.push({
@@ -57,7 +69,19 @@ export default defineComponent({
     };
 
     const closeDropdown = async () => {
-      userDropdownMenuRef.value?.close();
+      if (!isMobile){
+        showUserPopup.value = false;
+        return;
+      }
+      userDropdownMenuRef.value?.toggle(false);
+    };
+
+    const openDropdown = async () => {
+      if (!isMobile){
+        showUserPopup.value = true;
+        return;
+      }
+      userDropdownMenuRef.value?.toggle(true);
     };
 
     return {
@@ -65,7 +89,10 @@ export default defineComponent({
       userInfo,
       toLogin,
       closeDropdown,
-      userDropdownMenuRef
+      userDropdownMenuRef,
+      isMobile,
+      showUserPopup,
+      openDropdown,
     };
   },
 });

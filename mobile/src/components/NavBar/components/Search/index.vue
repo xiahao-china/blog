@@ -1,201 +1,141 @@
 <template>
-  <div class="nav-bar-shell">
-    <div class="nav-bar">
-      <div class="logo">
-        <img class="logo-img" :src="staticImgs.logoIcon" @click="toHome" />
-        <div class="select-block">
-          <van-dropdown-menu class="dropdown">
-            <van-dropdown-item v-model="nowSelect" @change="onChangeDropdownSelect" :options="DROPDOWN_SELECT_OPTIONS">
-              <template v-if="!nowSelect" #title>
-                <div>即刻</div>
-              </template>
-            </van-dropdown-item>
-          </van-dropdown-menu>
+  <div class="search-shell">
+    <div class="search">
+      <div class="top-block">
+        <div class="title">搜索</div>
+        <div class="tec-support"><span class="iconfont icon-nodejs" /></div>
+        <div class="close-icon" @click="close">
+          <span class="iconfont icon-close" />
         </div>
       </div>
-      <div class="search" :class="inputActive ? 'search-active' : ''">
-        <div class="content">
-          <input
-            ref="searchInput"
-            class="search-input"
-            v-model="searchText"
-            @focus="inputActive = true"
-            @blur="inputActive = false"
-            @keydown="searchKeyDownHandle"
+      <div class="search-bar">
+        <input
+          class="search-input"
+          v-model="searchInput"
+          placeholder="输入关键词快速查找"
+          @input="toSearch"
+        />
+        <span v-if="searchInput" class="iconfont icon-close clearall" @click="searchInput=''"/>
+      </div>
+<!--      <div class="fast-chose"></div>-->
+
+      <div class="search-res">
+        <div class="error-msg" v-if="errorMsg">{{errorMsg}}</div>
+        <div class="normal-msg" v-if="!errorMsg && !searchLoading && !totalResItem">芜湖~看起来没有这样的文章呢</div>
+        <div class="loading-status" v-if="searchLoading">
+          <van-loading  color="rgb(156, 159, 167)" size="20px" >搜索中...</van-loading>
+        </div>
+        <div class="search-res-list">
+          <div
+            class="search-res-item"
+            v-for="item in articleList"
+            :key="item.id"
+            @click="() => openBlogDetail(item.id)"
+          >
+            <div class="text">{{ item.title }}</div>
+          </div>
+        </div>
+        <div class="pagination" v-if="totalResItem">
+          <van-pagination
+            v-model="currentPage"
+            :total-items="totalResItem"
+            :items-per-page="EVERY_PAGE_MAX"
           />
         </div>
-        <div class="search-icon-shell" @click="toSearch">
-          <img class="search-icon" :src="staticImgs.searchIcon" />
-        </div>
       </div>
-      <div class="right-block" :class="inputActive ? 'hidden-right-block' : ''">
-        <div class="login-btn" v-if="!userInfo.uid" @click="toLogin">登录</div>
-        <van-dropdown-menu ref="userDropdownMenuRef" class="user-dropdown" teleport="body">
-          <van-dropdown-item>
-            <template #title>
-              <img class="head-img" v-if="userInfo.uid" :src="userInfo.avatar || staticImgs.defaultHeadImg" />
-            </template>
-            <div class="user-options" >
-              <div class="user-info">
-                <img class="user-head-img" :src="userInfo.avatar || staticImgs.defaultHeadImg" />
-                <div class="text-info">
-                  <div class="nick-shell">
-                    <div class="nick">{{userInfo.nick}}</div>
-                    <span class="iconfont icon-edit"/>
-                  </div>
-                  <div class="last-login">上次登录：{{userPreLoginStr}}</div>
-                </div>
-              </div>
-              <div class="statistical-data">
-                <div class="data-item">
-                  <div class="num">{{userInfo.likesNum || 0}}</div>
-                  <div class="desc">点赞</div>
-                </div>
-                <div class="data-item">
-                  <div class="num">{{userInfo.followNum || 0}}</div>
-                  <div class="desc">关注</div>
-                </div>
-                <div class="data-item">
-                  <div class="num">{{userInfo.collectNum || 0}}</div>
-                  <div class="desc">收藏</div>
-                </div>
-              </div>
-              <div class="btn-list">
-                <div class="btn-item" @click="toCreateArticle">
-                  <span class="iconfont icon-icf_wirte"/>
-                  开始创作
-                </div>
-                <div class="btn-item warning" @click="logOut">退出登录</div>
-              </div>
-            </div>
-          </van-dropdown-item>
-        </van-dropdown-menu>
+      <div class="tip-info">
+        找到{{ totalResItem }}条结果，用时{{ searchTime }}ms
       </div>
     </div>
   </div>
-
 </template>
 
 <script lang="ts">
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { computed, defineComponent, ref, watch } from "vue";
-import { IUserInfo } from "@/api/usr/const";
-import { IObject } from "@/util";
+import { Pagination, Loading } from "vant";
 
-import { DROPDOWN_SELECT_OPTIONS, getSearchRecord, setSearchRecord } from "./const";
-import dayjs from "dayjs";
-import { logOutReq } from "@/api/usr";
-import { showToast } from "vant";
+import { IUserInfo } from "@/api/usr/const";
+import { IArticle } from "@/api/article/const";
+
+import { EVERY_PAGE_MAX, throttleSearch } from "./const";
+import { searchArticle } from "@/api/article";
 
 export default defineComponent({
-  name: "NavBar",
-  components: {},
-  emits: ["search"],
+  name: "Search",
+  components: {
+    VanPagination: Pagination,
+    VanLoading: Loading,
+  },
+  emits: ["close"],
   setup: (props, { emit }) => {
     const staticImgs = ref({
       logoIcon: require("@/assets/staticImg/common/logo-new.png"),
       searchIcon: require("@/assets/staticImg/common/search.png"),
-      defaultHeadImg: require("@/assets/staticImg/common/defaultHeadImg.png")
+      defaultHeadImg: require("@/assets/staticImg/common/defaultHeadImg.png"),
     });
     const store = useStore();
     const router = useRouter();
     const route = useRoute();
-    const searchInput = ref<HTMLInputElement>();
-    const userDropdownMenuRef = ref<{close: ()=>void}>();
     const userInfo = computed(() => store.state.usrInfo as IUserInfo);
 
-    const inputActive = ref(false);
-    const showSearchPopup = ref(false);
-    const searchHistoryRecord = ref(getSearchRecord());
-    const searchText = ref("");
-    const nowSelect = ref("");
+    const searchLoading = ref(false);
+    const searchInput = ref("");
+    const currentPage = ref(1);
+    const totalResItem = ref(0);
+    const searchTime = ref(0);
+    const articleList = ref<IArticle[]>([]);
+    const errorMsg = ref("");
 
-    const toLogin = () => {
+    // 抛出关闭事件
+    const close = () => {
+      emit("close");
+    };
+
+    const openBlogDetail = (id: string) => {
       router.push({
-        query: {
-          backPageHash: route.hash,
-          backPageQuery: JSON.stringify(route.query)
-        },
-        path: "/Login"
+        query: { id },
+        path: "/ArticleDetail",
       });
     };
 
     const toSearch = () => {
-      if (!searchText.value) {
-        inputActive.value = false;
-        searchInput.value?.blur();
-        return;
-      }
-      searchHistoryRecord.value = [...searchHistoryRecord.value, {
-        text: searchText.value,
-        time: new Date().getTime()
-      }];
-      setSearchRecord(searchHistoryRecord.value);
-
-      router.push({
-        query: {
-          searchText: searchText.value
+      const startTime = Date.now();
+      searchLoading.value = true;
+      articleList.value = [];
+      throttleSearch(
+        {
+          pageSize: EVERY_PAGE_MAX,
+          pageNumber: currentPage.value,
+          text: searchInput.value,
         },
-        hash: "/Search"
-      });
+        (res) => {
+          const endTime = Date.now();
+          searchLoading.value = false;
+          searchTime.value = endTime - startTime;
+          totalResItem.value = res.total || 0;
+          articleList.value = res.list || [];
+          errorMsg.value = res.msg || "";
+        }
+      );
     };
-
-    const toHome = () => {
-      router.push("/HomePage");
-    };
-
-    const logOut = async ()=>{
-      const res = await logOutReq();
-      if (res.code !== 200) showToast(res.message || '登出失败！');
-      else {
-        store.dispatch("checkLoginStatus");
-        userDropdownMenuRef.value?.close();
-      }
-    }
-
-    const toCreateArticle = () => {
-      router.push("/CreateAndEditArticle");
-    };
-    const searchKeyDownHandle = () => {
-      if ((event as IObject).key === "Enter") toSearch();
-    };
-
-    const onChangeDropdownSelect = (val: string) => {
-      router.push(val);
-    };
-
-    const userPreLoginStr = computed(()=>{
-      return userInfo.value.lastLoginTime ? dayjs(userInfo.value.lastLoginTime).format('YYYY-DD-MM HH:mm') :
-        '----'
-    })
-
-    watch(() => route.path, () => {
-      nowSelect.value = DROPDOWN_SELECT_OPTIONS.find((item) => route.path.includes(item.value))?.value || "";
-    }, { immediate: true });
 
     return {
       staticImgs,
-      DROPDOWN_SELECT_OPTIONS,
-
-      userInfo,
-      toLogin,
-      inputActive,
-      searchText,
-      toSearch,
-      searchHistoryRecord,
-      searchKeyDownHandle,
       searchInput,
-      nowSelect,
-      toHome,
-      onChangeDropdownSelect,
-      userPreLoginStr,
-      toCreateArticle,
-      logOut,
-      userDropdownMenuRef,
-      showSearchPopup
+      currentPage,
+      totalResItem,
+      searchTime,
+      EVERY_PAGE_MAX,
+      close,
+      articleList,
+      openBlogDetail,
+      toSearch,
+      searchLoading,
+      errorMsg
     };
-  }
+  },
 });
 </script>
 
