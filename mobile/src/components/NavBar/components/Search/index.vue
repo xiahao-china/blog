@@ -94,6 +94,7 @@ export default defineComponent({
     };
 
     const openBlogDetail = (id: string) => {
+      close();
       router.push({
         query: { id },
         path: "/ArticleDetail",
@@ -101,9 +102,16 @@ export default defineComponent({
     };
 
     const toSearch = () => {
+      if (searchInput.value === ""){
+        searchLoading.value = false;
+        errorMsg.value = "";
+        totalResItem.value = 0;
+        return;
+      }
       const startTime = Date.now();
       searchLoading.value = true;
       articleList.value = [];
+      currentPage.value = 1;
       throttleSearch(
         {
           pageSize: EVERY_PAGE_MAX,

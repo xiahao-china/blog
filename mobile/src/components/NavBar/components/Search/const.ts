@@ -26,5 +26,5 @@ export const throttleSearch = debounce(
       msg: "",
     });
   },
-  800
+  600
 );
