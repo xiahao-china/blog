@@ -3,14 +3,14 @@ import RouterClass from "koa-router";
 import {bodyParser} from "@koa/bodyparser";
 import { connectMongoDB } from "@/lib/mongodb";
 import { WEB_SOCKET_SERVER } from "@/lib/webSocket";
-
+import { MqttServer } from "@/lib/mqtt";
+import mqttRoutes from "@/routes/mqtt";
 
 import wsRoutes from "./routes/webSocket";
 import apiRouter from "./routes/api/index";
 import { sslCheckTask } from "./task/sslCheck";
 import { ScheduledTasks } from "./task";
-import { MqttServer } from "@/lib/mqtt";
-import mqttRoutes from "@/routes/mqtt";
+
 
 
 const app = new Koa();

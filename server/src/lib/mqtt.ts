@@ -1,22 +1,33 @@
-import aedes from "aedes";
+import aedes, { Client } from "aedes";
 import net from "net";
 import type { PublishPacket } from "aedes/types/packet";
+import equipmentModel, { getDefaultEquipment, IEquipment } from "@/models/equipment";
+import { IObject } from "@/utils/const";
+import Aedes from "aedes";
 
-const aedesObj = new aedes();
+export const aedesObj = new aedes();
 
 export const DEFAULT_MQTT_PUBLISH_OBJ: PublishPacket = {
   cmd: "publish",
   qos: 0,
   retain: false,
   dup: false,
-  payload: '',
-  topic: '',
-}
+  payload: "",
+  topic: ""
+};
+
+export const getPublishAim = (mqttObj: Aedes, clientId?: string[] | string) => {
+  if (!clientId) return [mqttObj];
+  const clientList = (mqttObj as IObject)?.clients as ({ [key: string]: Client } | undefined);
+  if (!clientList) return [];
+  if (typeof clientId === "string") return [clientList[clientId]];
+  return clientId.map((item) => clientList[item]);
+};
 
 export type TMqttTopicPublishFn = (
   mqttObj: aedes,
   topic: string,
-  msg: string
+  clientId?: string[] | string
 ) => Promise<string | null> | string | null;
 
 export type TMqttTopicRoutes = {
@@ -37,13 +48,13 @@ export class MqttServer {
     });
 
     aedesObj.on("publish", (packet, client) => {
-      const {topic, payload} = packet;
+      const { topic, payload } = packet;
       if (!this.topicRoutes[topic]) {
         console.log(`Topic ${topic} not found`);
         return;
       }
       const topicFn = this.topicRoutes[topic];
-      topicFn(aedesObj, topic, payload.toString());
+      topicFn(aedesObj, payload.toString());
     });
   }
 
@@ -52,7 +63,29 @@ export class MqttServer {
   }
 }
 
-
+aedesObj.authenticate = async (client, username, password, done) => {
+  const equipmentInfo = await equipmentModel.collection.findOne({ account: username });
+  if (!equipmentInfo || !password) {
+    return done({
+      returnCode: 4,
+      ...new Error("设备不存在!")
+    }, false);
+  }
+  if (equipmentInfo.password !== password.toString('utf-8')) {
+    return done({
+      returnCode: 4,
+      ...new Error("设备秘钥错误!")
+    }, false);
+  }
+  (client as IObject).eid = equipmentInfo.eid;
+  console.log(`Client Authenticated: ${client.id}`);
+  done(null, true);
+  equipmentModel.collection.updateOne({ eid: equipmentInfo.eid }, {
+    $set: {
+      clientId: client.id
+    }
+  });
+};
 aedesObj.on("client", (client) => {
   console.log(`Client Connected: ${client.id}`);
 });

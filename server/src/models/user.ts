@@ -33,10 +33,9 @@ export interface IUserInfo {
   lastLoginTime: number;
 
   collectArticleId: string[]; // 收藏的文章
-
   likeArticleId: string[]; // 点赞的文章
-
   followUid: string[]; // 关注的人uid
+  bindEquipmentId: string[]; // 绑定的设备id
 
   state: EUserStatus;
   role: ERole;
@@ -64,6 +63,7 @@ export const getDefaultUserInfo = (): IUserInfo => {
     collectArticleId: [],
     likeArticleId: [],
     followUid: [],
+    bindEquipmentId: [],
 
     state: EUserStatus.using,
     role: ERole.normal,
@@ -98,6 +98,7 @@ const usersSchema = new Schema({
   collectArticleId: Array,
   likeArticleId: Array,
   followUid: Array,
+  bindEquipmentId: Array,
 
   state: Number,
   role: Number,
