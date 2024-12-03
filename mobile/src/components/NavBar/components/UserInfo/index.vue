@@ -61,7 +61,6 @@ import { showToast } from "vant";
 
 import { IUserInfo } from "@/api/usr/const";
 import { logOutReq } from "@/api/usr";
-import {isMiniScreen, isMobile} from "@/util";
 
 
 export default defineComponent({

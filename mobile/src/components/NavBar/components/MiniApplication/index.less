@@ -1,0 +1,118 @@
+@import "/src/assets/globalStyle/commonStyle.less";
+@import "/src/assets/globalStyle/animations.less";
+
+.application-card-list {
+  width: 100%;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  display: flex;
+  padding: 12px;
+
+  .application-card-item {
+    width: 170px;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 16px;
+    border: 1px solid @weak-gray;
+    background: rgb(231, 237, 244);
+    border-radius: 8px;
+    padding: 12px 0 12px 8px;
+
+    .application-card-item-img {
+      width: 22px;
+      margin-right: 8px;
+      border-radius: 50%;
+    }
+
+    .iconfont {
+      font-size: 22px;
+      margin-right: 8px;
+    }
+
+    .application-card-item-title {
+      font-size: 12px;
+      font-weight: 500;
+      color: @main-text-color;
+      flex: 1;
+    }
+
+    .icon-youjiantou1 {
+      font-size: 14px;
+    }
+    .icon-lianjie{
+      font-size: 16px;
+    }
+  }
+
+}
+
+.mini-application {
+  flex-direction: row;
+  align-items: center;
+
+  .dropdown {
+    /deep/ .van-dropdown-menu__bar {
+      background: transparent;
+      box-shadow: none;
+
+      .van-dropdown-menu__item {
+        box-shadow: none;
+
+        .van-dropdown-menu__title {
+          padding-left: 0;
+          padding-right: 0;
+          font-size: 16px;
+          font-weight: bold;
+          white-space: nowrap;
+
+          .mini-app {
+            font-weight: normal;
+            font-size: 19px;
+            color: @main-text-color2;
+          }
+
+          &:after {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+
+}
+
+.application-popup{
+  background: transparent;
+  margin-top: -10%;
+  .application-shell{
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    width: 480px;
+    padding: 24px 24px 36px;
+    background: @main-bg-color;
+    flex-direction: column;
+    align-items: center;
+    .title{
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+    .application-card-item{
+      width: 48%;
+      cursor: pointer;
+      transition: all ease-in-out 0.2s;
+      &:hover{
+        border-color: @main-color;
+      }
+    }
+  }
+}
+
+
+@media (min-width: 750px) {
+  /* 在这里写入当屏幕宽度大于750px时应用的样式 */
+
+
+}

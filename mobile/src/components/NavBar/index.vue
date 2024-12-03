@@ -10,20 +10,11 @@
       <div class="logo">
         <img class="logo-img" :src="staticImgs.logoIcon" @click="toHome" />
       </div>
-      <div class="select-block">
-        <van-dropdown-menu class="dropdown">
-          <van-dropdown-item
-            v-model="nowSelect"
-            @change="onChangeDropdownSelect"
-            :options="DROPDOWN_SELECT_OPTIONS"
-          >
-            <template #title>
-              <span class="mini-app iconfont icon-app" />
-            </template>
-          </van-dropdown-item>
-        </van-dropdown-menu>
-      </div>
-      <span class="search-icon iconfont icon-search" @click="showSearchPopup = true" />
+      <MiniApplication />
+      <span
+        class="search-icon iconfont icon-search"
+        @click="showSearchPopup = true"
+      />
       <span
         class="iconfont dark-icon"
         @click="changeDarkSwitchValue"
@@ -40,7 +31,7 @@
         {{ progress ? progress : "" }}
       </div>
       <NavBarLogin />
-      <Search v-show="showSearchPopup" @close="showSearchPopup=false"/>
+      <Search v-show="showSearchPopup" @close="showSearchPopup = false" />
     </div>
   </div>
 </template>
@@ -48,6 +39,7 @@
 <script lang="ts">
 import { useStore } from "vuex";
 import { showNotify } from "vant";
+import dayjs from "dayjs";
 import { useRoute, useRouter } from "vue-router";
 import {
   computed,
@@ -58,11 +50,11 @@ import {
   watch,
 } from "vue";
 import { IUserInfo } from "@/api/usr/const";
+import Search from "./components/Search/index.vue";
 import NavBarLogin from "./components/Login/index.vue";
-
+import MiniApplication from "./components/MiniApplication/index.vue";
 import {
   DARK_SWITCH_VALUE_LOCAL_STORAGE_KEY,
-  DROPDOWN_SELECT_OPTIONS,
   getSearchRecord,
   recordScroll,
   revertPageColor,
@@ -70,13 +62,11 @@ import {
 } from "./const";
 
 import "vant/es/notify/style";
-import dayjs from "dayjs";
-import Search from "@/components/NavBar/components/Search/index.vue"; // 手动引入函数式调用的toast样式
 
 export default defineComponent({
   name: "NavBar",
   methods: { dayjs },
-  components: { Search, NavBarLogin },
+  components: { Search, NavBarLogin, MiniApplication },
   emits: ["search"],
   setup: (props, { emit }) => {
     const staticImgs = ref({
@@ -94,11 +84,12 @@ export default defineComponent({
 
     const showSearchPopup = ref(false);
     const searchHistoryRecord = ref(getSearchRecord());
-    const nowSelect = ref("");
     const hasScroll = ref(false);
     const progress = ref(0);
     const showHead = ref(true); // 是否显示导航栏
-    const darkSwitch = ref(localStorage.getItem(DARK_SWITCH_VALUE_LOCAL_STORAGE_KEY) === "true"); // 黑暗模式开关
+    const darkSwitch = ref(
+      localStorage.getItem(DARK_SWITCH_VALUE_LOCAL_STORAGE_KEY) === "true"
+    ); // 黑暗模式开关
 
     const changeDarkSwitchValue = () => {
       darkSwitch.value = !darkSwitch.value;
@@ -113,10 +104,6 @@ export default defineComponent({
       });
     };
 
-    const onChangeDropdownSelect = (val: string) => {
-      router.push(val);
-    };
-
     const toHome = () => router.push("/HomePage");
 
     const navBarCanFold = computed(() => {
@@ -124,17 +111,6 @@ export default defineComponent({
         router.currentRoute.value.name as string
       );
     });
-
-    watch(
-      () => route.path,
-      () => {
-        nowSelect.value =
-          DROPDOWN_SELECT_OPTIONS.find((item) =>
-            route.path.includes(item.value)
-          )?.value || "";
-      },
-      { immediate: true }
-    );
 
     onMounted(() => {
       slideEventDestoryFn = recordScroll(
@@ -153,12 +129,9 @@ export default defineComponent({
 
     return {
       staticImgs,
-      DROPDOWN_SELECT_OPTIONS,
       userInfo,
       searchHistoryRecord,
       searchInput,
-      nowSelect,
-      onChangeDropdownSelect,
       showSearchPopup,
       hasScroll,
       toHome,
