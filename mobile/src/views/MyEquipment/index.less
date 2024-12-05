@@ -1,0 +1,218 @@
+@import "/src/assets/globalStyle/commonStyle.less";
+
+.my-equipment {
+  display: flex;
+  height: 100%;
+  min-height: calc(100vh - 30px);
+  width: 100%;
+  overflow: hidden;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding: 12px 18px;
+
+  .current-chose,
+  .equipment {
+
+    width: 100%;
+    display: flex;
+    margin-bottom: 32px;
+    flex-direction: column;
+
+    .title-block {
+      align-items: center;
+      display: inline-flex;
+      flex-direction: row;
+
+      .title {
+        flex: 1;
+        display: inline-flex;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .icon-tianjiashebei {
+        display: inline-flex;
+        font-size: 16px;
+        font-weight: 500;
+        color: @main-color;
+      }
+    }
+
+    .options-list {
+      width: 100%;
+      padding: 0 16px;
+      display: inline-flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+
+      .none-text {
+        margin-top: 24px;
+        width: 100%;
+        justify-content: center;
+        display: inline-flex;
+        font-size: 20px;
+        color: @weak-text-gray2;
+      }
+      .light-options{
+        margin-top: 16px;
+        display: inline-flex;
+        width: 100%;
+      }
+      .options-item{
+        display: inline-flex;
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+        .label {
+          display: inline-flex;
+          font-size: 14px;
+          font-weight: 500;
+          color: @main-text-color;
+        }
+        .content{
+          cursor: pointer;
+          display: inline-flex;
+        }
+      }
+
+
+    }
+  }
+
+  .equipment{
+    margin-top: 32px;
+    .equipment-list{
+      display: inline-flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      padding-top: 16px;
+      .add-card,
+      .equipment-item {
+        display: inline-flex;
+        width: 164px;
+        height: 90px;
+        border-radius: 16px;
+        background: rgb(231, 237, 244);
+
+        &:active {
+          background: @yellow-color-weak;
+        }
+
+        &:hover {
+          border: 1px solid rgba(255, 236, 201, 0.7);
+        }
+      }
+
+      .equipment-item{
+        transition: 0.2s ease-in-out background-color;
+        padding: 0 16px;
+        position: relative;
+        align-items: center;
+        .equipment-item-info{
+          align-items: center;
+          display: inline-flex;
+          color: @main-text-color2;
+          transition: 0.2s ease-in-out color;
+          .iconfont{
+            font-size: 14px;
+            margin-right: 6px;
+          }
+          .equipment-item-info-title{
+            flex-direction: column;
+            display: inline-flex;
+            font-size: 14px;
+            .text{
+              font-weight: 600;
+            }
+            .equipment-item-info-subtitle{
+              font-size: 12px;
+              margin-top: 2px;
+              color: @table-weak-text-gray;
+            }
+          }
+
+        }
+        .icon-close{
+          position: absolute;
+          right: 12px;
+          top: 12px;
+          font-size: 12px;
+          color: @weak-text-gray;
+          font-weight: 400;
+        }
+
+        &.active{
+          background: @yellow-color-weak;
+          .equipment-item-info{
+            .iconfont,
+            .equipment-item-info-title,
+            .equipment-item-info-title > .equipment-item-info-subtitle{
+              color: @yellow-heavy-color-weak;
+            }
+          }
+        }
+      }
+
+      .add-card {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        .add-icon {
+          font-size: 16px;
+          color: @main-text-color2;
+        }
+
+        .text {
+          margin-top: 4px;
+          font-size: 13px;
+          color: @main-text-color2;
+        }
+      }
+    }
+  }
+
+  .edit-equipment{
+    display: inline-flex;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    *{
+      display: inline-flex;
+    }
+    .edit-equipment-item{
+      align-items: center;
+      justify-content: center;
+      border-radius: 16px;
+      border: 1px solid @main-color;
+      width: 156px;
+      height: 36px;
+      .text{
+        font-size: 14px;
+        color: @main-color;
+      }
+      .icon-qiehuan1{
+        font-size: 16px;
+        color: @main-color;
+        margin-right: 4px;
+      }
+      .icon-edit{
+        font-size: 15px;
+        color: @main-color;
+        margin-right: 4px;
+      }
+      &:hover{
+        background: @main-color;
+        .text,
+        .icon-edit{
+          color: white;
+        }
+      }
+    }
+
+  }
+
+}
+

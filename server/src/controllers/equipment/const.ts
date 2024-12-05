@@ -1,12 +1,10 @@
-import { EEquipmentType, IEquipment } from "@/models/equipment";
+import { EEquipmentOptions, EEquipmentType, IEquipment } from "@/models/equipment";
 import { IPageReqBase } from "@/routes/api/const";
 import { aedesObj } from "@/lib/mqtt";
 import { IObject } from "@/utils/const";
 import { lightingOptionControllers } from "@/controllers/mqttSwitch";
 
-export enum EEquipmentOptions {
-  lighting = "lighting",
-}
+
 
 export type IEquipmentOptionsItem = {
   [key in EEquipmentOptions]: (params: IObject, clientId: string) => void;
@@ -52,5 +50,6 @@ export const EQUIPMENT_BASE_RES_KEY_LIST: (keyof IEquipment)[] = [
   "type",
   "wifiName",
   "account",
-  "lastUseTime"
+  "lastUseTime",
+  "substance"
 ];

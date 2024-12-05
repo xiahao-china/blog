@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4133519 */
-  src: url('iconfont.woff2?t=1733216394446') format('woff2'),
-       url('iconfont.woff?t=1733216394446') format('woff'),
-       url('iconfont.ttf?t=1733216394446') format('truetype');
+  src: url('iconfont.woff2?t=1733307303864') format('woff2'),
+       url('iconfont.woff?t=1733307303864') format('woff'),
+       url('iconfont.ttf?t=1733307303864') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,22 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-lightbulb:before {
+  content: "\e640";
+}
+
+.icon-mqtt-logo:before {
+  content: "\e602";
+}
+
+.icon-qiehuan1:before {
+  content: "\e623";
+}
+
+.icon-tianjiashebei:before {
+  content: "\e6c8";
 }
 
 .icon-youjiantou1:before {

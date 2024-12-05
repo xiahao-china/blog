@@ -97,6 +97,11 @@ export default defineComponent({
         return;
       }
       router.push(item.value);
+      if (!isMobile) {
+        showApplicationPopup.value = false;
+      } else {
+        applicationDropdownRef.value?.toggle(false);
+      }
     };
 
     const openDropdown = async () => {
@@ -126,7 +131,7 @@ export default defineComponent({
       onChangeDropdownSelect,
       showApplicationPopup,
       openDropdown,
-      applicationDropdownRef
+      applicationDropdownRef,
     };
   },
 });

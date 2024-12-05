@@ -8,7 +8,7 @@ import {
   IEquipmentSearchOnlineReqParams,
 } from "./const";
 
-export const equipmentList = async () => {
+export const getEquipmentList = async () => {
   const res = await request.post<IBaseRes<IEquipment[]>>(
     "/api/equipment/list",
     {}
@@ -20,7 +20,7 @@ export const equipmentSearchOnline = async (
   params: Partial<IEquipmentSearchOnlineReqParams>
 ) => {
   const res = await request.post<IBaseRes<IEquipmentSearchOfflineRes>>(
-    "/api/equipment/searchOnline",
+    "/api/equipment/search",
     params
   );
   return res;

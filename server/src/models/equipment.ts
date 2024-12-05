@@ -12,6 +12,10 @@ export enum EEquipmentType {
   switch = 1,
 }
 
+export enum EEquipmentOptions {
+  lighting = "lighting",
+}
+
 export interface IEquipment {
   eid: string;
   clientId: string;
@@ -19,6 +23,7 @@ export interface IEquipment {
   password: string;
   status: EEquipmentStatus;
   type: EEquipmentType;
+  substance: EEquipmentOptions;
   wifiName: string;
   wifiPassword: string;
   lastUseTime: number;
@@ -32,6 +37,7 @@ export const getDefaultEquipment = (): IEquipment => {
     password: "",
     status: EEquipmentStatus.unActive,
     type: EEquipmentType.switch,
+    substance: EEquipmentOptions.lighting,
     wifiName: "",
     wifiPassword: "",
     lastUseTime: 0
@@ -47,6 +53,7 @@ const equipmentSchema = new Schema({
   type: Number,
   wifiName: String,
   wifiPassword: String,
+  substance: String,
   lastUseTime: Number
 });
 

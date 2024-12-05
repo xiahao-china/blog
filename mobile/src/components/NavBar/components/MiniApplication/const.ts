@@ -8,7 +8,7 @@ export interface IDropdownSelectOptions {
 export const DROPDOWN_SELECT_OPTIONS: IDropdownSelectOptions[] = [
   {
     text: "我的设备",
-    value: "https://tinypng.com/cn/",
+    value: "MyEquipment",
     icon: "icon-shebei",
   },
   {

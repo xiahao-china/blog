@@ -55,7 +55,9 @@ export const routes: Array<RouteRecordRaw & IObject> = [
       pageName: "修改个人信息",
     },
     component: () =>
-      import(/* webpackChunkName: "ChangeUserInfo" */ "src/views/ChangeUserInfo/index.vue"),
+      import(
+        /* webpackChunkName: "ChangeUserInfo" */ "src/views/ChangeUserInfo/index.vue"
+      ),
   },
   {
     path: "/CreateAndEditArticle",
@@ -64,7 +66,21 @@ export const routes: Array<RouteRecordRaw & IObject> = [
       pageName: "写文章",
     },
     component: () =>
-      import(/* webpackChunkName: "CreateAndEditArticle" */ "src/views/CreateAndEditArticle/index.vue"),
+      import(
+        /* webpackChunkName: "CreateAndEditArticle" */ "src/views/CreateAndEditArticle/index.vue"
+      ),
+  },
+  {
+    path: "/MyEquipment",
+    name: "MyEquipment",
+    needNavBar: true,
+    meta: {
+      pageName: "我的设备",
+    },
+    component: () =>
+      import(
+        /* webpackChunkName: "MyEquipment" */ "src/views/MyEquipment/index.vue"
+        ),
   },
   {
     path: "/:pathMatch(.*)*",

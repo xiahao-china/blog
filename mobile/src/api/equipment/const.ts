@@ -21,6 +21,7 @@ export interface IEquipment {
   type: EEquipmentType;
   wifiName: string;
   wifiPassword: string;
+  substance: EEquipmentOptions;
   lastUseTime: number;
 }
 

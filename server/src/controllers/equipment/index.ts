@@ -37,7 +37,7 @@ export const equipmentListControllers = async (
   }
 };
 
-export const equipmentSearchOnlineControllers = async (
+export const equipmentSearchControllers = async (
   ctx: TDefaultRouter<IEquipmentSearchOnlineControllersReqParams>,
   next: TNext
 ) => {

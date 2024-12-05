@@ -1,7 +1,7 @@
 import aedes, { Client } from "aedes";
 import net from "net";
 import type { PublishPacket } from "aedes/types/packet";
-import equipmentModel, { getDefaultEquipment, IEquipment } from "@/models/equipment";
+import equipmentModel, { EEquipmentStatus, getDefaultEquipment, IEquipment } from "@/models/equipment";
 import { IObject } from "@/utils/const";
 import Aedes from "aedes";
 
@@ -20,8 +20,8 @@ export const getPublishAim = (mqttObj: Aedes, clientId?: string[] | string) => {
   if (!clientId) return [mqttObj];
   const clientList = (mqttObj as IObject)?.clients as ({ [key: string]: Client } | undefined);
   if (!clientList) return [];
-  if (typeof clientId === "string") return [clientList[clientId]];
-  return clientId.map((item) => clientList[item]);
+  if (typeof clientId === "string") return [clientList[clientId]].filter((item=>item));
+  return clientId.map((item) => clientList[item]).filter((item=>item));
 };
 
 export type TMqttTopicPublishFn = (
@@ -65,24 +65,25 @@ export class MqttServer {
 
 aedesObj.authenticate = async (client, username, password, done) => {
   const equipmentInfo = await equipmentModel.collection.findOne({ account: username });
+  console.log(`Client Authenticated: ${client.id} - ${username}`);
   if (!equipmentInfo || !password) {
     return done({
       returnCode: 4,
       ...new Error("设备不存在!")
     }, false);
   }
-  if (equipmentInfo.password !== password.toString('utf-8')) {
+  if (equipmentInfo.password !== password.toString("utf-8")) {
     return done({
       returnCode: 4,
       ...new Error("设备秘钥错误!")
     }, false);
   }
   (client as IObject).eid = equipmentInfo.eid;
-  console.log(`Client Authenticated: ${client.id}`);
   done(null, true);
   equipmentModel.collection.updateOne({ eid: equipmentInfo.eid }, {
     $set: {
-      clientId: client.id
+      clientId: client.id,
+      status: EEquipmentStatus.online
     }
   });
 };
@@ -92,6 +93,14 @@ aedesObj.on("client", (client) => {
 
 aedesObj.on("clientDisconnect", (client) => {
   console.log(`Client Disconnected: ${client.id}`);
+  if ((client as IObject).eid) {
+    equipmentModel.collection.updateOne({ eid: (client as IObject).eid }, {
+      $set: {
+        clientId: client.id,
+        status: EEquipmentStatus.offline
+      }
+    });
+  }
 });
 
 aedesObj.on("subscribe", (subscriptions, client) => {
