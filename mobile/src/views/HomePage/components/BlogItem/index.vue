@@ -55,7 +55,7 @@ export default defineComponent({
       browseNum: formatNumToWan(props.article.browseNum),
       collectNum: formatNumToWan(props.article.collectNum),
       likeNum: formatNumToWan(props.article.likeNum),
-      createTimeStr: dayjs(props.article.createTime).format('YYYY-DD-MM HH:mm'),
+      createTimeStr: dayjs(props.article.createTime).format('YYYY-MM-DD HH:mm'),
       tag: props.article.tag || []
     }));
 
