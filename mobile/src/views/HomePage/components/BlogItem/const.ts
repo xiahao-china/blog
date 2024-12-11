@@ -21,7 +21,7 @@ export interface ICoverKeyInfo {
 }
 
 export const extractCoverKeyInfo = (str: string): ICoverKeyInfo => {
-  const encodingAry = new TextEncoder().encode(str[0]);
+  const encodingAry = new TextEncoder().encode(str);
   const calVal = Math.ceil(
     encodingAry.reduce((pre, cur) => pre + cur, 0) / encodingAry.length
   );
@@ -47,6 +47,7 @@ export const extractCoverKeyInfo = (str: string): ICoverKeyInfo => {
   if (!matchEnKeyWord) {
     matchEnKeyWord = preHandleStr.slice(0, firstIsEnglish ? 8 : 4);
   }
+  if (matchEnKeyWord.length > 8) matchEnKeyWord = `${matchEnKeyWord.slice(0, 8)}...`;
   return {
     linearGradient: LINEAR_GRADIENT_MAP[mapIndex],
     keyWord: matchEnKeyWord,

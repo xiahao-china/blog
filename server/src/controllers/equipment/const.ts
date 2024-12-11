@@ -13,7 +13,7 @@ export type IEquipmentOptionsItem = {
 export const EQUIPMENT_OPTIONS_MAP: { [key in EEquipmentType]: IEquipmentOptionsItem } = {
   [EEquipmentType.switch]: {
     [EEquipmentOptions.lighting]: (params, clientId) => {
-      lightingOptionControllers(aedesObj, params.status ? 'cmd:ON;': 'cmd:ON;', clientId)
+      lightingOptionControllers(aedesObj, params.status ? 'cmd:ON;': 'cmd:OFF;', clientId)
     }
   }
 };
