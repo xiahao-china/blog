@@ -82,7 +82,7 @@ import { useStore } from "vuex";
 import Quill from "quill";
 import Delta from "quill-delta";
 import { HtmlToDelta } from "quill-delta-from-html";
-import 'vant/es/image-preview/style';
+import "vant/es/image-preview/style";
 
 import Loading from "@/components/Loading/index.vue";
 import { recordScroll } from "@/components/NavBar/const";
@@ -100,6 +100,7 @@ import {
   IArticleActionItem,
   listImgClick,
 } from "./const";
+import { formatEscapedChars } from "@/util/format";
 
 export default defineComponent({
   name: "ArticleDetail",
@@ -124,8 +125,10 @@ export default defineComponent({
         showToast(res.message || "啊哦~服务器出现了一点问题~");
         return;
       }
+      const handleContent = formatEscapedChars(res.data.content);
       articleInfo.value = {
         ...res.data,
+        content: handleContent,
         createTimeStr: dayjs(res.data.createTime).format("YYYY-MM-DD HH:mm"),
       };
       if (contentRef.value) {
@@ -142,9 +145,9 @@ export default defineComponent({
         let handleDeltaAry: Delta | undefined;
         try {
           if (res.data.isHTML) {
-            handleDeltaAry = new HtmlToDelta().convert(res.data.content);
+            handleDeltaAry = new HtmlToDelta().convert(handleContent);
           } else {
-            handleDeltaAry = JSON.parse(res.data.content);
+            handleDeltaAry = JSON.parse(handleContent);
           }
         } catch (err) {
           console.log(err);
@@ -249,7 +252,7 @@ export default defineComponent({
       contentRef,
       ARTICLE_ACTION_LIST,
       onActionSelect,
-      showFoot
+      showFoot,
     };
   },
 });
@@ -260,5 +263,4 @@ export default defineComponent({
 @import "quill/dist/quill.snow.css";
 @import "highlight.js/styles/atom-one-dark.css";
 @import "index.less";
-
 </style>

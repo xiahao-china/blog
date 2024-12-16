@@ -24,7 +24,7 @@ export const EQUIPMENT_STATUS_INFO_MAP = {
     color: "rgb(140, 140, 140)"
   },
   [EEquipmentStatus.offline]: {
-    text: "不活跃",
+    text: "离线",
     color: "rgb(211, 72, 101)"
   },
   [EEquipmentStatus.online]: {

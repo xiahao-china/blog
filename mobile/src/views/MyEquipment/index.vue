@@ -59,6 +59,12 @@
             class="iconfont icon-close"
             @click.stop="() => delElement(item)"
           />
+          <div class="status">
+            <div class="dot" :style="{background: EQUIPMENT_STATUS_INFO_MAP[item.status].color}"/>
+            <div class="text" :style="{color: EQUIPMENT_STATUS_INFO_MAP[item.status].color}">
+              {{EQUIPMENT_STATUS_INFO_MAP[item.status].text}}
+            </div>
+          </div>
         </div>
         <div class="add-card" @click="showEquipmentSearch = true">
           <van-icon class="add-icon" name="plus" />
@@ -95,7 +101,7 @@ import {
   IEquipment,
 } from "@/api/equipment/const";
 import EquipmentSearch from "./components/EquipmentSearch/index.vue";
-import { EQUIPMENT_SUBSTANCE_INFO_MAP } from "./const";
+import { EQUIPMENT_STATUS_INFO_MAP, EQUIPMENT_SUBSTANCE_INFO_MAP } from "./const";
 import {
   equipmentDel,
   equipmentOptions,
@@ -105,7 +111,8 @@ import { IObject } from "@/util";
 
 export default defineComponent({
   name: "MyEquipment",
-  computed: {},
+  computed: {
+  },
   components: {
     EquipmentSearch,
     VanIcon: Icon,
@@ -212,7 +219,8 @@ export default defineComponent({
       init,
       optionElement,
       nowSwitchStatus,
-      closeSearch
+      closeSearch,
+      EQUIPMENT_STATUS_INFO_MAP
     };
   },
 });
