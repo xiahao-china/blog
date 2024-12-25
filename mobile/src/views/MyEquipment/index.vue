@@ -60,9 +60,17 @@
             @click.stop="() => delElement(item)"
           />
           <div class="status">
-            <div class="dot" :style="{background: EQUIPMENT_STATUS_INFO_MAP[item.status].color}"/>
-            <div class="text" :style="{color: EQUIPMENT_STATUS_INFO_MAP[item.status].color}">
-              {{EQUIPMENT_STATUS_INFO_MAP[item.status].text}}
+            <div
+              class="dot"
+              :style="{
+                background: EQUIPMENT_STATUS_INFO_MAP[item.status].color,
+              }"
+            />
+            <div
+              class="text"
+              :style="{ color: EQUIPMENT_STATUS_INFO_MAP[item.status].color }"
+            >
+              {{ EQUIPMENT_STATUS_INFO_MAP[item.status].text }}
             </div>
           </div>
         </div>
@@ -82,15 +90,12 @@
         <div class="text">编辑</div>
       </div>
     </div>
-    <EquipmentSearch
-      v-show="showEquipmentSearch"
-      @close="closeSearch"
-    />
+    <EquipmentSearch v-show="showEquipmentSearch" @close="closeSearch" />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref, watch } from "vue";
+import { defineComponent, onMounted, onUnmounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { showToast, Icon, showConfirmDialog, Switch } from "vant";
@@ -98,10 +103,14 @@ import { showToast, Icon, showConfirmDialog, Switch } from "vant";
 import {
   EEquipmentOptions,
   EEquipmentType,
-  IEquipment, ISwitchEquipmentExtraInfo
+  IEquipment,
+  ISwitchEquipmentExtraInfo,
 } from "@/api/equipment/const";
 import EquipmentSearch from "./components/EquipmentSearch/index.vue";
-import { EQUIPMENT_STATUS_INFO_MAP, EQUIPMENT_SUBSTANCE_INFO_MAP } from "./const";
+import {
+  EQUIPMENT_STATUS_INFO_MAP,
+  EQUIPMENT_SUBSTANCE_INFO_MAP,
+} from "./const";
 import {
   equipmentDel,
   equipmentOptions,
@@ -111,8 +120,7 @@ import { IObject } from "@/util";
 
 export default defineComponent({
   name: "MyEquipment",
-  computed: {
-  },
+  computed: {},
   components: {
     EquipmentSearch,
     VanIcon: Icon,
@@ -139,14 +147,34 @@ export default defineComponent({
       }
       nowChoseEquipment.value = item;
       if (item.type.toString() === EEquipmentType.switch.toString()) {
-        nowSwitchStatus.value = (JSON.parse(item.extraInfo || '{}') as ISwitchEquipmentExtraInfo).isOpen;
+        nowSwitchStatus.value = (
+          JSON.parse(item.extraInfo || "{}") as ISwitchEquipmentExtraInfo
+        ).isOpen;
       }
     };
 
     const init = async () => {
+      if (document.visibilityState === "hidden") {
+        return;
+      }
+      // 检查是否登录
+      if (!store.state.usrInfo) {
+        showToast("您需要登录才能使用该功能~");
+        router.push({
+          path: "/login",
+          query: {
+            redirect: route.fullPath,
+          },
+        });
+        return;
+      }
       const res = await getEquipmentList();
       equipmentList.value = res.data;
-      if (!nowChoseEquipment.value || !res.data.find((item) => item.eid === nowChoseEquipment.value?.eid)) choseEquipment(res.data[0]);
+      if (
+        !nowChoseEquipment.value ||
+        !res.data.find((item) => item.eid === nowChoseEquipment.value?.eid)
+      )
+        choseEquipment(res.data[0]);
     };
 
     const delElement = async (item: IEquipment) => {
@@ -190,18 +218,12 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      // 检查是否登录
-      if (!store.state.usrInfo) {
-        showToast("您需要登录才能使用该功能~");
-        router.push({
-          path: "/login",
-          query: {
-            redirect: route.fullPath,
-          },
-        });
-        return;
-      }
       init();
+      document.addEventListener("visibilitychange", init);
+    });
+
+    onUnmounted(() => {
+      document.removeEventListener("visibilitychange", init);
     });
 
     return {
@@ -218,7 +240,7 @@ export default defineComponent({
       optionElement,
       nowSwitchStatus,
       closeSearch,
-      EQUIPMENT_STATUS_INFO_MAP
+      EQUIPMENT_STATUS_INFO_MAP,
     };
   },
 });
