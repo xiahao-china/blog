@@ -12,6 +12,10 @@ export enum EEquipmentOptions {
   lighting = "lighting",
 }
 
+export interface ISwitchEquipmentExtraInfo {
+  isOpen: false;
+}
+
 export interface IEquipment {
   eid: string;
   clientId: string;
@@ -23,6 +27,7 @@ export interface IEquipment {
   wifiPassword: string;
   substance: EEquipmentOptions;
   lastUseTime: number;
+  extraInfo: string;
 }
 
 export interface IEquipmentSearchOnlineReqParams {

@@ -1,7 +1,7 @@
 import { EReqStatus, IPageReqBase, sendResponse, TDefaultRouter, TNext } from "@/routes/api/const";
 import { checkLogin } from "@/controllers/user";
 
-import equipmentModel, { EEquipmentType, getDefaultEquipment, IEquipment } from "@/models/equipment";
+import equipmentModel, { EEquipmentOptions, EEquipmentType, getDefaultEquipment, IEquipment } from "@/models/equipment";
 import userModel from "@/models/user";
 
 import { IObject } from "@/utils/const";
@@ -15,7 +15,7 @@ import {
   IOptionsEquipmentControllersReqParams,
   IAdminCreateEquipmentControllersReqParams,
   EQUIPMENT_OPTIONS_MAP,
-  EEquipmentOptions
+  IAdminDelEquipmentControllersReqParams
 } from "./const";
 
 
@@ -132,7 +132,7 @@ export const optionsEquipmentControllers = async (
     const equipmentInfo = await equipmentModel.collection.findOne({ eid }) as unknown as IEquipment;
     if (!equipmentInfo) return sendResponse.error(ctx, "设备不存在!");
     const optionsParams = JSON.parse(optionJsonParams);
-    EQUIPMENT_OPTIONS_MAP[equipmentInfo.type]?.[option as EEquipmentOptions]?.(optionsParams, equipmentInfo.clientId);
+    EQUIPMENT_OPTIONS_MAP[equipmentInfo.type]?.[option as EEquipmentOptions]?.(optionsParams, equipmentInfo.clientId, eid);
     return sendResponse.success(ctx);
   } catch (err) {
     return sendResponse.error(ctx, JSON.stringify(err));
@@ -164,3 +164,24 @@ export const adminCreateEquipmentControllers = async (
     return sendResponse.error(ctx, JSON.stringify(err));
   }
 }
+
+//  管理员删除设备, 暂时写死权限
+export const adminDelEquipmentControllers = async (
+  ctx: TDefaultRouter<IAdminDelEquipmentControllersReqParams>,
+  next: TNext
+) => {
+  const { eid } = ctx.request.body || {};
+  const userInfo = await checkLogin(ctx, next);
+  if (!userInfo) return sendResponse.error(ctx, "", EReqStatus.noLogin);
+  // 暂时写死权限
+  if (userInfo.email !== '471087639@qq.com') return sendResponse.error(ctx, "权限不足");
+  try {
+    const equipmentInfo = await equipmentModel.collection.findOne({ eid });
+    if (!equipmentInfo) return sendResponse.error(ctx, "设备不存在!");
+    await equipmentModel.collection.deleteOne({ eid });
+    return sendResponse.success(ctx);
+  } catch (err) {
+    return sendResponse.error(ctx, JSON.stringify(err));
+  }
+}
+

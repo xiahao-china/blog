@@ -70,6 +70,7 @@ export const numberToChinese = (inputNum?: number | string): string => {
 };
 
 export const formatEscapedChars = (str: string) => {
+  if (!str) return str;
   let handleStr = str;
   Object.keys(ESCAPED_CHARS_LIST).forEach((key) => {
     if (handleStr.includes(key)) {

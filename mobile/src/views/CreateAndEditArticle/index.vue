@@ -75,6 +75,7 @@ import PcEditorToolBar from "./components/PcEditorToolBar/index.vue";
 import ExtraInfoSetting from "./components/ExtraInfoSetting/index.vue";
 
 import { IExtraArticleInfo, initEdit, onChoseImgUpload } from "./const";
+import { formatEscapedChars } from "@/util/format";
 
 let timeoutId: number | undefined;
 let editor: Quill | undefined;
@@ -139,6 +140,7 @@ export default defineComponent({
         title.value = blogInfo.data.title;
         initContent = blogInfo.data.content;
       }
+      initContent = formatEscapedChars(initContent);
       editor = initEdit({
         str: initContent,
         isHTML,

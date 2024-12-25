@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { IObject } from "@/utils/const";
 
 const Schema = mongoose.Schema;
 
@@ -16,6 +17,10 @@ export enum EEquipmentOptions {
   lighting = "lighting",
 }
 
+export interface ISwitchEquipmentExtraInfo {
+  isOpen: false;
+}
+
 export interface IEquipment {
   eid: string;
   clientId: string;
@@ -27,6 +32,7 @@ export interface IEquipment {
   wifiName: string;
   wifiPassword: string;
   lastUseTime: number;
+  extraInfo: string;
 }
 
 export const getDefaultEquipment = (): IEquipment => {
@@ -40,7 +46,8 @@ export const getDefaultEquipment = (): IEquipment => {
     substance: EEquipmentOptions.lighting,
     wifiName: "",
     wifiPassword: "",
-    lastUseTime: 0
+    lastUseTime: 0,
+    extraInfo: JSON.stringify({})
   };
 };
 
@@ -54,7 +61,8 @@ const equipmentSchema = new Schema({
   wifiName: String,
   wifiPassword: String,
   substance: String,
-  lastUseTime: Number
+  lastUseTime: Number,
+  extraInfo: String
 });
 
 //   要把 schema 转换为一个 Model， 使用 mongoose.model(modelName, schema) 函数：

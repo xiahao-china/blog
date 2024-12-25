@@ -1,6 +1,6 @@
 import Router from "koa-router";
 import {
-  addEquipmentControllers, adminCreateEquipmentControllers, delEquipmentControllers,
+  addEquipmentControllers, adminCreateEquipmentControllers, adminDelEquipmentControllers, delEquipmentControllers,
   equipmentListControllers, equipmentSearchControllers, optionsEquipmentControllers
 } from "@/controllers/equipment";
 
@@ -13,4 +13,5 @@ export default (router: Router) => {
   router.post("/equipment/add", addEquipmentControllers);
 
   router.post("/admin/createEquipment", adminCreateEquipmentControllers);
+  router.post("/admin/delEquipment", adminDelEquipmentControllers);
 }

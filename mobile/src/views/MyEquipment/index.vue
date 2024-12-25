@@ -98,7 +98,7 @@ import { showToast, Icon, showConfirmDialog, Switch } from "vant";
 import {
   EEquipmentOptions,
   EEquipmentType,
-  IEquipment,
+  IEquipment, ISwitchEquipmentExtraInfo
 } from "@/api/equipment/const";
 import EquipmentSearch from "./components/EquipmentSearch/index.vue";
 import { EQUIPMENT_STATUS_INFO_MAP, EQUIPMENT_SUBSTANCE_INFO_MAP } from "./const";
@@ -132,23 +132,21 @@ export default defineComponent({
     const showEquipmentSearch = ref(false);
     const nowSwitchStatus = ref(false);
 
-    const init = async () => {
-      const res = await getEquipmentList();
-      equipmentList.value = res.data;
-      if (!nowChoseEquipment.value) nowChoseEquipment.value = res.data[0];
-      else if (
-        !res.data.find((item) => item.eid === nowChoseEquipment.value?.eid)
-      ) {
-        nowChoseEquipment.value = res.data[0];
-      }
-    };
-
     const choseEquipment = (item: IEquipment) => {
       if (nowChoseEquipment.value?.eid === item.eid) {
         nowChoseEquipment.value = undefined;
         return;
       }
       nowChoseEquipment.value = item;
+      if (item.type.toString() === EEquipmentType.switch.toString()) {
+        nowSwitchStatus.value = (JSON.parse(item.extraInfo || '{}') as ISwitchEquipmentExtraInfo).isOpen;
+      }
+    };
+
+    const init = async () => {
+      const res = await getEquipmentList();
+      equipmentList.value = res.data;
+      if (!nowChoseEquipment.value || !res.data.find((item) => item.eid === nowChoseEquipment.value?.eid)) choseEquipment(res.data[0]);
     };
 
     const delElement = async (item: IEquipment) => {
