@@ -4,6 +4,7 @@ import articleModel, { getDefaultArticle, IArticle } from "@/models/article";
 import draftArticleModel, { getDefaultDraftArticle, IDraftArticle } from "@/models/draft";
 import searchHistoryModel, { getDefaultSearchHistory, ISearchHistory } from "@/models/searchHistory";
 import userModel, { IUserInfo } from "@/models/user";
+import browseHistoryModel, { getDefaultBrowseHistory, IBrowseHistory } from "@/models/browseHistory";
 
 import { EReqStatus, IPageReqBase, sendResponse, TDefaultRouter, TNext } from "@/routes/api/const";
 import { checkLogin } from "@/controllers/user";
@@ -96,16 +97,41 @@ export const createAndEditArticleControllers = async (
 
 export const getArticleDetailControllers = async (ctx: TDefaultRouter<{ id: string }>, next: TNext) => {
   const { id } = ctx.request.query || {};
+  const userInfo = await checkLogin(ctx, next);
   if (!id) return sendResponse.error(ctx, "传参缺失，请检查id!");
   const article: IArticle = await articleModel.collection.findOne({ id });
   if (!article) return sendResponse.error(ctx, "文章不存在!");
   const createrUserInfo: IUserInfo = await userModel.collection.findOne({ uid: article.createrUid });
   try {
     articleModel.collection.updateOne({ id }, { $set: { browseNum: article.browseNum + 1 } }, {});
+
+    if (userInfo) {
+      // 保存搜索历史
+      const historyItem = await browseHistoryModel.collection.findOne({ uid: userInfo.uid, articleId: id });
+      const currentMs = new Date().getTime();
+      if (historyItem) {
+        await browseHistoryModel.collection.updateOne({
+          uid: userInfo.uid,
+          articleId: id,
+          browseNum: historyItem.browseNum + 1,
+          browseStartTimeMs: [...historyItem.browseStartTimeMs, currentMs]
+        }, { $set: { browseNum: historyItem.browseNum + 1 } });
+      } else {
+        await browseHistoryModel.collection.insertMany([{
+          ...getDefaultBrowseHistory(),
+          id: `${userInfo.uid}-${id}`,
+          uid: userInfo.uid,
+          articleId: id,
+          browseNum: 1,
+          browseStartTimeMs: [currentMs]
+        }]);
+      }
+    }
+
   } catch (err) {
     console.log(err);
   }
-  const userInfo = await checkLogin(ctx, next);
+
   let collaborateUserInfo: Partial<IUserInfo>[] = [];
   // 创作者或者协助者可以获取信息
   if (userInfo && article.collaborateUid && (
@@ -161,7 +187,7 @@ export const searchArticleControllers = async (
           }
         }
       );
-    }else {
+    } else {
       await searchHistoryModel.collection.insertMany([
         {
           ...getDefaultSearchHistory(),
@@ -216,6 +242,41 @@ export const articleListControllers = async (ctx: TDefaultRouter<IPageReqBase>, 
     });
   } catch (err) {
     console.log("err:", err);
+    return sendResponse.error(ctx, JSON.stringify(err));
+  }
+};
+
+// 获取推荐文章 推荐次序为 总浏览最多 我看的最多 总点赞最多 最新 收藏最多
+export const articleRecommendControllers = async (ctx: TDefaultRouter<IObject>, next: TNext) => {
+  const userInfo = await checkLogin(ctx, next);
+  try {
+    // 总浏览最多
+    const mostViewedArticlesInTotal = await articleModel.collection.find({ isPrivate: { $nin: [true] } }).sort({ browseNum: -1 }).limit(3).toArray();
+    // 我看的最多
+    let mostViewedArticlesByMe: IArticle[];
+    if (userInfo) {
+      const mostBrowseHits = await browseHistoryModel.collection.find({ uid: userInfo.uid }).sort({ browseNum: -1 }).toArray();
+      if (mostBrowseHits.length > 0) {
+        mostViewedArticlesByMe = [await articleModel.collection.findOne({ id: mostBrowseHits[0].articleId })];
+      }
+    }
+    // 总点赞最多
+    const mostLikedArticlesInTotal = await articleModel.collection.find({ isPrivate: { $nin: [true] } }).sort({ likeNum: -1 }).limit(3).toArray();
+    // 最新
+    const latestArticles = await articleModel.collection.find({ isPrivate: { $nin: [true] } }).sort({ createTime: -1 }).limit(3).toArray();
+    // 收藏最多
+    const mostCollectedArticles = await articleModel.collection.find({ isPrivate: { $nin: [true] } }).sort({ collectNum: -1 }).limit(3).toArray();
+
+    return sendResponse.success(ctx, {
+      mostViewedArticlesInTotal: filterObjItemByKey(mostViewedArticlesInTotal, ARTICLE_BASE_RES_KEY_LIST) as (IArticle & { nick: string }),
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      mostViewedArticlesByMe: filterObjItemByKey((mostViewedArticlesByMe || []), ARTICLE_BASE_RES_KEY_LIST) as (IArticle & { nick: string }),
+      mostLikedArticlesInTotal: filterObjItemByKey(mostLikedArticlesInTotal, ARTICLE_BASE_RES_KEY_LIST) as (IArticle & { nick: string }),
+      latestArticles: filterObjItemByKey(latestArticles, ARTICLE_BASE_RES_KEY_LIST) as (IArticle & { nick: string }),
+      mostCollectedArticles: filterObjItemByKey(mostCollectedArticles, ARTICLE_BASE_RES_KEY_LIST) as (IArticle & { nick: string }),
+    });
+  } catch (err) {
     return sendResponse.error(ctx, JSON.stringify(err));
   }
 };

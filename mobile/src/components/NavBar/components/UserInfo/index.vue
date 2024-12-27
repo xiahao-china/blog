@@ -97,7 +97,7 @@ export default defineComponent({
     };
 
     const userPreLoginStr = computed(() => {
-      return userInfo.value.lastLoginTime ? dayjs(userInfo.value.lastLoginTime).format("YYYY-DD-MM HH:mm") :
+      return userInfo.value.lastLoginTime ? dayjs(userInfo.value.lastLoginTime).format("YYYY-MM-DD HH:mm") :
         "----";
     });
 

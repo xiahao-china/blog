@@ -1,4 +1,5 @@
 import { IBaseUserInfo, IUserInfo } from "@/api/usr/const";
+import { articleRecommend } from "@/api/article/index";
 
 export interface IArticle {
   id: string;
@@ -72,6 +73,14 @@ export interface IArticleListReqParams {
 export interface IArticleListRes{
   list: IArticle[];
   total: number;
+}
+
+export interface  IArticleRecommendRes {
+  mostViewedArticlesInTotal: IArticle[];
+  mostViewedArticlesByMe: IArticle[];
+  mostLikedArticlesInTotal: IArticle[];
+  latestArticles: IArticle[];
+  mostCollectedArticles: IArticle[];
 }
 
 export interface INormalArticleReqParams {

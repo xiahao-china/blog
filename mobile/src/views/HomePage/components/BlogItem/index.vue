@@ -11,7 +11,9 @@
         <div class="author">{{ handleArticleInfo.nick || "---" }}</div>
         <div class="tag-item" v-for="(item, index) in handleArticleInfo.tag" :key="index">#{{item}}</div>
       </div>
-      <div class="title">{{ handleArticleInfo.title }}</div>
+      <div class="title">
+        <div class="title-text">{{ handleArticleInfo.title }}</div>
+      </div>
       <div class="bottom-block">
         <div class="browseNum">
           <span class="iconfont icon-eye" />{{ handleArticleInfo.browseNum }}

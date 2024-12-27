@@ -61,11 +61,19 @@
       }
     }
     .title{
-      color: @main-text-color;
-      font-size: 18px;
-      line-height: 26px;
-      font-weight: 600;
-      .ellipsis-text(294px);
+      // 多行省略
+      .title-text{
+        color: @main-text-color;
+        font-size: 18px;
+        line-height: 26px;
+        font-weight: 600;
+        max-width: 294px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+      }
     }
     .bottom-block{
       width: 100%;

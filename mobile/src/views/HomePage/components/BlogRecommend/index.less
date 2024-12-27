@@ -1,0 +1,198 @@
+@import "/src/assets/globalStyle/commonStyle.less";
+
+.recommend-blog{
+  cursor: pointer;
+  width: 334px;
+  margin-top: 16px;
+  display: inline-flex;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid @weak-gray;
+  height: 340px;
+  position: relative;
+
+  .recommend-carousel{
+    width: 100%;
+    .recommend-item{
+      position: relative;
+      z-index: 5;
+      width: 100%;
+      height: 340px;
+      display: flex;
+      padding-left: 28px;
+      flex-direction: column;
+      justify-content: center;
+
+      .tag-icon{
+        z-index: 9;
+        position: absolute;
+        right: 12px;
+        top: 12px;
+        font-size: 24px;
+        background: linear-gradient(to right,#f65,#ffbf37); /* 从左到右，红黄绿渐变 */
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent; /* 兼容旧版浏览器 */
+        background-clip: text; /* 标准语法 */
+        color: transparent; /* 标准语法 */
+        &.icon-new{
+          font-size: 30px;
+        }
+        &.icon-shoucang{
+          font-size: 20px;
+        }
+        &.icon-message_like{
+          font-size: 26px;
+          font-weight: 600;
+        }
+      }
+      .title{
+        z-index: 9;
+        display: inline-flex;
+        align-items: center;
+        font-size: 36px;
+        font-weight: 600;
+        color: @main-text-color;
+        max-width: 180px;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+      .extra-info{
+        z-index: 9;
+        margin-top: 8px;
+        display: inline-flex;
+        flex-direction: row;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 400;
+        color: @weak-text-gray2;
+      }
+      .bg-base-color{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        opacity: 0.2;
+      }
+      .to-read-shell{
+        z-index: 9;
+        width: 100%;
+        margin-top: 72px;
+        padding-right: 28px;
+        display: inline-flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        .to-read{
+          cursor: pointer;
+          display: inline-flex;
+          flex-direction: row;
+          align-items: center;
+          filter: hue-rotate(10deg) saturate(1.5);
+          padding: 14px 18px;
+          border-radius: 32px;
+          .to-read-text{
+            font-size: 16px;
+            font-weight: 400;
+            color: white;
+          }
+          .icon-youjiantou1{
+            font-size: 14px;
+            color: white;
+            margin-left: 4px;
+            margin-top: 1px;
+          }
+        }
+      }
+    }
+  }
+
+  .scroll-logo{
+    display: inline-flex;
+    .scroll-logo-to-bottom,
+    .scroll-logo-to-up{
+      position: absolute;
+      flex-direction: column;
+      display: inline-flex;
+      filter: blur(8px);
+      z-index: -1;
+
+      .scroll-iconfont{
+        width: 86px;
+        height: 86px;
+        font-size: 36px;
+        color: white;
+        margin-bottom: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.06;
+        border-radius: 12px;
+        box-shadow: 0 2px 16px -3px rgba(0, 0, 0, .15);
+      }
+      .scroll-iconfont + .scroll-iconfont{
+        margin-top: 24px;
+      }
+    }
+    .scroll-logo-to-up{
+      left: 20px;
+      bottom: 0;
+      animation: scroll-to-up 200s infinite;
+    }
+    .scroll-logo-to-bottom{
+      right: 80px;
+      animation: scroll-to-bottom 200s infinite;
+      margin-right: 36px;
+    }
+  }
+}
+
+// 滚动动画
+@keyframes scroll-to-bottom {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes scroll-to-up {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 750px) {
+  .recommend-blog{
+    width: 708px;
+    .scroll-logo{
+      .scroll-logo-to-bottom,
+      .scroll-logo-to-up{
+        filter: blur(1px);
+        .scroll-iconfont{
+          opacity: 0.2;
+        }
+      }
+      .scroll-logo-to-bottom{
+        right: 140px;
+      }
+      .scroll-logo-to-up{
+        left: 300px;
+      }
+    }
+  }
+
+}

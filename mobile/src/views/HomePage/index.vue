@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    <BlogRecommend />
     <van-list
       class="list-shell"
       :loading="loading"
@@ -26,10 +27,12 @@ import { computed, defineComponent, onMounted, ref } from "vue";
 import BlogItem from "@/views/HomePage/components/BlogItem/index.vue";
 import { IArticle } from "@/api/article/const";
 import { articleList } from "@/api/article";
+import BlogRecommend from "@/views/HomePage/components/BlogRecommend/index.vue";
 
 export default defineComponent({
   name: "Home",
   components: {
+    BlogRecommend,
     BlogItem,
   },
   setup: () => {

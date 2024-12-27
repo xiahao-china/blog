@@ -1,6 +1,6 @@
 import Router from "koa-router"
 import {
-  articleListControllers,
+  articleListControllers, articleRecommendControllers,
   collectArticleControllers,
   createAndEditArticleControllers,
   delDraftArticleControllers,
@@ -10,13 +10,14 @@ import {
   likeArticleControllers,
   saveDraftArticleControllers,
   searchArticleControllers
-} from "@/controllers/article"
+} from "@/controllers/article";
 
 export default (router: Router) => {
   router.post("/article/createAndEdit", createAndEditArticleControllers)
   router.get("/article/getDetail", getArticleDetailControllers)
   router.post("/article/search", searchArticleControllers)
   router.post("/article/list", articleListControllers)
+  router.get("/article/recommend", articleRecommendControllers)
   router.post("/article/delete", deleteArticleControllers)
   router.post("/article/like", likeArticleControllers)
   router.post("/article/collect", collectArticleControllers)

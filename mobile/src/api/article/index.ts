@@ -1,6 +1,6 @@
 import request, {IBaseRes} from "@/api/request";
 import {
-  IArticle, IArticleListReqParams, IArticleListRes,
+  IArticle, IArticleListReqParams, IArticleListRes, IArticleRecommendRes,
   ICreateAndEditArticleReqParams, IDraftArticle,
   IGetArticleDetailReqParams, IGetArticleDetailResItem, INormalArticleReqParams, ISaveDraftArticleReqParams,
   ISearchArticleReqParams,
@@ -27,6 +27,10 @@ export const articleList = async (params: Partial<IArticleListReqParams>) => {
   return res;
 }
 
+export const articleRecommend = async () => {
+  const res = await request.get<IBaseRes<IArticleRecommendRes>>('/api/article/recommend', {});
+  return res;
+}
 export const deleteArticle = async (params: Partial<INormalArticleReqParams>) => {
   const res = await request.post<IBaseRes>('/api/article/delete', params);
   return res;
