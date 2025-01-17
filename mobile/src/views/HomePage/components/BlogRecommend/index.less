@@ -119,6 +119,7 @@
       display: inline-flex;
       filter: blur(8px);
       z-index: -1;
+      transform: translateZ(0);
 
       .scroll-iconfont{
         width: 86px;
@@ -140,11 +141,11 @@
     .scroll-logo-to-up{
       left: 20px;
       bottom: 0;
-      animation: scroll-to-up 200s infinite;
+      animation: scroll-to-up 200s linear infinite;
     }
     .scroll-logo-to-bottom{
       right: 80px;
-      animation: scroll-to-bottom 200s infinite;
+      animation: scroll-to-bottom 200s linear infinite;
       margin-right: 36px;
     }
   }
@@ -153,25 +154,25 @@
 // 滚动动画
 @keyframes scroll-to-bottom {
   0% {
-    transform: translateY(0);
+    transform: translateY(0) translateZ(0);
   }
   50% {
-    transform: translateY(-100%);
+    transform: translateY(-100%) translateZ(0);
   }
   100% {
-    transform: translateY(0);
+    transform: translateY(0) translateZ(0);
   }
 }
 
 @keyframes scroll-to-up {
   0% {
-    transform: translateY(0);
+    transform: translateY(0) translateZ(0);
   }
   50% {
-    transform: translateY(100%);
+    transform: translateY(100%) translateZ(0);
   }
   100% {
-    transform: translateY(0);
+    transform: translateY(0) translateZ(0);
   }
 }
 

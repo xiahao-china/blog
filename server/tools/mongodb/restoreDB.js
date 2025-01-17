@@ -40,7 +40,16 @@ const deployByCommonArray = async (commonStrList) => {
 
 const downloadFile = async (path, localPath) => {
   const client = await Client(config.defaultServerConfig);
-  const res = await client.downloadFile(path, localPath);
+  let totalBytes = 0;
+  let downloadedBytes = 0;
+  const res = await client.downloadFile(path, localPath, {
+    step: (curSize, chunkNum, fileSize) => {
+      totalBytes = fileSize;
+      downloadedBytes = curSize;
+      const progress = Math.round((downloadedBytes / totalBytes) * 100);
+      console.log(`下载进度: ${progress}%`);
+    }
+  });
   client.close();
   return res;
 }

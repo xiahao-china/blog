@@ -38,6 +38,7 @@ export class ScheduledTasks {
       ...task,
       status: ETaskItemStatus.IMPLEMENTING
     });
+    return this;
   }
 
   // 检查当前时间是否需要执行任务

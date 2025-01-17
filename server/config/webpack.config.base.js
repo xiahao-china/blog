@@ -54,6 +54,10 @@ const webpackConfig = {
         mailAuthPass: serverConfig.mailAuthPass,
         aliAccessKeyId: serverConfig.aliAccessKeyId,
         aliAccessKeySecret: serverConfig.aliAccessKeySecret,
+        dbBackupToolPath: serverConfig.dbBackupToolPath,
+        serverRootPath: serverConfig.serverRootPath,
+        dbBackupDataPathName: serverConfig.dbBackupDataPathName,
+        dbBackupFilesPathName: serverConfig.dbBackupFilesPathName,
       }),
     })
   ],

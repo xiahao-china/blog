@@ -19,6 +19,7 @@ export enum EEquipmentOptions {
 
 export interface ISwitchEquipmentExtraInfo {
   isOpen: false;
+  voltagePercentage: number;
 }
 
 export interface IEquipment {

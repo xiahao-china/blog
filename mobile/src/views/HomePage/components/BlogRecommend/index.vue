@@ -3,7 +3,7 @@
     <div class="recommend-carousel">
       <van-swipe
         :style="`height: ${calcHeight}px`"
-        :autoplay="3000"
+        :autoplay="5000"
         :default-index="0"
         :vertical="true"
         :show-indicators="false"
@@ -23,7 +23,7 @@
                 @click="() => toDetail(item.id)"
               >
                 <div class="to-read-text">阅读文章</div>
-                <span class="iconfont icon-youjiantou1"/>
+                <span class="iconfont icon-youjiantou1" />
               </div>
             </div>
             <div class="bg-base-color" :style="`background:${item.bgColor}`" />
@@ -42,13 +42,13 @@
         />
       </div>
       <div class="scroll-logo-to-up">
-          <span
-            v-for="item in SCROLL_LOGO"
-            :key="item.value"
-            class="iconfont scroll-iconfont"
-            :class="item.value"
-            :style="`background:${item.bgColor}`"
-          />
+        <span
+          v-for="item in SCROLL_LOGO"
+          :key="item.value"
+          class="iconfont scroll-iconfont"
+          :class="item.value"
+          :style="`background:${item.bgColor}`"
+        />
       </div>
     </div>
   </div>
@@ -88,7 +88,7 @@ export default defineComponent({
       });
     };
 
-    const calcHeight = calcSizeBase375(isMobile ? 340 : 135 );
+    const calcHeight = calcSizeBase375(isMobile ? 340 : 135);
 
     onMounted(() => {
       init();
@@ -99,7 +99,7 @@ export default defineComponent({
       blogList,
       calcHeight,
       SCROLL_LOGO,
-      isMobile
+      isMobile,
     };
   },
 });
