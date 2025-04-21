@@ -104,6 +104,8 @@ export const initEdit = (params: IInitEditParams) => {
   }
   quill.on("text-change", async (info, oldDelta) => {
     const insertInfo = info.ops[1]?.insert as IObject;
+    // 兼容初始即插入图片情况
+    const insertFirstInfo = info.ops[0]?.insert as IObject;
     if (insertInfo && insertInfo["image"]) {
       const isBase64 = /^data:image\/[A-z]+;base64/.test(
         insertInfo["image"].split(",")[0]
@@ -114,6 +116,19 @@ export const initEdit = (params: IInitEditParams) => {
       const imgUrl = await onChoseImgUpload(file, true, editorObj);
       if (imgUrl) {
         insertInfo["image"] = imgUrl;
+      }
+    }
+
+    if (insertFirstInfo && insertFirstInfo["image"]) {
+      const isBase64 = /^data:image\/[A-z]+;base64/.test(
+        insertFirstInfo["image"].split(",")[0]
+      );
+      if (!isBase64) return;
+      const file = base64ToFile(insertFirstInfo["image"]);
+      quill.setContents(oldDelta);
+      const imgUrl = await onChoseImgUpload(file, true, editorObj);
+      if (imgUrl) {
+        insertFirstInfo["image"] = imgUrl;
       }
     }
   });

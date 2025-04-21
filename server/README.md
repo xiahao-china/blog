@@ -11,6 +11,12 @@ export default {
 }
 ```
 
+# linux启动mongodb
+```
+mongod --fork --dbpath /home/BlogServer/linux-pre-env-file/mongodb/data --logpath /home/BlogServer/linux-pre-env-file/mongodb/logs/mongodb.log --logappend
+```
+
+
 # mac启动mangodb
 
 ```

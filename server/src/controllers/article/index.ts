@@ -305,14 +305,19 @@ export const likeArticleControllers = async (ctx: TDefaultRouter<{ id: string }>
   try {
     const article: IArticle = await articleModel.collection.findOne({ id });
     if (!article) return sendResponse.error(ctx, "文章不存在");
+    const hasLike = userInfo.likeArticleId.includes(id);
     await articleModel.collection.updateOne(
       { id },
       {
-        $set: { likeNum: article.likeNum + 1 }
+        $set: { likeNum: hasLike ? article.likeNum - 1 : article.likeNum + 1 }
       }
     );
-    const likeIdList = userInfo.likeArticleId;
-    likeIdList.push(id);
+    let likeIdList = userInfo.likeArticleId;
+    if (hasLike){
+      likeIdList = likeIdList.filter((item) => item !== id);
+    }else {
+      likeIdList.push(id);
+    }
     await userModel.collection.updateOne(
       { uid: userInfo.uid },
       {
