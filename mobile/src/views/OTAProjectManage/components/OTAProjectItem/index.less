@@ -1,0 +1,81 @@
+@import "/src/assets/globalStyle/commonStyle.less";
+@import "/src/assets/globalStyle/animations.less";
+
+.ota-project-item{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px 8px 18px;
+  background: white;
+  border-radius: 12px;
+  cursor: pointer;
+  position: relative;
+  margin-top: 12px;
+  *{
+    display: inline-flex;
+  }
+  .id-info{
+    position: absolute;
+    height: 100%;
+    min-width: 30px;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    flex-direction: row;
+    color: @main-text-color;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 18px;
+    opacity: 0.1;
+    .abs-center();
+  }
+  .main-info{
+    flex: 1;
+    flex-direction: column;
+    .name{
+      font-size: 16px;
+      color: @main-text-color;
+      font-weight: 600;
+    }
+    .desc{
+      margin-top: 8px;
+      font-size: 12px;
+      color: @table-weak-text-gray;
+      .ellipsis-text(200px);
+
+    }
+  }
+  .other-info{
+    align-items: flex-end;
+    flex-direction: column;
+
+
+    .right-arrow{
+      color: #2E2E2E;
+      margin-top: 4px;
+    }
+  }
+
+  .current-version{
+    background: @main-color;
+    font-size: 10px;
+    border-radius: 4px 0 4px 4px;
+    color: white;
+    padding: 2px 4px;
+    &.no-version{
+      background: @weak-text-gray2;
+    }
+    &.can-edit{
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+  }
+}
+
+@media (min-width: 750px) {
+  /* 在这里写入当屏幕宽度大于750px时应用的样式 */
+
+}

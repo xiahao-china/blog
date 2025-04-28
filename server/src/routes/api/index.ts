@@ -3,6 +3,7 @@ import userRouter from "./user";
 import articleRouter from "./article";
 import fileRouter from "./file";
 import equipmentRouter from "./equipment";
+import otaRouter from "./ota";
 
 export default (router: Router) => {
   // 注入用户层级相关路由
@@ -10,4 +11,5 @@ export default (router: Router) => {
   articleRouter(router);
   fileRouter(router);
   equipmentRouter(router);
+  otaRouter(router);
 }

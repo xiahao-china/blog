@@ -12,6 +12,11 @@ export const DROPDOWN_SELECT_OPTIONS: IDropdownSelectOptions[] = [
     icon: "icon-shebei",
   },
   {
+    text: "OTA管理",
+    value: "OTAProjectManage",
+    icon: "icon-OTAshengjiweixuanzhong",
+  },
+  {
     text: "tinyPng 图片压缩",
     value: "https://tinypng.com/cn/",
     iconUrl: require("@/assets/staticImg/common/tinyPngLogo.png"),

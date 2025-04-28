@@ -51,5 +51,6 @@ export const compressedFile = async (ctx: TDefaultRouter<IObject>, next: TNext) 
 
 export const loadFileControllers = async (ctx: TDefaultRouter<IObject>, next: TNext) => {
   ctx.path = `/${ctx.params.filename}`;
+  // @ts-ignore
   return staticServeObj(ctx, next);
 };

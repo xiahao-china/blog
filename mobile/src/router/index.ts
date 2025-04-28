@@ -80,7 +80,31 @@ export const routes: Array<RouteRecordRaw & IObject> = [
     component: () =>
       import(
         /* webpackChunkName: "MyEquipment" */ "src/views/MyEquipment/index.vue"
-        ),
+      ),
+  },
+  {
+    path: "/OTAProjectManage",
+    name: "OTAProjectManage",
+    needNavBar: true,
+    meta: {
+      pageName: "OTA项目管理",
+    },
+    component: () =>
+      import(
+        /* webpackChunkName: "OTAProjectManage" */ "src/views/OTAProjectManage/index.vue"
+      ),
+  },
+  {
+    path: "/OTAVersionManage",
+    name: "OTAVersionManage",
+    needNavBar: true,
+    meta: {
+      pageName: "OTA版本管理",
+    },
+    component: () =>
+      import(
+        /* webpackChunkName: "OTAVersionManage" */ "src/views/OTAVersionManage/index.vue"
+      ),
   },
   {
     path: "/:pathMatch(.*)*",

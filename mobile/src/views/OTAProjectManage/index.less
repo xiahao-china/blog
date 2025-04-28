@@ -1,0 +1,43 @@
+@import "/src/assets/globalStyle/commonStyle.less";
+
+.ota-project-manage {
+  display: flex;
+  height: 100%;
+  min-height: calc(100vh - 30px);
+  width: 100%;
+  overflow: hidden;
+  flex-direction: column;
+  position: relative;
+  padding: 12px 18px;
+
+  .title {
+    display: inline-flex;
+    font-size: 14px;
+    font-weight: 600;
+    color: @second-text-color;
+  }
+
+  .mobile-add-btn{
+    position: fixed;
+    right: 18px;
+    bottom: 72px;
+    font-size: 48px;
+    color: @main-color;
+    cursor: pointer;
+  }
+
+  .my-project{
+    margin-top: 16px;
+    margin-bottom: 8px;
+  }
+
+  .none-info{
+    margin-top: 16px;
+    font-size: 14px;
+    width: 100%;
+    text-align: center;
+    color: @weak-text-gray2;
+  }
+
+}
+
