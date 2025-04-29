@@ -52,8 +52,8 @@ export default defineComponent({
       default: "",
     },
     currentVersion: {
-      type: String,
-      default: "",
+      type: Number,
+      default: 0,
     },
     createTime: {
       type: String,

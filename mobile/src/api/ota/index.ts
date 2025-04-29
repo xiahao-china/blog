@@ -62,9 +62,9 @@ export const getOTABinInfoList = async (params: any) => {
 
 // 上传固件bin文件
 export const uploadOTABin = async (
-  params: Partial<IUploadOTABinReqParams> & Partial<FormData>
+  params: Partial<FormData>
 ) => {
-  const res = await request.post<IBaseRes<{ filePath: string }>>(
+  const res = await request.post<IBaseRes<{ fileName: string; uploadId: string; }>>(
     "/api/ota/uploadOTABin",
     params,
     {

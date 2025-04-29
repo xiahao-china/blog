@@ -3,7 +3,7 @@ export interface IOTABin {
   name: string; // 固件名称
   version: number; // 固件版本 格式为 0.1
   downloadUrl: string; // 固件下载地址
-  createTime: number; // 创建时间
+  createTime: number | string; // 创建时间
   createUid: string; // 创建者uid
   belongProjectId: string; // 所属项目ID
 }
@@ -55,6 +55,7 @@ export interface ICreateOTABinInfoReqParams {
   name: string; // 固件名称
   version: number; // 固件版本 格式为 0.1
   downloadUrl: string; // 固件下载地址
+  uploadId: string; // 上传ID
 }
 
 export interface IGetFirmwareUpdateRecordReqParams {

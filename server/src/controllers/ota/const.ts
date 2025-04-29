@@ -32,7 +32,7 @@ export interface ICreateOTABinInfoReqParams {
   projectId: string; // 项目 ID
   name: string; // 固件名称
   version: number; // 固件版本 格式为 0.1
-  downloadUrl: string; // 固件下载地址
+  uploadId: string; // 固件下载地址
 }
 
 export interface IGetFirmwareUpdateRecordReqParams extends IPageReqBase {

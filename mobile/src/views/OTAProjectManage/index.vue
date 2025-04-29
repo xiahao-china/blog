@@ -72,6 +72,7 @@ import { getProjectDetail, getProjectList } from "@/api/ota";
 
 import OTAProjectItem from "./components/OTAProjectItem/index.vue";
 import EditAndCreateOTAProject from "./components/EditAndCreateOTAProject/index.vue";
+import dayjs from "dayjs";
 
 export default defineComponent({
   name: "MyEquipment",
@@ -118,12 +119,17 @@ export default defineComponent({
         pageNumber: pageNum.value,
       });
       loading.value = false;
-      otaProjectList.value = otaProjectList.value.concat(res.data.list || []);
+      const handleProjectList = res.data.list.map((item: IOTAProject) => {
+        return {
+          ...item,
+          createTime: dayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+        };
+      });
+      otaProjectList.value = otaProjectList.value.concat(handleProjectList || []);
       total.value = res.data.total || 0;
     };
 
     const reloadOTAProjectList = () => {
-      console.log('doneee');
       otaProjectList.value = [];
       pageNum.value = 0;
       total.value = 0;
@@ -136,7 +142,10 @@ export default defineComponent({
           id: projectRecord.projectId,
         });
         if (res.code === 200) {
-          frequentlyProjectItem.value = res.data;
+          frequentlyProjectItem.value = {
+            ...res.data,
+            createTime: dayjs(res.data.createTime).format('YYYY-MM-DD HH:mm:ss')
+          };
         }
       }
     };
@@ -173,6 +182,6 @@ export default defineComponent({
 });
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 @import "index.less";
 </style>

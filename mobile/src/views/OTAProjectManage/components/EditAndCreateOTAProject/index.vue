@@ -1,11 +1,11 @@
 <template>
   <van-popup
-    :show="showStatus"
+    :show="show"
     position="bottom"
     round
     closeable
-    @input="showStatusChange"
-    @click-close-icon="() => showStatusChange(false)"
+    @input="showChange"
+    @click-close-icon="() => showChange(false)"
   >
     <div class="equipment-add-card">
       <div class="title">
@@ -25,24 +25,25 @@
           </div>
         </div>
         <div class="filed-list">
-          <van-field v-model="name" label="项目名称" placeholder="请填写10字内项目名称" maxlength="10" clearable/>
-          <van-field v-model="description" label="项目介绍" placeholder="请填写项目简介" type="text" maxlength="32" show-word-limit/>
           <van-field
             v-if="nowChoseOTAProject"
-            :model-value="version"
-            label="当前发布版本"
+            v-model="version"
+            label="当前版本"
           />
+          <van-field v-model="name" label="项目名称" placeholder="请填写10字内项目名称" maxlength="10" clearable/>
+          <van-field v-model="description" label="项目介绍" placeholder="请填写项目简介" type="text" maxlength="32" show-word-limit/>
+
         </div>
       </div>
       <div class="equipment-add-card-btn">
-        <div class="cancel-btn" @click="() => showStatusChange(false)">
+        <div class="cancel-btn" @click="() => showChange(false)">
           取消
         </div>
         <div
           class="confirm-btn"
           @click="
             () =>
-              nowChoseOTAProject ? toEditOTAProject() : toCreateOTAProject()
+              nowChoseOTAProject ? editPreConfirm() : toCreateOTAProject()
           "
         >
           确认
@@ -53,8 +54,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, watch } from "vue";
-import { showToast, Field } from "vant";
+import { defineComponent, onMounted, PropType, ref, watch } from "vue";
+import { showToast, Field, showConfirmDialog } from "vant";
 import { IOTAProject } from "@/api/ota/const";
 import { createProject, editProject } from "@/api/ota";
 
@@ -65,22 +66,24 @@ export default defineComponent({
     VanField: Field,
   },
   props: {
-    showStatus: {
+    show: {
       type: Boolean,
       default: false,
     },
     nowChoseOTAProject: {
       type: Object as PropType<IOTAProject>,
+      default: () => ({}),
     },
   },
-  emits: ["close", "create"],
+  emits: ["close", "create", "edit"],
   setup: (props, { emit }) => {
     const name = ref("");
     const description = ref("");
+    const originVersion = ref(0);
     const version = ref(0);
 
     // 抛出关闭事件
-    const showStatusChange = (val: boolean) => {
+    const showChange = (val: boolean) => {
       if (!val) emit("close");
     };
 
@@ -96,7 +99,7 @@ export default defineComponent({
       });
       if (res.code === 200) {
         showToast("创建成功！");
-        showStatusChange(false);
+        showChange(false);
         emit("create");
         return;
       }
@@ -104,10 +107,6 @@ export default defineComponent({
     };
 
     const toEditOTAProject = async () => {
-      if (!name.value) {
-        showToast("请输入OTA项目名称~");
-        return;
-      }
       const res = await editProject({
         name: name.value,
         description: description.value,
@@ -116,20 +115,48 @@ export default defineComponent({
       });
       if (res.code === 200) {
         showToast("编辑成功！");
-        showStatusChange(false);
+        showChange(false);
+        emit("edit");
         return;
       }
       showToast(res.message || "编辑失败！");
     };
 
+    const editPreConfirm = () => {
+      if (!name.value) {
+        showToast("请输入OTA项目名称~");
+        return;
+      }
+      if (originVersion.value !== version.value) {
+        showConfirmDialog({
+          title: "您的版本号有更新",
+          message: "是否确认修改版本？",
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+        }).then(toEditOTAProject)
+      }
+
+    }
+
+    watch(()=>props.show, (val)=>{
+      console.log('doneee');
+      if(val) {
+        name.value = props.nowChoseOTAProject?.name || "";
+        description.value = props.nowChoseOTAProject?.description || "";
+        version.value = props.nowChoseOTAProject?.currentVersion || 0;
+        originVersion.value = props.nowChoseOTAProject?.currentVersion || 0;
+      }
+    })
+
     return {
-      showStatusChange,
+      showChange,
       close,
       toCreateOTAProject,
       name,
       description,
       toEditOTAProject,
       version,
+      editPreConfirm
     };
   },
 });

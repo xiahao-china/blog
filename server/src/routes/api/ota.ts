@@ -25,7 +25,7 @@ export default (router: Router) => {
   // 获取固件bin信息列表
   router.post("/ota/getOTABinInfoList", getOTABinInfoList);
   // 上传固件bin文件
-  router.post("/ota/uploadOTABin", uploadOTABin, otaUploadByMulter.single('file'),);
+  router.post("/ota/uploadOTABin", uploadOTABin, otaUploadByMulter.single('file'));
   // 创建固件bin信息记录
   router.post("/ota/createOTABinInfo", createOTABinInfo);
   // 项目下固件更新记录
