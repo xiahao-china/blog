@@ -16,9 +16,6 @@
 
     <div class="title my-project">
       <div class="text">我的项目</div>
-      <div class="add-btn">
-        <van-icon v-if="!isMobile" name="add" @click="showCreateOTA = true" />
-      </div>
     </div>
     <div class="ota-project-list">
       <van-list
@@ -42,7 +39,7 @@
       <div v-if="!otaProjectList.length" class="none-info">您还没有创建项目哦~</div>
     </div>
 
-    <div v-if="isMobile" class="mobile-add-btn" @click="showCreateOTA = true">
+    <div  class="mobile-add-btn" @click="showCreateOTA = true">
       <van-icon class="add-icon" name="add" />
     </div>
 

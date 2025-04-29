@@ -238,9 +238,13 @@ export const getLastVersion = async (
   try {
     const project = await otaProjectModel.collection.findOne({ id: projectId });
     if (!project) return sendResponse.error(ctx, "项目不存在!");
+    // 找到对应bin版本
+    const binInfo = await otaBinModel.collection.findOne({ version: project.currentVersion });
+    if (!binInfo) return sendResponse.error(ctx, "版本产物不存在!");
+
     return sendResponse.success(ctx, {
       currentVersion: project.currentVersion,
-      binFileId: project.binFileIdList[project.binFileIdList.length - 1]
+      binFileId: binInfo.id
     });
   } catch (err) {
     console.log("err", err);
@@ -268,6 +272,7 @@ export const downloadOTABin = async (
     };
     await otaBinDownloadRecordModel.collection.insertMany([newDownloadRecord]);
     ctx.path = `${binInfo.downloadUrl}`;
+    ctx.set('Content-Disposition', `attachment; filename="${binInfo.downloadUrl.replace('/', "")}"`);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     return staticServeObj(ctx, next);

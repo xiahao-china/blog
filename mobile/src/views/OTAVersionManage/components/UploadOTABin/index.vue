@@ -1,7 +1,7 @@
 <template>
   <van-popup
     :show="show"
-    position="bottom"
+    :position="isMobile ? 'bottom' : 'center'"
     round
     closeable
     @input="showChange"
@@ -45,6 +45,7 @@ import { defineComponent, PropType, ref, watch } from "vue";
 import { showToast, Field, Loading } from "vant";
 import { IOTABin, IOTAProject } from "@/api/ota/const";
 import { createOTABinInfo, createProject, editProject, uploadOTABin } from "@/api/ota";
+import { isMobile } from "@/util";
 
 export default defineComponent({
   name: "UploadOTABin",
@@ -131,7 +132,8 @@ export default defineComponent({
       version,
       uploading,
       fileOriginName,
-      uploadId
+      uploadId,
+      isMobile
     };
   },
 });

@@ -1,7 +1,7 @@
 <template>
   <van-popup
     :show="show"
-    position="bottom"
+    :position="isMobile ? 'bottom' : 'center'"
     round
     closeable
     @input="showChange"
@@ -58,6 +58,7 @@ import { defineComponent, onMounted, PropType, ref, watch } from "vue";
 import { showToast, Field, showConfirmDialog } from "vant";
 import { IOTAProject } from "@/api/ota/const";
 import { createProject, editProject } from "@/api/ota";
+import { isMobile } from "@/util";
 
 export default defineComponent({
   name: "EditAndCreateOTAProject",
@@ -72,7 +73,6 @@ export default defineComponent({
     },
     nowChoseOTAProject: {
       type: Object as PropType<IOTAProject>,
-      default: () => ({}),
     },
   },
   emits: ["close", "create", "edit"],
@@ -156,7 +156,8 @@ export default defineComponent({
       description,
       toEditOTAProject,
       version,
-      editPreConfirm
+      editPreConfirm,
+      isMobile,
     };
   },
 });
