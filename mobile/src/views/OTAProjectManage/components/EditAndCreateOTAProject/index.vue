@@ -14,11 +14,11 @@
       <div class="equipment-add-card-info">
         <div class="base-info" v-if="nowChoseOTAProject">
           <div class="other-info">
-            <div class="sub">项目ID:</div>
+            <div class="sub">项目PID ：</div>
             <div class="text">{{ nowChoseOTAProject.id }}</div>
           </div>
           <div class="other-info">
-            <div class="sub">创建时间:</div>
+            <div class="sub">创建时间：</div>
             <div class="text">
               {{ nowChoseOTAProject.createTime }}
             </div>
