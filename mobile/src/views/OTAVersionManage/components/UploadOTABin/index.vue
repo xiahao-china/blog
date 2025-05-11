@@ -9,12 +9,11 @@
   >
     <div class="equipment-add-card">
       <div class="title">
-        {{ nowChoseOTAProject ? "编辑项目" : "新建项目" }}
+        更新版本
       </div>
       <div class="equipment-add-card-info">
         <div class="filed-list">
           <van-field v-model="version" label="版本号" placeholder="请填写如0.2格式数字"  type="number"/>
-
           <van-field v-model="name" label="版本说明" placeholder="请填写100字内版本说明" maxlength="100" show-word-limit clearable/>
           <div class="uoload-file" :class="uploadId?'active':''" @click="choseUploadFile">
             <div v-if="!uploadId" class="iconfont icon-weibiaoti1"/>
@@ -62,11 +61,15 @@ export default defineComponent({
     nowChoseOTAProject: {
       type: Object as PropType<IOTABin>,
     },
+    maxVersion: {
+      type: Number,
+      default: 0,
+    }
   },
   emits: ["close", "create"],
   setup: (props, { emit }) => {
     const name = ref("");
-    const version = ref(0);
+    const version = ref(props.maxVersion || 0);
     const fileOriginName = ref("");
     const uploading = ref(false);
     const uploadId = ref("");
@@ -75,6 +78,14 @@ export default defineComponent({
     const showChange = (val: boolean) => {
       if (!val) emit("close");
     };
+
+    const clearParams = () => {
+      name.value = "";
+      version.value = 0;
+      fileOriginName.value = "";
+      uploading.value = false;
+      uploadId.value = "";
+    }
 
     const toUploadOTABinInfo = async () => {
       const res = await createOTABinInfo({
@@ -86,6 +97,7 @@ export default defineComponent({
       if (res.code === 200) {
         showToast("创建成功！");
         showChange(false);
+        clearParams();
         emit("create");
         return;
       }

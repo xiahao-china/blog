@@ -5,27 +5,34 @@ import { HtmlToDelta } from "quill-delta-from-html/quill-delta-from-html";
 import { IObject } from "@/util";
 import { uploadFile } from "@/api/file";
 import { IBaseUserInfo } from "@/api/usr/const";
+import { EDITOR_OPTIONS, FONT_SIZE_SELECT_LIST } from "@/views/CreateAndEditArticle/components/EditorToolBar/const";
 
-export const TOOLBAR_OPTIONS = [
-  ["bold", "italic", "underline", "strike"], // 基础字体样式
-  ["blockquote", "code-block", "check"], // 行格式
-  ["link", "image", "video", "formula"], //
-  // [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-  // ['ordered','bullet','check'],
-  // [{'list': ['ordered','bullet','check']}],
-  [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
-  [{ script: "sub" }, { script: "super" }], // superscript/subscript
-  // [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent反
-  // [{ 'direction': 'rtl' }],                         // text direction
+const fontSizeStyle: any = Quill.import("attributors/style/size");
+fontSizeStyle.whitelist = FONT_SIZE_SELECT_LIST.whitelist;
+Quill.register(fontSizeStyle, true);
 
-  [{ size: ["small", false, "large", "huge"] }], // custom dropdown
-  [{ header: [1, 2, 3, 4, 5, 6, false] }],
+// export const TOOLBAR_OPTIONS = [
+//   ["bold", "italic", "underline", "strike"], // 基础字体样式
+//   ["blockquote", "code-block", "check"], // 行格式
+//   ["link", "image", "video", "formula"], //
+//   // [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+//   // ['ordered','bullet','check'],
+//   // [{'list': ['ordered','bullet','check']}],
+//   [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
+//   [{ script: "sub" }, { script: "super" }], // superscript/subscript
+//   // [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent反
+//   // [{ 'direction': 'rtl' }],                         // text direction
+//
+//   // [{ size: ["small", false, "large", "huge"] }], // custom dropdown
+//   [{ header: [1, 2, 3, 4, 5, 6, false] }],
+//
+//   // [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+//   // [{ 'font': [] }],
+//   // [{ 'align': [] }],
+//   // ['clean']                                         // remove formatting button
+// ];
 
-  // [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-  // [{ 'font': [] }],
-  // [{ 'align': [] }],
-  // ['clean']                                         // remove formatting button
-];
+
 
 export interface IInitEditParams {
   str: string;
@@ -83,11 +90,13 @@ export const initEdit = (params: IInitEditParams) => {
       },
       toolbar: {
         container: FixToolbarRootEl,
-        handlers: TOOLBAR_OPTIONS,
+        handlers: EDITOR_OPTIONS,
       },
     },
     theme: "snow",
   });
+
+
   const editorObj = quill;
   if (str) {
     if (isHTML) {

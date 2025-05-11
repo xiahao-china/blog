@@ -13,16 +13,8 @@
       </div>
     </div>
     <EditorToolBar
-      v-if="isMobile"
       ref="editorToolBarRef"
-      :editor-toolbar-display="editorToolbarDisplay"
-      @end-edit="onEndEdit"
-      @chose-img="onChoseImg"
-    />
-    <PcEditorToolBar
-      v-else
-      ref="editorToolBarRef"
-      :editor-toolbar-display="true"
+      :editor-toolbar-display="isMobile ? editorToolbarDisplay : true"
       @end-edit="onEndEdit"
       @chose-img="onChoseImg"
     />
@@ -71,7 +63,6 @@ import {
 import { IGetArticleDetailResItem } from "@/api/article/const";
 
 import EditorToolBar from "./components/EditorToolBar/index.vue";
-import PcEditorToolBar from "./components/PcEditorToolBar/index.vue";
 import ExtraInfoSetting from "./components/ExtraInfoSetting/index.vue";
 
 import { IExtraArticleInfo, initEdit, onChoseImgUpload } from "./const";
@@ -84,7 +75,6 @@ export default defineComponent({
   name: "CreateAndEditArticle",
   components: {
     ExtraInfoSetting,
-    PcEditorToolBar,
     EditorToolBar,
   },
   setup: () => {

@@ -23,6 +23,7 @@ export interface IOTAProject {
   currentVersion: number; // 当前启用版本，即最后可使用版本 格式为 0.1
   createTime: number | string; // 创建时间
   createUid: string; // 创建者uid
+  maxVersion: number; // 最大版本，即当前最大版本 格式为 0.1
 }
 
 export interface ICreateProjectReqParams{

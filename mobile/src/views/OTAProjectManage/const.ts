@@ -17,6 +17,7 @@ export const createDefaultOTAProjectInfo = (): IOTAProject => {
     currentVersion: 0, // 当前启用版本，即最后可使用版本 格式为 0.1
     createTime: "", // 创建时间
     createUid: "", // 创建者uid
+    maxVersion: 0, // 最大版本，即当前最大版本 格式为 0.1
   };
 };
 

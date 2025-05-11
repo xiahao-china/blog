@@ -62,10 +62,11 @@ export default defineComponent({
     }));
 
     const toDetail = () => {
-      router.push({
-        query: { id: props.article.id },
-        path: "/ArticleDetail",
-      });
+      window.open(`/#/ArticleDetail?id=${props.article.id}`, "_blank");
+      // router.push({
+      //   query: { id: props.article.id },
+      //   path: "/ArticleDetail",
+      // });
     };
 
     const coverKeyInfo = computed(()=>extractCoverKeyInfo(props.article.title))

@@ -54,6 +54,7 @@ export const OTA_PROJECT_BASE_RES_KEY_LIST: (keyof IOTAProject)[] = [
   "description",
   "currentVersion",
   "createTime",
+  "maxVersion"
 ];
 
 export const OTA_FILE_STORAGE_PATH = path.join(__dirname, process.env.NODE_ENV === 'development' ? "../../../tools/mongodb/uploadFiles/otaBin" : '../../dbToolShell/uploadFiles/otaBin');

@@ -73,7 +73,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, onUnmounted, ref } from "vue";
+import { computed, defineComponent, onMounted, onUnmounted, ref, watch } from "vue";
 import { showDialog, showImagePreview, showToast } from "vant";
 import dayjs from "dayjs";
 import hljs from "highlight.js";
@@ -232,6 +232,11 @@ export default defineComponent({
           });
         });
       }
+      if (!query.id) return;
+      initBlogDetail(query.id.toString());
+    });
+
+    watch(()=>route.query, (query) => {
       if (!query.id) return;
       initBlogDetail(query.id.toString());
     });

@@ -166,6 +166,15 @@ export const createOTABinInfo = async (
     };
 
     await otaBinModel.collection.insertMany([newOTABin]);
+
+    const res = await otaProjectModel.collection.updateOne(
+      { id: projectId },
+      {
+        $set: {
+          maxVersion: Math.max(project.maxVersion || 0, version),
+        }
+      }
+    );
     return sendResponse.success(ctx, { id: newOTABin.id });
   } catch (err) {
     console.log("err", err);

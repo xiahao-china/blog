@@ -37,6 +37,7 @@
             :key="item.id"
             :ota-bin="item"
             :now-version="currentOTAProject?.currentVersion"
+            @click="()=>changeVersionConfirm(item)"
           />
         </div>
         <div v-if="!otaBinList.length" class="none-info">您还没有更新版本文件哦~</div>
@@ -53,6 +54,7 @@
     <UploadOTABin
       v-model:show="showUploadOTABin"
       :nowChoseOTAProject="currentOTAProject"
+      :max-version="currentOTAProject?.maxVersion"
       @close="showUploadOTABin = false"
       @create="reloadOTABinList"
     />
@@ -76,7 +78,7 @@ import dayjs from "dayjs";
 import { IOTABin, IOTAProject } from "@/api/ota/const";
 
 import { isMobile } from "@/util";
-import { getOTABinInfoList, getProjectDetail, getProjectList } from "@/api/ota";
+import { editProject, getOTABinInfoList, getProjectDetail, getProjectList } from "@/api/ota";
 
 import OTAProjectItem from "@/views/OTAProjectManage/components/OTAProjectItem/index.vue";
 import EditAndCreateOTAProject from "@/views/OTAProjectManage/components/EditAndCreateOTAProject/index.vue";
@@ -168,6 +170,31 @@ export default defineComponent({
       }
     };
 
+    const changeVersionConfirm = (item:IOTABin) => {
+      if (item.version === currentOTAProject.value?.currentVersion) return;
+      showConfirmDialog({
+        title: "您的版本号有更新",
+        message: `是否确认修改版本为Ver.${item.version}吗？`,
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+      }).then(async () => {
+        const res = await editProject({
+          name: currentOTAProject.value?.name || "",
+          description: currentOTAProject.value?.description || "",
+          currentVersion: item.version || 0,
+          id: currentOTAProject.value?.id || "",
+        });
+        if (res.code === 200) {
+          showToast("编辑成功！");
+          initProjectInfo();
+          return;
+        }
+        showToast(res.message || "编辑失败！");
+      }).catch(() => {
+        console.log("取消");
+      })
+    }
+
     const copyPId = () => {
       copyText(projectId);
       showToast("复制成功！");
@@ -190,6 +217,7 @@ export default defineComponent({
       otaBinList,
       reloadOTABinList,
       copyPId,
+      changeVersionConfirm
     };
   },
 });
