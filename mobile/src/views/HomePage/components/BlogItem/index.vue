@@ -26,7 +26,7 @@
         <div class="likeNum">
           <span class="iconfont icon-like" />{{ handleArticleInfo.likeNum }}
         </div>
-        <div class="create-time">{{handleArticleInfo.createTimeStr}}</div>
+        <div class="create-time">{{handleArticleInfo.lastUpdateTimeStr}}</div>
       </div>
     </div>
   </div>
@@ -58,6 +58,7 @@ export default defineComponent({
       collectNum: formatNumToWan(props.article.collectNum),
       likeNum: formatNumToWan(props.article.likeNum),
       createTimeStr: dayjs(props.article.createTime).format('YYYY-MM-DD HH:mm'),
+      lastUpdateTimeStr: dayjs(props.article.lastUpdateTime).format('YYYY-MM-DD HH:mm'),
       tag: props.article.tag || []
     }));
 

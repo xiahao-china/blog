@@ -67,7 +67,8 @@ export const createAndEditArticleControllers = async (
             isHTML: isHTML || false,
             isPrivate,
             cover,
-            collaborateUid: collaborateUid || []
+            collaborateUid: collaborateUid || [],
+            lastUpdateTime: new Date().getTime()
           }
         }
       );

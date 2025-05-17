@@ -101,7 +101,11 @@ export default defineComponent({
         showToast(res.message || '获取验证码失败，请稍后再试~');
         return;
       }
-      showToast('获取验证码成功，快去看看吧~');
+      if (isMail) {
+        showToast('获取验证码成功，快去看看吧~');
+      }else {
+        showToast('获取验证码成功（因政策更新，移动运营商报备中，可能无法收到哦~）');
+      }
       let interVal = VERIFICATION_CODE_ACQUISITION_INTERVAL;
       const intervalFn = () => {
         interVal--;

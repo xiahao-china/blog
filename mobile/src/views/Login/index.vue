@@ -14,12 +14,16 @@
         @update="(val) => (loginInfo = val)"
       />
       <GetVerificationCode v-else :login-input-info="loginInfo" @update="(val) => (loginInfo = val)" />
-      <div class="change-login-method-shell">
-        <span class="iconfont icon-qiehuan"/>
-        <div class="change-login-method" @click="changeLoginMethod">
-          使用{{ loginInfo.method === ELoginMethod.password ? "验证码" : "密码" }}
+      <div class="extra-tip">
+<!--        <div class="phone-mail-tip" v-if="loginInfo.method !== ELoginMethod.password">移动运营商报备ing~</div>-->
+        <div class="change-login-method-shell">
+          <span class="iconfont icon-qiehuan"/>
+          <div class="change-login-method" @click="changeLoginMethod">
+            使用{{ loginInfo.method === ELoginMethod.password ? "验证码" : "密码" }}
+          </div>
         </div>
       </div>
+
 
       <div class="to-login-btn" @click="toLogin">登录</div>
       <div class="fast-login">

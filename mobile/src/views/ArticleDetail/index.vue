@@ -33,7 +33,7 @@
             <span class="iconfont icon-like" />
             <div class="text">{{ articleInfo.likeNum || "点赞" }}</div>
           </div>
-          <div class="options-item to-review">
+          <div class="options-item to-review" @click="onReview">
             <span class="iconfont icon-comment" />
             <div class="text">{{ articleInfo.reviewNum || "评论" }}</div>
           </div>
@@ -118,6 +118,11 @@ export default defineComponent({
 
     const showFoot = ref(true);
     let slideEventDestoryFn: () => void | undefined;
+
+    // 评论
+    const onReview = ()=>{
+      showToast("因备案政策审核原因，评论功能暂未开放");
+    }
 
     const initBlogDetail = async (articleId: string) => {
       const res = await getArticleDetail({ id: articleId });
@@ -258,6 +263,7 @@ export default defineComponent({
       ARTICLE_ACTION_LIST,
       onActionSelect,
       showFoot,
+      onReview
     };
   },
 });

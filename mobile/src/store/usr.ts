@@ -3,7 +3,7 @@ import { ESex, IUserInfo } from "@/api/usr/const";
 import { checkLoginStatusReq } from "@/api/usr";
 import { cloneDeep } from "lodash";
 
-export interface IUserState {usrInfo: IUserInfo}
+export interface IUserState {usrInfo: IUserInfo & {hasLoaded: boolean}}
 
 export const DEFAULT_USR_INFO = {
   uid: "",
@@ -17,6 +17,7 @@ export const DEFAULT_USR_INFO = {
   followNum: 0,
   likesNum: 0,
   collectNum: 0,
+  hasLoaded: false,
 }
 
 export default {
@@ -25,7 +26,10 @@ export default {
   },
   mutations: {
     updateAllUserInfo: (state, payload: IUserInfo) => {
-      state.usrInfo = payload;
+      state.usrInfo = {
+        ...payload,
+        hasLoaded: true,
+      };
     },
   },
   actions: {

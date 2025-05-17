@@ -87,6 +87,15 @@
         </select>
       </div>
     </div>
+
+    <div class="ability-block" v-if="!isMobile">
+      <div class="tool-bar-item-title">排列:</div>
+      <div class="ability-list">
+        <button class="ql-align" value="justify" />
+        <button class="ql-align" value="right" />
+        <button class="ql-align" value="center" />
+      </div>
+    </div>
   </div>
 </template>
 

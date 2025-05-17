@@ -41,6 +41,9 @@
       :collaborate-user-info="extraArticleInfo?.collaborateUserInfo"
       @done="extraInfoSettingDone"
     />
+    <div class="loading-mask" v-if="!usrInfo.hasLoaded">
+      <van-loading color="white" size="20%"  />
+    </div>
   </div>
 </template>
 
@@ -48,7 +51,7 @@
 import { computed, defineComponent, nextTick, onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
-import { showToast } from "vant";
+import { showToast, Loading } from "vant";
 import Quill from "quill";
 import dayjs from "dayjs";
 
@@ -76,6 +79,7 @@ export default defineComponent({
   components: {
     ExtraInfoSetting,
     EditorToolBar,
+    VanLoading: Loading,
   },
   setup: () => {
     const store = useStore();
@@ -206,7 +210,7 @@ export default defineComponent({
       nextTick(createOrEditArticle);
     };
 
-    onMounted(async () => {
+    const waitLodingCheck = () => {
       if (!usrInfo.value.uid) {
         showToast("请登录后再写作吧~");
         router.push({
@@ -217,11 +221,20 @@ export default defineComponent({
           path: "/Login",
         });
       }
-      await initBlog();
+      initBlog();
       const query = route.query;
       if (!query.articleId){
         initAutoSave();
       }
+    }
+
+    onMounted(()=>{
+      const time = setInterval(()=>{
+        if (usrInfo.value.hasLoaded) {
+          waitLodingCheck();
+          clearInterval(time);
+        }
+      }, 100)
     });
 
     return {
