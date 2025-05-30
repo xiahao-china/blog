@@ -91,4 +91,5 @@ export interface INormalArticleReqParams {
 export interface ISaveDraftArticleReqParams {
   title?: string;
   content?: string;
+  articleId?: string;
 }

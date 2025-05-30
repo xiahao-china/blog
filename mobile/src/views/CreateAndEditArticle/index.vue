@@ -42,7 +42,7 @@
       @done="extraInfoSettingDone"
     />
     <div class="loading-mask" v-if="!usrInfo.hasLoaded">
-      <van-loading color="white" size="20%"  />
+      <van-loading color="white" size="20%" />
     </div>
   </div>
 </template>
@@ -51,7 +51,7 @@
 import { computed, defineComponent, nextTick, onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
-import { showToast, Loading } from "vant";
+import { showToast, Loading, showDialog } from "vant";
 import Quill from "quill";
 import dayjs from "dayjs";
 
@@ -113,26 +113,43 @@ export default defineComponent({
     };
 
     const initBlog = async () => {
-      const query = route.query;
+      const articleId = route.query.articleId?.toString() || '';
       let initContent = "";
       let isHTML = false;
-      if (query.articleId) {
+      const draftBlogInfo = await getDraftArticle(articleId);
+
+      if (articleId) {
         const blogInfo = await getArticleDetail({
-          id: query.articleId?.toString(),
+          id: articleId,
         });
-        isHTML = blogInfo.data.isHTML;
-        title.value = blogInfo.data.title;
-        nowBlogInfo.value = blogInfo.data;
+        if (Object.keys(draftBlogInfo.data).length) {
+          await showDialog({
+            title: "提示",
+            message: "您有已保存的草稿，是否要继续编辑？",
+            showCancelButton: true,
+          })
+            .then(() => {
+              title.value = draftBlogInfo.data.title;
+              initContent = draftBlogInfo.data.content;
+            })
+            .catch(async () => {
+              title.value = blogInfo.data.title;
+              initContent = blogInfo.data.content;
+            });
+        }else {
+          title.value = blogInfo.data.title;
+          initContent = blogInfo.data.content;
+        }
         extraArticleInfo.value = {
           isPrivate: blogInfo.data.isPrivate || false,
           cover: blogInfo.data.cover || "",
           collaborateUserInfo: blogInfo.data.collaborateUserInfo || [],
         };
-        initContent = blogInfo.data.content;
+        nowBlogInfo.value = blogInfo.data;
+        isHTML = blogInfo.data.isHTML;
       } else {
-        const blogInfo = await getDraftArticle();
-        title.value = blogInfo.data.title;
-        initContent = blogInfo.data.content;
+        title.value = draftBlogInfo.data.title;
+        initContent = draftBlogInfo.data.content;
       }
       initContent = formatEscapedChars(initContent);
       editor = initEdit({
@@ -163,11 +180,14 @@ export default defineComponent({
         isHTML: false,
         isPrivate: extraArticleInfo.value?.isPrivate,
         cover: extraArticleInfo.value?.cover,
-        collaborateUid: (extraArticleInfo.value?.collaborateUserInfo || []).map((item)=>item.uid),
+        collaborateUid: (extraArticleInfo.value?.collaborateUserInfo || []).map(
+          (item) => item.uid
+        ),
       });
       if (res.code === 200) {
         showToast("发布成功");
-        await delDraftArticle();
+        const articleId = route.query.articleId || "";
+        await delDraftArticle(articleId?.toString());
         setTimeout(() => {
           router.push({
             query: { id: res.data.id.toString() },
@@ -180,6 +200,7 @@ export default defineComponent({
     };
 
     const initAutoSave = () => {
+      const articleId = route.query.articleId || "";
       if (timeoutId) {
         clearInterval(timeoutId);
         timeoutId = undefined;
@@ -190,6 +211,7 @@ export default defineComponent({
         const res = await saveDraftArticle({
           title: title.value,
           content: JSON.stringify(content),
+          articleId: articleId?.toString(),
         });
         if (res.code === 200)
           lastSaveDraftArticle.value = dayjs().format("MM-DD HH:mm");
@@ -222,19 +244,16 @@ export default defineComponent({
         });
       }
       initBlog();
-      const query = route.query;
-      if (!query.articleId){
-        initAutoSave();
-      }
-    }
+      initAutoSave();
+    };
 
-    onMounted(()=>{
-      const time = setInterval(()=>{
+    onMounted(() => {
+      const time = setInterval(() => {
         if (usrInfo.value.hasLoaded) {
           waitLodingCheck();
           clearInterval(time);
         }
-      }, 100)
+      }, 100);
     });
 
     return {

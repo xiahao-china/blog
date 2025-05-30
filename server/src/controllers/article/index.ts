@@ -2,6 +2,8 @@ import { isEqual } from "lodash";
 import xss from "xss";
 import articleModel, { getDefaultArticle, IArticle } from "@/models/article";
 import draftArticleModel, { getDefaultDraftArticle, IDraftArticle } from "@/models/draft";
+import editArticleDraftModel, { getDefaultEditArticleDraft, IEditArticleDraft } from "@/models/editArticleDraft";
+
 import searchHistoryModel, { getDefaultSearchHistory, ISearchHistory } from "@/models/searchHistory";
 import userModel, { IUserInfo } from "@/models/user";
 import browseHistoryModel, { getDefaultBrowseHistory, IBrowseHistory } from "@/models/browseHistory";
@@ -17,6 +19,7 @@ import {
   getArticleListControllersFilterObj, SEARCH_MAX_NUM_EVERY_MINUTE, searchArticleControllersFilterObj
 } from "@/controllers/article/const";
 import { SEARCH_USER_RES_KEY_LIST } from "@/controllers/user/const";
+import editArticleDraft from "@/models/editArticleDraft";
 
 export interface ICreateArticleControllersReqParams {
   id: string;
@@ -30,6 +33,7 @@ export interface ISaveDraftReqParams {
   title: string;
   content: string;
   collaborateUid: string[];
+  articleId?: string;
 }
 
 export interface ISearchArticleControllersReqParams extends IPageReqBase {
@@ -365,35 +369,61 @@ export const collectArticleControllers = async (ctx: TDefaultRouter<{ id: string
   }
 };
 
+// 保存草稿
 export const saveDraftArticleControllers = async (ctx: TDefaultRouter<ISaveDraftReqParams>, next: TNext) => {
   const userInfo = await checkLogin(ctx, next);
   if (!userInfo) return sendResponse.error(ctx, "", EReqStatus.noLogin);
-  const { title, content } = ctx.request.body || {};
+  const { title, content, articleId } = ctx.request.body || {};
   if (!title && !content) return sendResponse.error(ctx, "文章标题或内容不能为空!");
   try {
-    const nowDraftArticle: IDraftArticle = await draftArticleModel.collection.findOne({ creatorUid: userInfo.uid });
-    if (nowDraftArticle) {
-      await draftArticleModel.collection.updateOne(
-        { creatorUid: userInfo.uid },
-        {
-          $set: {
-            title: xss(title || ""),
-            content: xss(content || ""),
-            lastUpdateTime: new Date().getTime()
+    if (articleId){
+      const nowDraftArticle: IDraftArticle = await editArticleDraftModel.collection.findOne({ articleId });
+      if (nowDraftArticle){
+        if (nowDraftArticle.creatorUid!== userInfo.uid) return sendResponse.error(ctx, "权限不足");
+        await editArticleDraftModel.collection.updateOne(
+          { articleId },
+          {
+            $set: {
+              title: xss(title || ""),
+              content: xss(content || ""),
+              lastUpdateTime: new Date().getTime()
+            }
           }
-        }
-      );
-      return sendResponse.success(ctx, {});
+        );
+        return sendResponse.success(ctx, {});
+      }
+      const newDraftArticle: IEditArticleDraft = {
+        ...getDefaultDraftArticle(),
+        creatorUid: userInfo.uid,
+        title: xss(title || ""),
+        content: xss(content || ""),
+        articleId,
+      };
+      await editArticleDraftModel.collection.insertMany([newDraftArticle]);
+    }else {
+      const nowDraftArticle: IDraftArticle = await draftArticleModel.collection.findOne({ creatorUid: userInfo.uid });
+      if (nowDraftArticle) {
+        await draftArticleModel.collection.updateOne(
+          { creatorUid: userInfo.uid },
+          {
+            $set: {
+              title: xss(title || ""),
+              content: xss(content || ""),
+              lastUpdateTime: new Date().getTime()
+            }
+          }
+        );
+        return sendResponse.success(ctx, {});
+      }
+
+      const newDraftArticle: IDraftArticle = {
+        ...getDefaultDraftArticle(),
+        creatorUid: userInfo.uid,
+        title: xss(title || ""),
+        content: xss(content || "")
+      };
+      await draftArticleModel.collection.insertMany([newDraftArticle]);
     }
-
-    const newDraftArticle: IDraftArticle = {
-      ...getDefaultDraftArticle(),
-      creatorUid: userInfo.uid,
-      title: xss(title || ""),
-      content: xss(content || "")
-    };
-    await draftArticleModel.collection.insertMany([newDraftArticle]);
-
     return sendResponse.success(ctx, {});
   } catch (err) {
     console.log("err", err);
@@ -401,15 +431,26 @@ export const saveDraftArticleControllers = async (ctx: TDefaultRouter<ISaveDraft
   }
 };
 
-export const delDraftArticleControllers = async (ctx: TDefaultRouter<IObject>, next: TNext) => {
+// 删除草稿
+export const delDraftArticleControllers = async (ctx: TDefaultRouter<IObject & {articleId?: string;}>, next: TNext) => {
   const userInfo = await checkLogin(ctx, next);
   if (!userInfo) return sendResponse.error(ctx, "", EReqStatus.noLogin);
+  const { articleId } = ctx.request.body || {};
   try {
-    const nowDraftArticle: IDraftArticle = await draftArticleModel.collection.findOne({ creatorUid: userInfo.uid });
-    if (nowDraftArticle) {
-      if (nowDraftArticle.creatorUid !== userInfo.uid) return sendResponse.error(ctx, "权限不足");
-      await draftArticleModel.collection.deleteOne({ creatorUid: userInfo.uid });
-      return sendResponse.success(ctx, {});
+    if (articleId){
+      const nowDraftArticle: IEditArticleDraft = await editArticleDraftModel.collection.findOne({ articleId });
+      if (nowDraftArticle){
+        if (nowDraftArticle.creatorUid !== userInfo.uid) return sendResponse.error(ctx, "权限不足");
+        await editArticleDraftModel.collection.deleteOne({ articleId });
+        return sendResponse.success(ctx, {});
+      }
+    }else {
+      const nowDraftArticle: IDraftArticle = await draftArticleModel.collection.findOne({ creatorUid: userInfo.uid });
+      if (nowDraftArticle) {
+        if (nowDraftArticle.creatorUid !== userInfo.uid) return sendResponse.error(ctx, "权限不足");
+        await draftArticleModel.collection.deleteOne({ creatorUid: userInfo.uid });
+        return sendResponse.success(ctx, {});
+      }
     }
     return sendResponse.success(ctx, {});
   } catch (err) {
@@ -418,12 +459,20 @@ export const delDraftArticleControllers = async (ctx: TDefaultRouter<IObject>, n
   }
 };
 
-export const getDraftArticleControllers = async (ctx: TDefaultRouter<IObject>, next: TNext) => {
+// 获取草稿
+export const getDraftArticleControllers = async (ctx: TDefaultRouter<IObject & {articleId?: string;}>, next: TNext) => {
   const userInfo = await checkLogin(ctx, next);
   if (!userInfo) return sendResponse.error(ctx, "", EReqStatus.noLogin);
+  const { articleId } = ctx.request.query || {};
   try {
-    const creatorUserInfo: IUserInfo = await draftArticleModel.collection.findOne({ creatorUid: userInfo.uid });
-    sendResponse.success(ctx, creatorUserInfo || {});
+    if (articleId){
+      const draftArticleInfo: IEditArticleDraft = await editArticleDraft.collection.findOne({ articleId });
+      if (draftArticleInfo && draftArticleInfo.creatorUid !== userInfo.uid) return sendResponse.error(ctx, "权限不足");
+      sendResponse.success(ctx, draftArticleInfo || {});
+    }else {
+      const draftArticleInfo: IDraftArticle = await draftArticleModel.collection.findOne({ creatorUid: userInfo.uid });
+      sendResponse.success(ctx, draftArticleInfo || {});
+    }
   } catch (err) {
     console.log("err", err);
     return sendResponse.error(ctx, JSON.stringify(err));

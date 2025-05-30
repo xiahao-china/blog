@@ -51,13 +51,13 @@ export const saveDraftArticle = async (params: Partial<ISaveDraftArticleReqParam
   return res;
 }
 
-export const delDraftArticle = async () => {
-  const res = await request.post<IBaseRes>('/api/article/draft/del', {});
+export const delDraftArticle = async (articleId?: string) => {
+  const res = await request.post<IBaseRes>('/api/article/draft/del', {articleId: articleId || ''});
   return res;
 }
 
-export const getDraftArticle = async () => {
-  const res = await request.get<IBaseRes<IDraftArticle>>('/api/article/draft/get', {});
+export const getDraftArticle = async (articleId?: string) => {
+  const res = await request.get<IBaseRes<IDraftArticle>>('/api/article/draft/get', {articleId: articleId || ''});
   return res;
 }
 
