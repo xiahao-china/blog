@@ -1,4 +1,4 @@
-import { TWsRoutesCallBackFn } from '@/lib/webSocket'
+import { TWsRoutesCallBackFn, WEB_SOCKET_SERVER } from "@/lib/webSocket";
 import userModel, { IUserInfo } from '@/models/user'
 
 export const checkLoginOnConnect = async (
@@ -11,4 +11,8 @@ export const checkLoginOnConnect = async (
   return true
 }
 
-export const heartbeatControllers: TWsRoutesCallBackFn = (ws, msgStruct) => {}
+export const heartbeatControllers: TWsRoutesCallBackFn = (ws, msgStruct,socketObj: WEB_SOCKET_SERVER) => {
+  const usr = socketObj.linkMap.get(ws);
+  if (usr)
+    usr.preHeartbeatTimeMs = new Date().getTime();
+}

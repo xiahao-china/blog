@@ -50,7 +50,10 @@ class WEB_SOCKET {
 
   initClient() {
     console.log('this.tryTime',this.tryTime);
-    this.client = new WebSocket(`ws://${window.location.hostname}/wsLink`);
+    this.client = new WebSocket(`ws://${window.location.hostname}:8080/websocket`);
+    this.client.onerror = () => {
+      console.log("error: websocket连接失败", event);
+    }
 
     this.client.onopen = () => {
       clearTimeout(this.reConnectTimer);
@@ -73,8 +76,8 @@ class WEB_SOCKET {
       console.log("close: websocket连接关闭");
     };
 
-    this.client.onerror = () => {
-      console.log("error: websocket连接失败");
+    this.client.onerror = (ws:any) => {
+      console.log("error: websocket连接失败", event);
     };
   }
 

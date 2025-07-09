@@ -38,10 +38,11 @@ export class WEB_SOCKET_SERVER {
   private routes: TWsRoutes
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  private linkMap: Map<
-    string,
+  public linkMap: Map<
+    ws.WebSocket,
     {
-      ws: ws.WebSocket
+      uid: string,
+      ws: ws.WebSocket,
       preHeartbeatTimeMs: number
     }
   >
@@ -58,6 +59,7 @@ export class WEB_SOCKET_SERVER {
       const nowTimeMs = new Date().getTime()
       that.linkMap.forEach((item) => {
         if (nowTimeMs - item.preHeartbeatTimeMs >= 5 * 1000) {
+          console.log('心跳超时', item.preHeartbeatTimeMs);
           item.ws.close()
         }
       })
@@ -77,7 +79,8 @@ export class WEB_SOCKET_SERVER {
         ws.close();
         return;
       }
-      that.linkMap.set(uid, {
+      that.linkMap.set(ws, {
+        uid,
         ws,
         preHeartbeatTimeMs: new Date().getTime()
       })
@@ -89,7 +92,7 @@ export class WEB_SOCKET_SERVER {
       })
 
       ws.on('close', () => {
-        that.linkMap.delete(uid)
+        that.linkMap.delete(ws)
       })
     })
   }
