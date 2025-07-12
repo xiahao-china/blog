@@ -4,7 +4,7 @@
 export BLOG_SERVER_USERNAME="root"
 
 # 目标服务器的 IP 地址或主机名
-export BLOG_SERVER_IP="123.60.24.107"
+export BLOG_SERVER_IP="119.91.29.164"
 
 # 目标服务器的端口
 export BLOG_SERVER_PORT="22"

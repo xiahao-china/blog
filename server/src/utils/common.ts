@@ -49,7 +49,7 @@ export const WHITELIST_HOST = [
   'https://jike.ink',
   'http://t.jike.ink',
   'http://192.168.50.228',
-  'https://123.60.24.107'
+  'https://119.91.29.164'
 ]
 
 export const parseCookies = (cookieString: string) => {

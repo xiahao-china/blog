@@ -204,6 +204,7 @@ export const checkLogin = async (ctx: TDefaultRouter<IObject>, next: TNext) => {
   const token = ctx.cookies.get("token");
   if (!uid || !token) return false;
   const userInfo: IUserInfo = await userModel.collection.findOne({ uid });
+  if (!userInfo) return false;
   const pcTokenCheck = userInfo.pcToken === token;
   const mobileTokenCheck = userInfo.token === token;
   if (!userInfo || (!pcTokenCheck && !mobileTokenCheck)) return false;

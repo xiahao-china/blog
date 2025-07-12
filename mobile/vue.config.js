@@ -102,7 +102,7 @@ module.exports = {
     proxy: {
       "/api": {
         target: "http://127.0.0.1:31226",
-        // target: "http://123.60.24.107:31226",
+        // target: "http://119.91.29.164:31226",
         pathRewrite: {
           // 路径改写规则
           "^/api/": "/", // 以“^/xxx”为开头的改写为''/xxx
@@ -110,7 +110,7 @@ module.exports = {
       },
       "/websocket": {
         target: "http://127.0.0.1:31228",
-        // target: "http://123.60.24.107:31228",
+        // target: "http://119.91.29.164:31228",
         ws: true,
         changeOrigin: true,
         pathRewrite: {
